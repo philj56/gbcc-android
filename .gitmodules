@@ -1,0 +1,9 @@
+[submodule "app/libs/openal-soft"]
+	path = app/libs/openal-soft
+	url = https://github.com/kcat/openal-soft.git
+[submodule "app/libs/libpng"]
+	path = app/libs/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "app/libs/GBCC"]
+	path = app/libs/GBCC
+	url = https://github.com/philj56/GBCC.git
