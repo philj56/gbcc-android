@@ -1,7 +1,7 @@
 package com.philj56.gbcc
 
 import android.content.Context
-import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -41,7 +41,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame colour
-        GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f)
+        GLES30.glClearColor(1.0f, 0.0f, 0.0f, 1.0f)
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -51,8 +51,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-        GLES20.glViewport(0, 0, width, height)
-        test()
+        GLES30.glViewport(0, 0, width, height)
+        //test()
     }
 
     external fun clear(x: Float): String
@@ -62,7 +62,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Used to load the 'native-lib' library on application startup.
         init {
-            System.loadLibrary("gltest")
+            System.loadLibrary("gbcc")
         }
     }
 }

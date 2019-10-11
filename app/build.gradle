@@ -16,7 +16,7 @@ android {
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
 			cmake {
-				cppFlags "-flto"
+				cppFlags ""
 				targets "gbcc", "libgbcc"
 			}
 		}

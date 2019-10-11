@@ -38,11 +38,12 @@ add_library(libgbcc SHARED
         ${GBCC_DIR}/src/screenshot.c
         ${GBCC_DIR}/src/time.c
         ${GBCC_DIR}/src/wav.c
-        ${GBCC_DIR}/src/window.c
-        ${GBCC_DIR}/src/vram_window.c
+        ${GBCC_DIR}/src/android/window.c
+        ${GBCC_DIR}/src/android/vram_window.c
         ${GBCC_DIR}/src/wav.c)
 
 target_link_libraries(libgbcc
+        GLESv3
         OpenAL
         png)
 
@@ -50,5 +51,5 @@ target_link_libraries(gbcc
                       android
                       log
                       EGL
-                      GLESv2
+                      GLESv3
                       libgbcc)

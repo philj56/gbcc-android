@@ -1,15 +1,12 @@
 #include <jni.h>
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 
 #include <math.h>
-extern "C" {
-#include "gbcc/src/wav.h"
-}
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_opengltest_MyGLRenderer_clear(
+Java_com_philj56_gbcc_MyGLRenderer_clear(
 		JNIEnv *env,
 		jobject obj,/* this */
 		jfloat x) {
@@ -19,12 +16,4 @@ Java_com_example_opengltest_MyGLRenderer_clear(
 			1.0);
 	// Redraw background colour
 	glClear(GL_COLOR_BUFFER_BIT);
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_example_opengltest_MyGLRenderer_test(
-		JNIEnv *env,
-		jobject obj /* this */) {
-	struct wav_header wav = {0};
-	wav_print_header(&wav);
 }
