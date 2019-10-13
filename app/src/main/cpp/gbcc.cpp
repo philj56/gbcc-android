@@ -75,6 +75,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
     fname[strlen(string)] = '\0';
     env->ReleaseStringUTFChars(file, string);
 
+    gbcc_audio_initialise(&gbc);
     gbcc_initialise(&gbc.core, fname);
     gbc.quit = false;
     gbc.has_focus = true;
@@ -92,6 +93,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	pthread_join(emu_thread, NULL);
 	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "Finished at 0x%04X", gbc.core.cpu.reg.pc);
 	gbcc_free(&gbc.core);
+	gbcc_audio_destroy(&gbc);
 	free(fname);
 }
 
