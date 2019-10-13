@@ -9,47 +9,50 @@ add_subdirectory(${LIBPNG_DIR} ./libpng)
 include_directories(${LIBPNG_DIR})
 
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/GBCC)
+include_directories(${GBCC_DIR}/include)
 
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+
+add_definitions(-DTILESET_PATH="/storage/emulated/0/Android/data/com.philj56.gbcc/files/tileset.png"
+                -DSHADER_PATH="/storage/emulated/0/Android/data/com.philj56.gbcc/files/shaders/" )
 
 add_library(gbcc SHARED
-            gbcc.cpp)
-
-add_library(libgbcc SHARED
-        ${GBCC_DIR}/src/apu.c
-        ${GBCC_DIR}/src/args.c
-        ${GBCC_DIR}/src/audio.c
-        ${GBCC_DIR}/src/bit_utils.c
-        ${GBCC_DIR}/src/colour.c
-        ${GBCC_DIR}/src/config.c
-        ${GBCC_DIR}/src/cpu.c
-        ${GBCC_DIR}/src/debug.c
-        ${GBCC_DIR}/src/fontmap.c
-        ${GBCC_DIR}/src/gbcc.c
-        ${GBCC_DIR}/src/hdma.c
-        ${GBCC_DIR}/src/init.c
-        ${GBCC_DIR}/src/input.c
-        ${GBCC_DIR}/src/mbc.c
-        ${GBCC_DIR}/src/memory.c
-        ${GBCC_DIR}/src/ops.c
-        ${GBCC_DIR}/src/palettes.c
-        ${GBCC_DIR}/src/ppu.c
-        ${GBCC_DIR}/src/printer.c
-        ${GBCC_DIR}/src/save.c
-        ${GBCC_DIR}/src/screenshot.c
-        ${GBCC_DIR}/src/time.c
-        ${GBCC_DIR}/src/wav.c
-        ${GBCC_DIR}/src/android/window.c
-        ${GBCC_DIR}/src/android/vram_window.c
-        ${GBCC_DIR}/src/wav.c)
-
-target_link_libraries(libgbcc
-        GLESv3
-        OpenAL
-        png)
+            gbcc.cpp
+            ${GBCC_DIR}/src/apu.c
+            ${GBCC_DIR}/src/args.c
+            ${GBCC_DIR}/src/audio.c
+            ${GBCC_DIR}/src/bit_utils.c
+            ${GBCC_DIR}/src/colour.c
+            ${GBCC_DIR}/src/config.c
+            ${GBCC_DIR}/src/cpu.c
+            ${GBCC_DIR}/src/debug.c
+            ${GBCC_DIR}/src/fontmap.c
+            ${GBCC_DIR}/src/gbcc.c
+            ${GBCC_DIR}/src/hdma.c
+            ${GBCC_DIR}/src/init.c
+            ${GBCC_DIR}/src/input.c
+            ${GBCC_DIR}/src/mbc.c
+            ${GBCC_DIR}/src/memory.c
+            ${GBCC_DIR}/src/ops.c
+            ${GBCC_DIR}/src/palettes.c
+            ${GBCC_DIR}/src/ppu.c
+            ${GBCC_DIR}/src/printer.c
+            ${GBCC_DIR}/src/save.c
+            ${GBCC_DIR}/src/screenshot.c
+            ${GBCC_DIR}/src/time.c
+            ${GBCC_DIR}/src/wav.c
+            ${GBCC_DIR}/src/android/window.c
+            ${GBCC_DIR}/src/android/vram_window.c
+            ${GBCC_DIR}/src/wav.c)
 
 target_link_libraries(gbcc
                       android
                       log
                       EGL
                       GLESv3
-                      libgbcc)
+                      OpenAL
+                      png)
