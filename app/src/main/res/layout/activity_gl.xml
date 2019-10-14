@@ -23,23 +23,22 @@
         android:id="@+id/buttonA"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="32dp"
         android:background="@android:color/transparent"
         android:contentDescription="A button"
         android:scaleType="fitCenter"
         android:src="@drawable/a"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.32999998" />
 
     <ImageButton
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="B button"
@@ -54,7 +53,7 @@
         android:id="@+id/buttonStart"
         android:layout_width="64dp"
         android:layout_height="32dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="Start Button"
@@ -71,8 +70,8 @@
         android:layout_width="64dp"
         android:layout_height="32dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="64dp"
         android:background="@android:color/transparent"
         android:contentDescription="Select Button"
         android:scaleType="fitCenter"
@@ -93,7 +92,8 @@
         android:src="@drawable/dpad"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
+        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView"
+        app:layout_constraintVertical_bias="0.32999998" />
 
     <Button
         android:id="@+id/buttonDown"
@@ -238,5 +238,32 @@
         app:layout_constraintEnd_toEndOf="@+id/myGLSurfaceView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/myGLSurfaceView" />
+
+    <ImageView
+        android:id="@+id/topRightCorner"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_top_corner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/topLeftCorner"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:rotation="270"
+        android:src="@drawable/ic_top_corner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
