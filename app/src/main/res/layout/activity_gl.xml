@@ -4,43 +4,239 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGameBoyTeal"
     tools:context=".GLActivity">
 
     <com.philj56.gbcc.MyGLSurfaceView
         android:id="@+id/myGLSurfaceView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button3"
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/buttonA"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:onClick="pressA"
-        android:text="A"
-        app:layout_constraintBottom_toTopOf="@+id/button4"
+        android:background="@android:color/transparent"
+        android:contentDescription="A button"
+        android:scaleType="fitCenter"
+        android:src="@drawable/a"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
+
+    <ImageButton
+        android:id="@+id/buttonB"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="B button"
+        android:scaleType="fitCenter"
+        android:src="@drawable/b"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonA"
+        app:layout_constraintEnd_toStartOf="@+id/buttonA"
+        app:layout_constraintTop_toTopOf="@+id/buttonA"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/buttonStart"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Start Button"
+        android:scaleType="fitCenter"
+        android:src="@drawable/start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@+id/buttonSelect"
+        app:layout_constraintTop_toTopOf="@+id/buttonSelect" />
+
+    <ImageButton
+        android:id="@+id/buttonSelect"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Select Button"
+        android:scaleType="fitCenter"
+        android:src="@drawable/start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonStart"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="156dp"
+        android:layout_height="156dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/dpad"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
 
     <Button
-        android:id="@+id/button4"
-        style="@android:style/Widget.Button"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonDown"
+        android:layout_width="24dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/buttonUp" />
+
+    <Button
+        android:id="@+id/buttonUp"
+        android:layout_width="24dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
+        app:layout_constraintEnd_toEndOf="@+id/buttonDown"
+        app:layout_constraintStart_toStartOf="@+id/buttonDown"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/buttonLeft"
+        android:layout_width="48dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/buttonRight"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/buttonRight"
+        android:layout_width="48dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonLeft"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/buttonLeft"
+        app:layout_constraintTop_toTopOf="@+id/buttonLeft" />
+
+    <ImageView
+        android:id="@+id/screenBorderBottom"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="308dp"
-        android:onClick="pressB"
-        android:text="B"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/button3"
+        android:contentDescription="Screen Border Bottom"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_edge"
+        app:layout_constraintEnd_toEndOf="@+id/myGLSurfaceView"
+        app:layout_constraintStart_toStartOf="@+id/myGLSurfaceView"
+        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
+
+    <ImageView
+        android:id="@+id/screenBorderLeft"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Left"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_edge"
+        app:layout_constraintBottom_toBottomOf="@+id/myGLSurfaceView"
+        app:layout_constraintEnd_toStartOf="@+id/myGLSurfaceView"
+        app:layout_constraintTop_toTopOf="@+id/myGLSurfaceView" />
+
+    <ImageView
+        android:id="@+id/screenBorderRight"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Right"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_edge"
+        app:layout_constraintBottom_toBottomOf="@+id/myGLSurfaceView"
+        app:layout_constraintStart_toEndOf="@+id/myGLSurfaceView"
+        app:layout_constraintTop_toTopOf="@+id/myGLSurfaceView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/screenBorderBottomRight"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Bottom Right"
+        android:rotation="90"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_corner"
+        app:layout_constraintBottom_toBottomOf="@+id/screenBorderBottom"
+        app:layout_constraintStart_toEndOf="@+id/screenBorderBottom"
+        app:layout_constraintTop_toBottomOf="@+id/screenBorderRight"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/screenBorderBottomLeft"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Bottom Left"
+        android:rotation="180"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_corner"
+        app:layout_constraintBottom_toBottomOf="@+id/screenBorderBottom"
+        app:layout_constraintEnd_toStartOf="@+id/screenBorderBottom"
+        app:layout_constraintTop_toBottomOf="@+id/screenBorderLeft"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/screenBorderBottomLeft2"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Bottom Left"
+        android:rotation="270"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_corner"
+        app:layout_constraintBottom_toTopOf="@+id/screenBorderLeft"
+        app:layout_constraintEnd_toStartOf="@+id/screenBorderTop"
+        app:layout_constraintTop_toTopOf="@+id/screenBorderTop" />
+
+    <ImageView
+        android:id="@+id/screenBorderTopRight"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:contentDescription="Screen Border Top Right"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_corner"
+        app:layout_constraintBottom_toTopOf="@+id/screenBorderRight"
+        app:layout_constraintStart_toEndOf="@+id/screenBorderTop"
+        app:layout_constraintTop_toTopOf="@+id/screenBorderTop"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/screenBorderTop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="Screen Border Top"
+        android:scaleType="fitXY"
+        android:src="@drawable/border_edge"
+        app:layout_constraintBottom_toTopOf="@+id/myGLSurfaceView"
+        app:layout_constraintEnd_toEndOf="@+id/myGLSurfaceView"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/button3" />
+        app:layout_constraintStart_toStartOf="@+id/myGLSurfaceView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

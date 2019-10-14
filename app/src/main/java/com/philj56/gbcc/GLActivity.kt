@@ -5,21 +5,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.Manifest
+import android.icu.util.Measure
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
 import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.FileOutputStream
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-
-private const val READ_REQUEST_CODE: Int = 42
+import kotlin.math.min
 
 class GLActivity : Activity() {
 
@@ -27,7 +30,23 @@ class GLActivity : Activity() {
 
     external fun loadRom(file: String)
     external fun quit()
-    external fun press(x: Int)
+    external fun press(button: Int, pressed: Boolean)
+    external fun saveState(state: Int)
+    external fun loadState(state: Int)
+
+    private fun setButtonId(id: Int, button: Int) {
+        findViewById<View>(id).setOnTouchListener(View.OnTouchListener() { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    press(button, true)
+                }
+                MotionEvent.ACTION_UP -> {
+                    press(button, false)
+                }
+            }
+            return@OnTouchListener true
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +55,33 @@ class GLActivity : Activity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-        // Create a GLSurfaceView instance and set it
-        // as the ContentView for this Activity
         setContentView(R.layout.activity_gl)
 
         checkFiles()
-        performFileSearch()
+        val bundle = intent.extras
+        val filename = bundle?.getString("file")
+        if (filename != null) {
+            loadRom(filename)
+        }
+
+        if (savedInstanceState != null) {
+            val state = savedInstanceState.getInt("Save State")
+            loadState(state)
+        }
+
+        setButtonId(R.id.buttonA, 0)
+        setButtonId(R.id.buttonB, 1)
+        setButtonId(R.id.buttonStart, 2)
+        setButtonId(R.id.buttonSelect, 3)
+        setButtonId(R.id.buttonUp, 4)
+        setButtonId(R.id.buttonDown, 5)
+        setButtonId(R.id.buttonLeft, 6)
+        setButtonId(R.id.buttonRight, 7)
     }
 
     override fun onResume() {
         super.onResume()
-
+        Log.i("GBCC", "RESUME")
         window.decorView.apply {
             systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -61,6 +96,14 @@ class GLActivity : Activity() {
         super.onDestroy()
 
         quit()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        Log.i("GBCC", "Saving state 10")
+        saveState(10)
+        outState.putInt("Save State", 10)
     }
 
     private fun checkFiles() {
@@ -80,43 +123,6 @@ class GLActivity : Activity() {
             }
         }
     }
-
-    private fun performFileSearch() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-        }
-
-        startActivityForResult(intent, READ_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-
-        super.onActivityResult(requestCode, resultCode, resultData)
-        if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            resultData?.data?.also { uri ->
-                Log.i("GBCC", "Uri: $uri")
-                val iStream = contentResolver.openInputStream(uri)
-                if (iStream == null) {
-                    Log.e("GBCC", "Failed to read $uri")
-                } else {
-                    val data = iStream.use { it.readBytes() }
-                    val file = File(getExternalFilesDir(null), "tmp.gbc")
-                    FileOutputStream(file).use { it.write(data) }
-                    Log.i("GBCC", file.toString())
-                    loadRom(file.toString())
-                }
-            }
-        }
-    }
-
-    fun pressA(view: View) {
-        press(0)
-    }
-
-    fun pressB(view: View) {
-        press(1)
-    }
 }
 
 class MyGLSurfaceView : GLSurfaceView {
@@ -133,6 +139,43 @@ class MyGLSurfaceView : GLSurfaceView {
 
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(renderer)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+
+        var width = 0
+        var height = 0
+        val scaleX = widthSize / 160
+        val scaleY = heightSize / 144
+
+        when(widthMode) {
+            MeasureSpec.EXACTLY -> width = widthSize
+            MeasureSpec.AT_MOST -> Unit
+            MeasureSpec.UNSPECIFIED -> width = 160
+        }
+
+        when(heightMode) {
+            MeasureSpec.EXACTLY -> height = heightSize
+            MeasureSpec.AT_MOST -> Unit
+            MeasureSpec.UNSPECIFIED -> height = 144
+        }
+
+        if (width == 0 && height == 0) {
+            val scale = min(scaleX, scaleY)
+            width = 160 * scale
+            height = 144 * scale
+            Log.i("GBCC", "Scaling to $width x $height")
+        } else if (width == 0) {
+            width = (height * 160) / 144
+        } else if (height == 0) {
+            height = (width * 144) / 160
+        }
+
+        setMeasuredDimension(width, height)
     }
 }
 

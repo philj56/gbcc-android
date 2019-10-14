@@ -101,13 +101,49 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_press(
 	JNIEnv *env,
 	jobject obj/* this */,
-	jint key) {
+	jint key,
+	jboolean pressed) {
 	switch (key) {
 		case 0:
-			gbc.core.keys.a = true;
+			gbc.core.keys.a = pressed;
 			break;
 		case 1:
-			gbc.core.keys.b = true;
+			gbc.core.keys.b = pressed;
+			break;
+		case 2:
+			gbc.core.keys.start = pressed;
+			break;
+		case 3:
+			gbc.core.keys.select = pressed;
+			break;
+		case 4:
+			gbc.core.keys.dpad.up = pressed;
+			break;
+		case 5:
+			gbc.core.keys.dpad.down = pressed;
+			break;
+		case 6:
+			gbc.core.keys.dpad.left = pressed;
+			break;
+		case 7:
+			gbc.core.keys.dpad.right = pressed;
 			break;
 	}
+}
+
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_saveState(
+	JNIEnv *env,
+	jobject obj/* this */,
+	jint state) {
+	gbc.save_state = state;
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_loadState(
+	JNIEnv *env,
+	jobject obj/* this */,
+	jint state) {
+	gbc.load_state = state;
 }
