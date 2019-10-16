@@ -5,10 +5,14 @@ import android.content.Context
 import android.graphics.Rect
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import java.io.File
 import java.io.FileOutputStream
 import javax.microedition.khronos.egl.EGLConfig
@@ -19,21 +23,22 @@ class GLActivity : Activity() {
 
     private lateinit var filename: String
     private var resume = false
-
-    private class Buttons {
-        lateinit var a: View
-        lateinit var b: View
-        lateinit var start: View
-        lateinit var select: View
-    }
-
-    private val buttons: Buttons = Buttons()
+    private var dpadState = 0
 
     private external fun loadRom(file: String)
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
+
+    private fun vibrate(milliseconds: Long) {
+        val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= 26) {
+            v.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            v.vibrate(milliseconds)
+        }
+    }
 
     private fun setButtonId(view: View, button: Int) {
         view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
@@ -43,6 +48,7 @@ class GLActivity : Activity() {
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
                     press(button, true)
+                    vibrate(10)
                 }
                 MotionEvent.ACTION_UP -> {
                     press(button, false)
@@ -57,7 +63,7 @@ class GLActivity : Activity() {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         setContentView(R.layout.activity_gl)
 
@@ -77,15 +83,10 @@ class GLActivity : Activity() {
             }
         }
 
-        buttons.a = findViewById(R.id.buttonA)
-        buttons.b = findViewById(R.id.buttonB)
-        buttons.start = findViewById(R.id.buttonStart)
-        buttons.select = findViewById(R.id.buttonSelect)
-
-        setButtonId(buttons.a, 0)
-        setButtonId(buttons.b, 1)
-        setButtonId(buttons.start, 2)
-        setButtonId(buttons.select, 3)
+        setButtonId(findViewById(R.id.buttonA), 0)
+        setButtonId(findViewById(R.id.buttonB), 1)
+        setButtonId(findViewById(R.id.buttonStart), 2)
+        setButtonId(findViewById(R.id.buttonSelect), 3)
 
         with(findViewById<View>(R.id.dpad)) {
             this.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
@@ -96,6 +97,7 @@ class GLActivity : Activity() {
                 val down = Rect(0, 2 * height / 3, width, height)
                 val left = Rect(0, 0, width / 3, height)
                 val right = Rect(2 * width / 3, 0, width, height)
+                val lastState = dpadState
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                         val x = motionEvent.x.toInt()
@@ -104,8 +106,26 @@ class GLActivity : Activity() {
                         press(5, down.contains(x, y))
                         press(6, left.contains(x, y))
                         press(7, right.contains(x, y))
+                        dpadState = 0
+                        if (up.contains(x, y)) {
+                            dpadState += 1
+                        }
+                        if (down.contains(x, y)) {
+                            dpadState += 2
+                        }
+                        if (left.contains(x, y)) {
+                            dpadState += 4
+                        }
+                        if (right.contains(x, y)) {
+                            dpadState += 8
+                        }
+
+                        if (lastState != dpadState) {
+                            vibrate(10)
+                        }
                     }
                     MotionEvent.ACTION_UP -> {
+                        dpadState = 0
                         press(4, false)
                         press(5, false)
                         press(6, false)

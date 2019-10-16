@@ -8,7 +8,7 @@
     tools:context=".GLActivity">
 
     <com.philj56.gbcc.MyGLSurfaceView
-        android:id="@+id/myGLSurfaceView"
+        android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -37,7 +37,6 @@
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
@@ -45,8 +44,6 @@
         android:scaleType="fitCenter"
         android:src="@drawable/b"
         app:layout_constraintEnd_toEndOf="@+id/buttonA"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:layout_constraintTop_toBottomOf="@+id/buttonA" />
 
     <ImageButton
@@ -78,9 +75,7 @@
         android:id="@+id/dpad"
         android:layout_width="156dp"
         android:layout_height="156dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/dpad"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,106 +84,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/screenBorderBottom"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:contentDescription="Screen Border Bottom"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_edge"
-        app:layout_constraintEnd_toEndOf="@+id/myGLSurfaceView"
-        app:layout_constraintStart_toStartOf="@+id/myGLSurfaceView"
-        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView" />
-
-    <ImageView
-        android:id="@+id/screenBorderLeft"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Left"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_edge"
-        app:layout_constraintBottom_toBottomOf="@+id/myGLSurfaceView"
-        app:layout_constraintEnd_toStartOf="@+id/myGLSurfaceView"
-        app:layout_constraintTop_toTopOf="@+id/myGLSurfaceView" />
-
-    <ImageView
-        android:id="@+id/screenBorderRight"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Right"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_edge"
-        app:layout_constraintBottom_toBottomOf="@+id/myGLSurfaceView"
-        app:layout_constraintStart_toEndOf="@+id/myGLSurfaceView"
-        app:layout_constraintTop_toTopOf="@+id/myGLSurfaceView"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/screenBorderBottomRight"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Bottom Right"
-        android:rotation="90"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/screenBorderBottom"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderBottom"
-        app:layout_constraintTop_toBottomOf="@+id/screenBorderRight"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/screenBorderBottomLeft"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Bottom Left"
-        android:rotation="180"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/screenBorderBottom"
-        app:layout_constraintEnd_toStartOf="@+id/screenBorderBottom"
-        app:layout_constraintTop_toBottomOf="@+id/screenBorderLeft"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:id="@+id/screenBorderBottomLeft2"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Bottom Left"
-        android:rotation="270"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_corner"
-        app:layout_constraintBottom_toTopOf="@+id/screenBorderLeft"
-        app:layout_constraintEnd_toStartOf="@+id/screenBorderTop"
-        app:layout_constraintTop_toTopOf="@+id/screenBorderTop" />
-
-    <ImageView
-        android:id="@+id/screenBorderTopRight"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:contentDescription="Screen Border Top Right"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_corner"
-        app:layout_constraintBottom_toTopOf="@+id/screenBorderRight"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderTop"
-        app:layout_constraintTop_toTopOf="@+id/screenBorderTop"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/screenBorderTop"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:contentDescription="Screen Border Top"
-        android:scaleType="fitXY"
-        android:src="@drawable/border_edge"
-        app:layout_constraintBottom_toTopOf="@+id/myGLSurfaceView"
-        app:layout_constraintEnd_toEndOf="@+id/myGLSurfaceView"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/myGLSurfaceView" />
-
-    <ImageView
         android:id="@+id/topRightCorner"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:src="@drawable/ic_top_corner"
+        android:src="@drawable/device_border_top_corner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -197,7 +96,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="270"
-        android:src="@drawable/ic_top_corner"
+        android:src="@drawable/device_border_top_corner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -206,7 +105,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="180"
-        android:src="@drawable/ic_top_corner"
+        android:src="@drawable/device_border_top_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -215,8 +114,44 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="90"
-        android:src="@drawable/ic_top_corner"
+        android:src="@drawable/device_border_top_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/screenBorderLeft"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:src="@drawable/screen_border_side"
+        app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
+        app:layout_constraintEnd_toStartOf="@+id/screen"
+        app:layout_constraintTop_toTopOf="@+id/screen" />
+
+    <ImageView
+        android:id="@+id/screenBorderRight"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:src="@drawable/screen_border_side"
+        app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
+        app:layout_constraintStart_toEndOf="@+id/screen"
+        app:layout_constraintTop_toTopOf="@+id/screen" />
+
+    <ImageView
+        android:id="@+id/screenBorderBottom"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:src="@drawable/screen_border_bottom"
+        app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
+        app:layout_constraintStart_toStartOf="@+id/screenBorderLeft"
+        app:layout_constraintTop_toBottomOf="@+id/screen" />
+
+    <ImageView
+        android:id="@+id/screenBorderTop"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:src="@drawable/screen_border_top"
+        app:layout_constraintBottom_toTopOf="@+id/screen"
+        app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
+        app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
