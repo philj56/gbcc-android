@@ -12,9 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,50 +37,42 @@
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="B button"
         android:scaleType="fitCenter"
         android:src="@drawable/b"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonA"
-        app:layout_constraintEnd_toStartOf="@+id/buttonA"
-        app:layout_constraintTop_toTopOf="@+id/buttonA"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="@+id/buttonA"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
+        app:layout_constraintTop_toBottomOf="@+id/buttonA" />
 
     <ImageButton
         android:id="@+id/buttonStart"
         android:layout_width="64dp"
         android:layout_height="32dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="Start Button"
         android:scaleType="fitCenter"
         android:src="@drawable/start"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/buttonSelect"
-        app:layout_constraintTop_toTopOf="@+id/buttonSelect" />
+        app:layout_constraintEnd_toEndOf="@+id/dpad"
+        app:layout_constraintTop_toBottomOf="@+id/dpad" />
 
     <ImageButton
         android:id="@+id/buttonSelect"
         android:layout_width="64dp"
         android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
         android:contentDescription="Select Button"
         android:scaleType="fitCenter"
         android:src="@drawable/start"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonStart"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/buttonStart"
+        app:layout_constraintTop_toBottomOf="@+id/buttonStart" />
 
     <ImageView
         android:id="@+id/dpad"
@@ -88,12 +80,13 @@
         android:layout_height="156dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/dpad"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myGLSurfaceView"
-        app:layout_constraintVertical_bias="0.32999998" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/screenBorderBottom"
@@ -209,13 +202,21 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/bottom"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_bottom"
+        android:id="@+id/bottomLeftCorner"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:rotation="180"
+        android:src="@drawable/ic_top_corner"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/bottomRightCorner"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:rotation="90"
+        android:src="@drawable/ic_top_corner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

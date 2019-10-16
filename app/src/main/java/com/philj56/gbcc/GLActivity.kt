@@ -2,22 +2,13 @@ package com.philj56.gbcc
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.Manifest
-import android.icu.util.Measure
+import android.graphics.Rect
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.Button
-import androidx.core.content.ContextCompat
+import android.view.*
 import java.io.File
 import java.io.FileOutputStream
 import javax.microedition.khronos.egl.EGLConfig
@@ -26,16 +17,29 @@ import kotlin.math.min
 
 class GLActivity : Activity() {
 
-    private lateinit var gLView: GLSurfaceView
+    private lateinit var filename: String
+    private var resume = false
 
-    external fun loadRom(file: String)
-    external fun quit()
-    external fun press(button: Int, pressed: Boolean)
-    external fun saveState(state: Int)
-    external fun loadState(state: Int)
+    private class Buttons {
+        lateinit var a: View
+        lateinit var b: View
+        lateinit var start: View
+        lateinit var select: View
+    }
 
-    private fun setButtonId(id: Int, button: Int) {
-        findViewById<View>(id).setOnTouchListener(View.OnTouchListener() { view, motionEvent ->
+    private val buttons: Buttons = Buttons()
+
+    private external fun loadRom(file: String)
+    private external fun quit()
+    private external fun press(button: Int, pressed: Boolean)
+    private external fun saveState(state: Int)
+    private external fun loadState(state: Int)
+
+    private fun setButtonId(view: View, button: Int) {
+        view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
+            if (touchView != view) {
+                return@OnTouchListener false
+            }
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
                     press(button, true)
@@ -44,7 +48,7 @@ class GLActivity : Activity() {
                     press(button, false)
                 }
             }
-            return@OnTouchListener true
+            return@OnTouchListener false
         })
     }
 
@@ -59,24 +63,64 @@ class GLActivity : Activity() {
 
         checkFiles()
         val bundle = intent.extras
-        val filename = bundle?.getString("file")
-        if (filename != null) {
+        filename = bundle?.getString("file") ?: ""
+        if (filename == "") {
+            Log.e("GBCC", "No rom provided.")
+            finish()
+        } else {
             loadRom(filename)
         }
 
         if (savedInstanceState != null) {
-            val state = savedInstanceState.getInt("Save State")
-            loadState(state)
+            if (savedInstanceState.getBoolean("resume")) {
+                loadState(10)
+            }
         }
 
-        setButtonId(R.id.buttonA, 0)
-        setButtonId(R.id.buttonB, 1)
-        setButtonId(R.id.buttonStart, 2)
-        setButtonId(R.id.buttonSelect, 3)
-        setButtonId(R.id.buttonUp, 4)
-        setButtonId(R.id.buttonDown, 5)
-        setButtonId(R.id.buttonLeft, 6)
-        setButtonId(R.id.buttonRight, 7)
+        buttons.a = findViewById(R.id.buttonA)
+        buttons.b = findViewById(R.id.buttonB)
+        buttons.start = findViewById(R.id.buttonStart)
+        buttons.select = findViewById(R.id.buttonSelect)
+
+        setButtonId(buttons.a, 0)
+        setButtonId(buttons.b, 1)
+        setButtonId(buttons.start, 2)
+        setButtonId(buttons.select, 3)
+
+        with(findViewById<View>(R.id.dpad)) {
+            this.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
+                if (view != this) {
+                    return@OnTouchListener false
+                }
+                val up = Rect(0, 0, width, height / 3)
+                val down = Rect(0, 2 * height / 3, width, height)
+                val left = Rect(0, 0, width / 3, height)
+                val right = Rect(2 * width / 3, 0, width, height)
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                        val x = motionEvent.x.toInt()
+                        val y = motionEvent.y.toInt()
+                        press(4, up.contains(x, y))
+                        press(5, down.contains(x, y))
+                        press(6, left.contains(x, y))
+                        press(7, right.contains(x, y))
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        press(4, false)
+                        press(5, false)
+                        press(6, false)
+                        press(7, false)
+                    }
+                }
+
+                return@OnTouchListener true
+            })
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("GBCC", "START")
     }
 
     override fun onResume() {
@@ -90,20 +134,36 @@ class GLActivity : Activity() {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
+        if (resume) {
+            loadRom(filename)
+            loadState(10)
+            resume = false
+        }
+    }
+
+
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("GBCC", "PAUSE")
+        saveState(10)
+        quit()
+        resume = true
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("GBCC", "STOP")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
-        quit()
+        Log.i("GBCC", "DESTROY")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        Log.i("GBCC", "Saving state 10")
-        saveState(10)
-        outState.putInt("Save State", 10)
+        outState.putBoolean("resume", true)
     }
 
     private fun checkFiles() {
@@ -123,13 +183,26 @@ class GLActivity : Activity() {
             }
         }
     }
+
+    companion object {
+        init {
+            System.loadLibrary("gbcc")
+        }
+    }
 }
 
 class MyGLSurfaceView : GLSurfaceView {
     private val renderer: MyGLRenderer
 
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
+    constructor(context: Context) : super(context) {
+        setMeasuredDimension(160, 144)
+        layoutParams = ViewGroup.LayoutParams(160, 144)
+    }
+
+    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
+        setMeasuredDimension(160, 144)
+        layoutParams = ViewGroup.LayoutParams(160, 144)
+    }
 
     init {
         // Create an OpenGL ES 3.0 context
@@ -168,7 +241,6 @@ class MyGLSurfaceView : GLSurfaceView {
             val scale = min(scaleX, scaleY)
             width = 160 * scale
             height = 144 * scale
-            Log.i("GBCC", "Scaling to $width x $height")
         } else if (width == 0) {
             width = (height * 160) / 144
         } else if (height == 0) {
@@ -196,13 +268,11 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         resizeWindow(width, height)
     }
 
-    external fun initWindow()
-    external fun updateWindow()
-    external fun resizeWindow(width: Int, height: Int)
+    private external fun initWindow()
+    private external fun updateWindow()
+    private external fun resizeWindow(width: Int, height: Int)
 
     companion object {
-
-        // Used to load the 'native-lib' library on application startup.
         init {
             System.loadLibrary("gbcc")
         }
