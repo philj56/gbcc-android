@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+
+set(LIBTYPE STATIC)
 set(OPENAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/openal-soft)
 add_subdirectory(${OPENAL_DIR} ./openal-soft)
 include_directories(${OPENAL_DIR}/include)
 
+set(PNG_SHARED OFF)
 set(LIBPNG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/libpng)
 add_subdirectory(${LIBPNG_DIR} ./libpng)
 include_directories(${LIBPNG_DIR})
@@ -11,14 +19,8 @@ include_directories(${LIBPNG_DIR})
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/GBCC)
 include_directories(${GBCC_DIR}/include)
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
-
-add_definitions(-DTILESET_PATH="/storage/emulated/0/Android/data/com.philj56.gbcc/files/tileset.png"
-                -DSHADER_PATH="/storage/emulated/0/Android/data/com.philj56.gbcc/files/shaders/" )
+add_definitions(-DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
+                -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/" )
 
 add_library(gbcc SHARED
             gbcc.cpp
@@ -55,4 +57,4 @@ target_link_libraries(gbcc
                       EGL
                       GLESv3
                       OpenAL
-                      png)
+                      png_static)

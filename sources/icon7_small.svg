@@ -21,6 +21,18 @@
      id="defs2">
     <linearGradient
        inkscape:collect="always"
+       id="linearGradient1225">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop1221" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop1223" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
        id="linearGradient13887">
       <stop
          style="stop-color:#ffffff;stop-opacity:0.1"
@@ -73,6 +85,15 @@
          stdDeviation="1.4999999"
          id="feGaussianBlur923" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1225"
+       id="linearGradient1227"
+       x1="39.382812"
+       y1="69.935362"
+       x2="80.309685"
+       y2="108.82623"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -81,9 +102,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.0000005"
-     inkscape:cx="127.83587"
-     inkscape:cy="11.672212"
+     inkscape:zoom="5.6568546"
+     inkscape:cx="-3.2476753"
+     inkscape:cy="13.912696"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -132,6 +153,11 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-377.26665)">
+    <path
+       style="display:inline;opacity:0.2;fill:url(#linearGradient1227);fill-opacity:1;stroke:none;stroke-width:14.84305382;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 68.724609 31.673828 L 39.382812 74.957031 L 77.998047 107.75391 C 78.781497 108.4193 79.94789 108.32447 80.613281 107.54102 L 111.86328 70.746094 C 112.52867 69.962643 112.43384 68.796251 111.65039 68.130859 L 68.724609 31.673828 z "
+       id="rect1213"
+       transform="translate(0,377.26665)" />
     <path
        inkscape:connector-curvature="0"
        id="rect7684-6"
@@ -240,8 +266,7 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Finish"
-     style="display:inline"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <ellipse
        style="opacity:1;fill:url(#radialGradient13889);fill-opacity:1;stroke:none;stroke-width:12.47582626;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path12039"

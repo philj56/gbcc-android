@@ -49,20 +49,6 @@ Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
 	gbc.window.height = height;
 }
 
-
-extern "C" JNIEXPORT void JNICALL
-Java_com_philj56_gbcc_MyGLRenderer_clear(
-		JNIEnv *env,
-		jobject obj,/* this */
-		jfloat x) {
-	glClearColor(sin(x) * 0.5 + 0.5,
-			(sin(x*1.1) * 0.5 + 0.5) * (cos(x*0.9) * 0.5 + 0.5),
-			cos(x) * 0.5 + 0.5,
-			1.0);
-	// Redraw background colour
-	glClear(GL_COLOR_BUFFER_BIT);
-}
-
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
         JNIEnv *env,
@@ -80,7 +66,9 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
     gbc.quit = false;
     gbc.has_focus = true;
 
-    pthread_create(&emu_thread, NULL, gbcc_emulation_loop, &gbc);
+    __android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
+
+    pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 
 }
 
@@ -90,7 +78,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	jobject obj/* this */) {
 
 	gbc.quit = true;
-	pthread_join(emu_thread, NULL);
+	pthread_join(emu_thread, nullptr);
 	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "Finished at 0x%04X", gbc.core.cpu.reg.pc);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);

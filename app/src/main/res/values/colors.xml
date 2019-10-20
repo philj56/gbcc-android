@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Generic system colors -->
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">@color/colorGameBoyTeal</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimaryNight">@color/screenBorder</color>
+
+    <!-- Colors for specific purposes -->
     <color name="screenBorder">#262E31</color>
+    <color name="colorGameBoyFuchsia">#FF0786</color>
+    <color name="colorGameBoyPurple">#AE46DE</color>
+    <color name="colorGameBoyGreen">#B8FF2C</color>
+    <color name="colorGameBoyYellow">#FDD827</color>
     <color name="colorGameBoyTeal">#004F50</color>
 </resources>

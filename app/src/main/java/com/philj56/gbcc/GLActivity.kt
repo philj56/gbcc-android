@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
 import javax.microedition.khronos.egl.EGLConfig
@@ -88,54 +89,52 @@ class GLActivity : Activity() {
         setButtonId(findViewById(R.id.buttonStart), 2)
         setButtonId(findViewById(R.id.buttonSelect), 3)
 
-        with(findViewById<View>(R.id.dpad)) {
-            this.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
-                if (view != this) {
-                    return@OnTouchListener false
-                }
-                val up = Rect(0, 0, width, height / 3)
-                val down = Rect(0, 2 * height / 3, width, height)
-                val left = Rect(0, 0, width / 3, height)
-                val right = Rect(2 * width / 3, 0, width, height)
-                val lastState = dpadState
-                when (motionEvent.action) {
-                    MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                        val x = motionEvent.x.toInt()
-                        val y = motionEvent.y.toInt()
-                        press(4, up.contains(x, y))
-                        press(5, down.contains(x, y))
-                        press(6, left.contains(x, y))
-                        press(7, right.contains(x, y))
-                        dpadState = 0
-                        if (up.contains(x, y)) {
-                            dpadState += 1
-                        }
-                        if (down.contains(x, y)) {
-                            dpadState += 2
-                        }
-                        if (left.contains(x, y)) {
-                            dpadState += 4
-                        }
-                        if (right.contains(x, y)) {
-                            dpadState += 8
-                        }
-
-                        if (lastState != dpadState) {
-                            vibrate(10)
-                        }
+        dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
+            if (view != dpad) {
+                return@OnTouchListener false
+            }
+            val up = Rect(0, 0, dpad.width, dpad.height / 3)
+            val down = Rect(0, 2 * dpad.height / 3, dpad.width, dpad.height)
+            val left = Rect(0, 0, dpad.width / 3, dpad.height)
+            val right = Rect(2 * dpad.width / 3, 0, dpad.width, dpad.height)
+            val lastState = dpadState
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    val x = motionEvent.x.toInt()
+                    val y = motionEvent.y.toInt()
+                    press(4, up.contains(x, y))
+                    press(5, down.contains(x, y))
+                    press(6, left.contains(x, y))
+                    press(7, right.contains(x, y))
+                    dpadState = 0
+                    if (up.contains(x, y)) {
+                        dpadState += 1
                     }
-                    MotionEvent.ACTION_UP -> {
-                        dpadState = 0
-                        press(4, false)
-                        press(5, false)
-                        press(6, false)
-                        press(7, false)
+                    if (down.contains(x, y)) {
+                        dpadState += 2
+                    }
+                    if (left.contains(x, y)) {
+                        dpadState += 4
+                    }
+                    if (right.contains(x, y)) {
+                        dpadState += 8
+                    }
+
+                    if (lastState != dpadState) {
+                        vibrate(10)
                     }
                 }
+                MotionEvent.ACTION_UP -> {
+                    dpadState = 0
+                    press(4, false)
+                    press(5, false)
+                    press(6, false)
+                    press(7, false)
+                }
+            }
 
-                return@OnTouchListener true
-            })
-        }
+            return@OnTouchListener true
+        })
     }
 
     override fun onStart() {
@@ -187,7 +186,7 @@ class GLActivity : Activity() {
     }
 
     private fun checkFiles() {
-        val filePath = getExternalFilesDir(null)
+        val filePath = filesDir
         if (File("$filePath/shaders").exists()) {
             //return
         }
