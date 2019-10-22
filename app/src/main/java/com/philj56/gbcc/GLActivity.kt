@@ -12,7 +12,6 @@ import android.os.Vibrator
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
@@ -211,7 +210,7 @@ class GLActivity : Activity() {
 }
 
 class MyGLSurfaceView : GLSurfaceView {
-    private val renderer: MyGLRenderer
+    private var renderer: MyGLRenderer? = null
 
     constructor(context: Context) : super(context) {
         setMeasuredDimension(160, 144)
@@ -224,13 +223,15 @@ class MyGLSurfaceView : GLSurfaceView {
     }
 
     init {
-        // Create an OpenGL ES 3.0 context
-        setEGLContextClientVersion(3)
+        if (!isInEditMode) {
+            // Create an OpenGL ES 3.0 context
+            setEGLContextClientVersion(3)
 
-        renderer = MyGLRenderer()
+            renderer = MyGLRenderer()
 
-        // Set the Renderer for drawing on the GLSurfaceView
-        setRenderer(renderer)
+            // Set the Renderer for drawing on the GLSurfaceView
+            setRenderer(renderer)
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
