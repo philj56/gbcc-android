@@ -4,6 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/importItem"
-        android:icon="@drawable/dpad"
-        android:title="Import" />
+        android:icon="@drawable/ic_library_add_white_24dp"
+        android:title="Import"
+        android:layout_centerVertical="true"
+        app:showAsAction="ifRoom"
+        app:maxButtonHeight="?attr/actionBarSize"/>
+    <item
+        android:id="@+id/settingsItem"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="Settings"
+        android:layout_centerVertical="true"
+        app:showAsAction="ifRoom"
+        app:maxButtonHeight="?attr/actionBarSize"/>
 </menu>

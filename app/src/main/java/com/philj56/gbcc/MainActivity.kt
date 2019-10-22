@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -12,12 +13,14 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 
 private const val IMPORT_REQUEST_CODE: Int = 42
+private const val BACK_DELAY: Int = 2000
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,14 +29,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currentDir: File
     private lateinit var baseDir: File
 
+    private var nightMode: Boolean = false
+    private var timeBackPressed: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+        nightMode = applicationContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        if (nightMode) {
             setTheme(R.style.AppThemeDark)
         } else {
             setTheme(R.style.AppTheme)
         }
         super.onCreate(savedInstanceState)
-        Log.i("Internal", filesDir.toString())
         baseDir = getExternalFilesDir(null) ?: filesDir
         currentDir = baseDir
         setContentView(R.layout.activity_main)
@@ -48,8 +54,6 @@ class MainActivity : AppCompatActivity() {
                 switchToGL(file.toString())
             }
         }
-        val dpi = resources.displayMetrics.densityDpi
-        Log.i("DPI", "$dpi")
     }
 
     override fun onContentChanged() {
@@ -154,20 +158,28 @@ class MainActivity : AppCompatActivity() {
         updateFiles()
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (currentDir != getExternalFilesDir(null)) {
-                currentDir = currentDir.parentFile ?: filesDir
-                updateFiles()
-                return true
-            }
+    override fun onBackPressed() {
+        if (currentDir != getExternalFilesDir(null)) {
+            currentDir = currentDir.parentFile ?: filesDir
+            updateFiles()
+            return
         }
-        return super.onKeyDown(keyCode, event)
+
+        if (timeBackPressed + BACK_DELAY > System.currentTimeMillis()) {
+            super.onBackPressed()
+            return
+        }
+
+        timeBackPressed = System.currentTimeMillis()
+
+        Toast.makeText(baseContext, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
     }
 }
 
 class FileAdapter(context: Context, resource: Int, textViewResourceId: Int, objects: List<File>)
     : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
+
+    private val nightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getView(position, convertView, parent)
@@ -176,10 +188,23 @@ class FileAdapter(context: Context, resource: Int, textViewResourceId: Int, obje
 
         if (textView.text.endsWith(".gbc")) {
             imageView.setImageResource(R.drawable.ic_file_gbc)
+            imageView.clearColorFilter()
         } else if (textView.text.endsWith(".gb")) {
             imageView.setImageResource(R.drawable.ic_file_dmg)
+            imageView.clearColorFilter()
         } else {
             imageView.setImageResource(R.drawable.ic_folder_white_34dp)
+            if (nightMode) {
+                imageView.setColorFilter(
+                    Color.argb(179, 255, 255, 255),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+            } else {
+                imageView.setColorFilter(
+                    Color.argb(138, 0, 0, 0),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+            }
         }
 
         textView.text = File(textView.text.toString()).nameWithoutExtension
