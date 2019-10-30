@@ -2,6 +2,7 @@ package com.philj56.gbcc
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Rect
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
@@ -12,6 +13,7 @@ import android.os.Vibrator
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
@@ -25,7 +27,7 @@ class GLActivity : Activity() {
     private var resume = false
     private var dpadState = 0
 
-    private external fun loadRom(file: String)
+    private external fun loadRom(file: String, prefs: SharedPreferences)
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
     private external fun saveState(state: Int)
@@ -74,7 +76,7 @@ class GLActivity : Activity() {
             Log.e("GBCC", "No rom provided.")
             finish()
         } else {
-            loadRom(filename)
+            loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
         }
 
         if (savedInstanceState != null) {
@@ -153,7 +155,7 @@ class GLActivity : Activity() {
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
         if (resume) {
-            loadRom(filename)
+            loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
             loadState(10)
             resume = false
         }
@@ -227,7 +229,7 @@ class MyGLSurfaceView : GLSurfaceView {
             // Create an OpenGL ES 3.0 context
             setEGLContextClientVersion(3)
 
-            renderer = MyGLRenderer()
+            renderer = MyGLRenderer(context)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(renderer)
@@ -271,12 +273,14 @@ class MyGLSurfaceView : GLSurfaceView {
     }
 }
 
-class MyGLRenderer : GLSurfaceView.Renderer {
+class MyGLRenderer(_context: Context) : GLSurfaceView.Renderer {
+
+    private val context: Context = _context
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame colour
         GLES30.glClearColor(1.0f, 0.0f, 0.0f, 1.0f)
-        initWindow()
+        initWindow(PreferenceManager.getDefaultSharedPreferences(context))
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -288,7 +292,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         resizeWindow(width, height)
     }
 
-    private external fun initWindow()
+    private external fun initWindow(prefs: SharedPreferences)
     private external fun updateWindow()
     private external fun resizeWindow(width: Int, height: Int)
 

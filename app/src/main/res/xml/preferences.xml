@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="0dp">
+
+    <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="show_fps"
+        app:title="Show FPS counter" />
+
+    <ListPreference
+        android:defaultValue="Subpixel"
+        android:entries="@array/shader_names_array"
+        android:entryValues="@array/shader_names_array"
+        android:key="shader"
+        android:title="Shader"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

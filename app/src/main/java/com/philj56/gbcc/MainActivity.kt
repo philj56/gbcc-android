@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 
-private const val IMPORT_REQUEST_CODE: Int = 42
+private const val IMPORT_REQUEST_CODE: Int = 10
 private const val BACK_DELAY: Int = 2000
 
 class MainActivity : AppCompatActivity() {
@@ -81,11 +81,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        val id = item.itemId
-
-        if (id == R.id.importItem) {
-            performFileSearch()
+        when (item.itemId) {
+            R.id.importItem -> performFileSearch()
+            R.id.settingsItem -> startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         return super.onOptionsItemSelected(item)
@@ -129,13 +127,16 @@ class MainActivity : AppCompatActivity() {
     private fun importFile(uri: Uri) {
         val iStream = contentResolver.openInputStream(uri)
         if (iStream == null) {
-            Log.e("GBCC", "Failed to import $uri")
+            Toast.makeText(baseContext, "Failed to import $uri", Toast.LENGTH_SHORT).show()
         } else {
-            val data = iStream.use { it.readBytes() }
             val name = getFileName(uri) ?: "tmp.gbc"
             if (name == "tmp.gbc") {
                 Log.w("GBCC", "Failed to retrieve real file name, using $name")
+            } else if (!name.matches(Regex(".*\\.gbc?"))) {
+                Toast.makeText(baseContext, "Failed to import $name", Toast.LENGTH_SHORT).show()
+                return
             }
+            val data = iStream.use { it.readBytes() }
             val file = File(getExternalFilesDir(null), name)
             FileOutputStream(file).use { it.write(data) }
             Log.i("Imported", file.toString())

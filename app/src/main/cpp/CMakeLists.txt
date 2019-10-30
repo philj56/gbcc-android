@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
-
 set(LIBTYPE STATIC)
 set(OPENAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/openal-soft)
 add_subdirectory(${OPENAL_DIR} ./openal-soft)
@@ -21,6 +15,13 @@ include_directories(${GBCC_DIR}/include)
 
 add_definitions(-DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
                 -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/" )
+
+
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
 
 add_library(gbcc SHARED
             gbcc.cpp

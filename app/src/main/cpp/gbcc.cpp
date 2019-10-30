@@ -20,13 +20,40 @@ pthread_t emu_thread;
 struct gbcc gbc;
 char *fname;
 
+void update_preferences(JNIEnv *env, jobject prefs) {
+	jstring ret;
+	jstring arg;
+	jmethodID id;
+	jclass prefsClass = env->GetObjectClass(prefs);
+
+	id = env->GetMethodID(prefsClass, "getBoolean", "(Ljava/lang/String;Z)Z");
+	arg = env->NewStringUTF("show_fps");
+	gbc.window.fps.show = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
+
+
+	id = env->GetMethodID(prefsClass, "getString", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
+	arg = env->NewStringUTF("shader");
+	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
+
+	const char *shader_name = env->GetStringUTFChars(ret, nullptr);
+	gbcc_window_use_shader(&gbc, shader_name);
+	env->DeleteLocalRef(arg);
+	env->ReleaseStringUTFChars(ret, shader_name);
+
+
+	env->DeleteLocalRef(prefsClass);
+}
+
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	JNIEnv *env,
-	jobject obj) {
+	jobject obj,
+	jobject prefs) {
 	gbcc_window_initialise(&gbc);
-	gbc.window.gl.cur_shader = 1;
-	gbc.window.fps.show = true;
+	if (gbc.core.initialised) {
+		update_preferences(env, prefs);
+	}
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -53,23 +80,26 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
         JNIEnv *env,
         jobject obj,/* this */
-        jstring file) {
-    const char *string = env->GetStringUTFChars(file, nullptr);
+        jstring file,
+        jobject prefs) {
 
-    fname = (char *)malloc(strlen(string) + 1);
-    memcpy(fname, string, strlen(string));
-    fname[strlen(string)] = '\0';
-    env->ReleaseStringUTFChars(file, string);
+	const char *string = env->GetStringUTFChars(file, nullptr);
 
-    gbcc_audio_initialise(&gbc);
-    gbcc_initialise(&gbc.core, fname);
-    gbc.quit = false;
-    gbc.has_focus = true;
+	fname = (char *)malloc(strlen(string) + 1);
+	memcpy(fname, string, strlen(string));
+	fname[strlen(string)] = '\0';
+	env->ReleaseStringUTFChars(file, string);
 
-    __android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
+	gbcc_audio_initialise(&gbc);
+	gbcc_initialise(&gbc.core, fname);
+	gbc.quit = false;
+	gbc.has_focus = true;
 
-    pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
-
+	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
+	if (gbc.window.initialised) {
+		update_preferences(env, prefs);
+	}
+	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -79,7 +109,6 @@ Java_com_philj56_gbcc_GLActivity_quit(
 
 	gbc.quit = true;
 	pthread_join(emu_thread, nullptr);
-	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "Finished at 0x%04X", gbc.core.cpu.reg.pc);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);
 	free(fname);

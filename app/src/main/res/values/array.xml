@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shader_names_array">
+        <item>Nothing</item>
+        <item>Colour Correct</item>
+        <item>Subpixel</item>
+        <item>Dot Matrix</item>
+    </string-array>
+</resources>
