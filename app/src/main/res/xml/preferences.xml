@@ -6,6 +6,12 @@
     <SwitchPreference
         app:defaultValue="false"
         app:iconSpaceReserved="false"
+        app:key="auto_resume"
+        app:title="Auto-resume" />
+
+    <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
         app:key="show_fps"
         app:title="Show FPS counter" />
 

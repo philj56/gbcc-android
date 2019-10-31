@@ -21,6 +21,8 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.min
 
+private const val autoSaveState: Int = 10
+
 class GLActivity : Activity() {
 
     private lateinit var filename: String
@@ -75,14 +77,10 @@ class GLActivity : Activity() {
         if (filename == "") {
             Log.e("GBCC", "No rom provided.")
             finish()
-        } else {
-            loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
         }
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.getBoolean("resume")) {
-                loadState(10)
-            }
+            resume = resume || savedInstanceState.getBoolean("resume")
         }
 
         setButtonId(findViewById(R.id.buttonA), 0)
@@ -154,9 +152,9 @@ class GLActivity : Activity() {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
+        loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
         if (resume) {
-            loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
-            loadState(10)
+            loadState(autoSaveState)
             resume = false
         }
     }
@@ -166,7 +164,7 @@ class GLActivity : Activity() {
     override fun onPause() {
         super.onPause()
         Log.i("GBCC", "PAUSE")
-        saveState(10)
+        saveState(autoSaveState)
         quit()
         resume = true
     }

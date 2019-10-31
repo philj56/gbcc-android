@@ -12,6 +12,7 @@ extern "C" {
 #pragma GCC visibility push(hidden)
 	#include <gbcc/gbcc.h>
 	#include <gbcc/core.h>
+	#include <gbcc/save.h>
 	#include <gbcc/window.h>
 #pragma GCC visibility pop
 }
@@ -43,6 +44,21 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 
 
 	env->DeleteLocalRef(prefsClass);
+}
+
+bool check_autoresume(JNIEnv *env, jobject prefs) {
+	bool ret;
+	jstring arg;
+	jmethodID id;
+	jclass prefsClass = env->GetObjectClass(prefs);
+
+	id = env->GetMethodID(prefsClass, "getBoolean", "(Ljava/lang/String;Z)Z");
+	arg = env->NewStringUTF("auto_resume");
+	ret = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
+
+	env->DeleteLocalRef(prefsClass);
+	return ret;
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -98,6 +114,9 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	if (gbc.window.initialised) {
 		update_preferences(env, prefs);
+	}
+	if (check_autoresume(env, prefs)) {
+		gbc.load_state = 10;
 	}
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 }
