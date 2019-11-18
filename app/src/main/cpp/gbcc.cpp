@@ -183,3 +183,39 @@ Java_com_philj56_gbcc_GLActivity_loadState(
 	jint state) {
 	gbc.load_state = state;
 }
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
+	JNIEnv *env,
+	jobject obj/* this */) {
+	static bool last_rumble = false;
+	bool rumble = gbc.core.cart.rumble_state;
+	bool ret = (rumble != last_rumble);
+	last_rumble = rumble;
+	return (jboolean) ret;
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
+	JNIEnv *env,
+	jobject obj/* this */,
+	jfloat x,
+	jfloat y) {
+	const float g = 9.81;
+	gbc.core.cart.mbc.accelerometer.real_x = 0x81D0u + (0x70 * x / g);
+	gbc.core.cart.mbc.accelerometer.real_y = 0x81D0u - (0x70 * y / g);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_hasRumble(
+	JNIEnv *env,
+	jobject obj/* this */) {
+	return gbc.core.cart.rumble;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_hasAccelerometer(
+	JNIEnv *env,
+	jobject obj/* this */) {
+	return (gbc.core.cart.mbc.type == MBC7);
+}

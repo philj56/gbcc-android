@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
@@ -64,10 +65,15 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun updateFiles() {
         directoryTree.text = "Files" + currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
-        files = currentDir.listFiles { file ->
+        val unsorted = currentDir.listFiles { file ->
             file.name.matches(Regex(".*\\.gbc?")) or file.isDirectory
-        }?.toCollection(ArrayList()) ?: ArrayList()
-        files.sort()
+        }
+        files = unsorted?.sortedWith(
+            compareBy(
+                { !it.isDirectory },
+                { it.name }
+            )
+        )?.toCollection(ArrayList()) ?: ArrayList()
         if (::adapter.isInitialized) {
             adapter.clear()
             adapter.addAll(files)

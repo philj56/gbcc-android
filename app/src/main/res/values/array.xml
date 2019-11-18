@@ -6,4 +6,38 @@
         <item>Subpixel</item>
         <item>Dot Matrix</item>
     </string-array>
+
+
+    <string-array name="orientation_names_array">
+        <item>System</item>
+        <item>Portrait</item>
+        <item>Landscape (auto)</item>
+        <item>Landscape (left)</item>
+        <item>Landscape (right)</item>
+    </string-array>
+
+    <string-array name="orientation_values_array">
+        <item>-1</item>
+        <item>1</item>
+        <item>6</item>
+        <item>0</item>
+        <item>8</item>
+    </string-array>
+
+
+    <string-array name="color_names_array">
+        <item>Berry</item>
+        <item>Dandelion</item>
+        <item>Grape</item>
+        <item>Kiwi</item>
+        <item>Teal</item>
+    </string-array>
+
+    <string-array name="color_values_array">
+        <item>@string/colorGameBoyBerry</item>
+        <item>@string/colorGameBoyDandelion</item>
+        <item>@string/colorGameBoyGrape</item>
+        <item>@string/colorGameBoyKiwi</item>
+        <item>@string/colorGameBoyTeal</item>
+    </string-array>
 </resources>

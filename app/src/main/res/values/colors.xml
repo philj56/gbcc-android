@@ -9,9 +9,16 @@
 
     <!-- Colors for specific purposes -->
     <color name="screenBorder">#262E31</color>
-    <color name="colorGameBoyFuchsia">#FF0786</color>
-    <color name="colorGameBoyPurple">#AE46DE</color>
-    <color name="colorGameBoyGreen">#B8FF2C</color>
-    <color name="colorGameBoyYellow">#FDD827</color>
+    <color name="colorGameBoyBerry">#FF0786</color>
+    <color name="colorGameBoyGrape">#AE46DE</color>
+    <color name="colorGameBoyKiwi">#B8FF2C</color>
+    <color name="colorGameBoyDandelion">#FDD827</color>
     <color name="colorGameBoyTeal">#004F50</color>
+
+    <!-- Duplicate color entries as strings, as preferences screen can't handle colors -->
+    <string name="colorGameBoyBerry">#FF0786</string>
+    <string name="colorGameBoyGrape">#AE46DE</string>
+    <string name="colorGameBoyKiwi">#B8FF2C</string>
+    <string name="colorGameBoyDandelion">#FDD827</string>
+    <string name="colorGameBoyTeal">#004F50</string>
 </resources>

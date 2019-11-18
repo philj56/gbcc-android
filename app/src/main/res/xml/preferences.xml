@@ -21,5 +21,24 @@
         android:entryValues="@array/shader_names_array"
         android:key="shader"
         android:title="Shader"
+        android:summary="%s"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/orientation_names_array"
+        android:entryValues="@array/orientation_values_array"
+        android:key="orientation"
+        android:title="Screen orientation"
+        android:summary="%s"
+        app:iconSpaceReserved="false" />
+
+    <ListPreference
+        android:defaultValue="@string/colorGameBoyTeal"
+        android:entries="@array/color_names_array"
+        android:entryValues="@array/color_values_array"
+        android:key="color"
+        android:title="GBC Color"
+        android:summary="%s"
         app:iconSpaceReserved="false" />
 </PreferenceScreen>
