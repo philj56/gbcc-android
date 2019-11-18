@@ -1,3 +1,43 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">GBCC</string>
+
+    <!-- MainActivity -->
+    <string name="directory_tree">Files<xliff:g>%1$s</xliff:g></string>
+    <string name="import_rom">Import</string>
+    <string name="settings">Settings</string>
+
+    <!-- GLActivity -->
+    <string name="a_button_description">A</string>
+    <string name="b_button_description">B</string>
+    <string name="start_button_description">Start</string>
+    <string name="select_button_description">Select</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_fps">Show FPS counter</string>
+    <string name="settings_auto_resume">Auto-resume</string>
+
+    <string name="settings_shader">Shader</string>
+    <string name="settings_shader_nothing">Nothing</string>
+    <string name="settings_shader_color_correct">Colour Correct</string>
+    <string name="settings_shader_sub_pixel">Sub-pixel</string>
+    <string name="settings_shader_dot_matrix">Dot Matrix</string>
+
+    <string name="settings_orientation">Screen Orientation</string>
+    <string name="settings_orientation_system">System</string>
+    <string name="settings_orientation_portrait">Portrait</string>
+    <string name="settings_orientation_landscape_auto">Landscape (auto)</string>
+    <string name="settings_orientation_landscape_left">Landscape (left)</string>
+    <string name="settings_orientation_landscape_right">Landscape (right)</string>
+
+    <string name="settings_color">GBC Colour</string>
+    <string name="settings_color_berry">Berry</string>
+    <string name="settings_color_dandelion">Dandelion</string>
+    <string name="settings_color_grape">Grape</string>
+    <string name="settings_color_kiwi">Kiwi</string>
+    <string name="settings_color_teal">Teal</string>
+
+    <!-- Messages -->
+    <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
+    <string name="message_failed_name">Failed to retrieve file name</string>
+    <string name="message_repeat_back">Press BACK again to exit</string>
 </resources>

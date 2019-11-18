@@ -4,7 +4,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">@color/colorGameBoyTeal</color>
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">@color/colorGameBoyBerry</color>
     <color name="colorPrimaryNight">@color/screenBorder</color>
 
     <!-- Colors for specific purposes -->

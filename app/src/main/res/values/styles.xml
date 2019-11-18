@@ -10,6 +10,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">#000000</item>
         <item name="toolbarStyle">@style/Toolbar</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:textDirection">locale</item>
     </style>
 
     <style name="AppThemeDark" parent="AppTheme">

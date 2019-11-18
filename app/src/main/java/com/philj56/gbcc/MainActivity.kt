@@ -15,7 +15,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
@@ -62,9 +61,9 @@ class MainActivity : AppCompatActivity() {
         updateFiles()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateFiles() {
-        directoryTree.text = "Files" + currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
+        val curPath = currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
+        directoryTree.text = String.format(getString(R.string.directory_tree), curPath)
         val unsorted = currentDir.listFiles { file ->
             file.name.matches(Regex(".*\\.gbc?")) or file.isDirectory
         }
@@ -133,19 +132,21 @@ class MainActivity : AppCompatActivity() {
     private fun importFile(uri: Uri) {
         val iStream = contentResolver.openInputStream(uri)
         if (iStream == null) {
-            Toast.makeText(baseContext, "Failed to import $uri", Toast.LENGTH_SHORT).show()
+            Toast.makeText(baseContext, getString(R.string.message_failed_import).format(uri), Toast.LENGTH_SHORT).show()
         } else {
-            val name = getFileName(uri) ?: "tmp.gbc"
-            if (name == "tmp.gbc") {
-                Log.w("GBCC", "Failed to retrieve real file name, using $name")
-            } else if (!name.matches(Regex(".*\\.gbc?"))) {
-                Toast.makeText(baseContext, "Failed to import $name", Toast.LENGTH_SHORT).show()
+            val name = getFileName(uri)
+            if (name == null) {
+                Toast.makeText(baseContext, getString(R.string.message_failed_name), Toast.LENGTH_SHORT).show()
+                return
+            }
+            if (!name.matches(Regex(".*\\.gbc?"))) {
+                Toast.makeText(baseContext, getString(R.string.message_failed_import).format(name), Toast.LENGTH_SHORT).show()
                 return
             }
             val data = iStream.use { it.readBytes() }
             val file = File(getExternalFilesDir(null), name)
             FileOutputStream(file).use { it.write(data) }
-            Log.i("Imported", file.toString())
+            Log.i("Imported", file.name)
         }
     }
 
@@ -179,7 +180,7 @@ class MainActivity : AppCompatActivity() {
 
         timeBackPressed = System.currentTimeMillis()
 
-        Toast.makeText(baseContext, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
+        Toast.makeText(baseContext, getString(R.string.message_repeat_back), Toast.LENGTH_SHORT).show()
     }
 }
 

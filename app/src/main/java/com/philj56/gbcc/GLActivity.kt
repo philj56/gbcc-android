@@ -34,7 +34,6 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var accelerometer: Sensor
     private lateinit var vibrator: Vibrator
     private lateinit var checkVibration: Runnable
-    private lateinit var checkAccelerometer: Runnable
     private lateinit var filename: String
     private var resume = false
     private var dpadState = 0

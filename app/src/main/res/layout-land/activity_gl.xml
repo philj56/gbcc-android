@@ -5,6 +5,7 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="@color/colorGameBoyTeal"
     tools:context=".GLActivity">
 
@@ -29,7 +30,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="64dp"
         android:background="@android:color/transparent"
-        android:contentDescription="A button"
+        android:contentDescription="@string/a_button_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_button_ab"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,7 +47,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="48dp"
         android:background="@android:color/transparent"
-        android:contentDescription="B button"
+        android:contentDescription="@string/b_button_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_button_ab"
         app:layout_constraintEnd_toEndOf="@+id/buttonA"
@@ -63,7 +64,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Select Button"
+        android:contentDescription="@string/select_button_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_button_startselect"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -83,7 +84,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Start Button"
+        android:contentDescription="@string/start_button_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_button_startselect"
         app:layout_constraintBottom_toTopOf="@+id/buttonSelect"
@@ -113,6 +114,7 @@
 
     <ImageView
         android:id="@+id/topRightCorner"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:src="@drawable/device_border_top_corner"
@@ -121,6 +123,7 @@
 
     <ImageView
         android:id="@+id/topLeftCorner"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="270"
@@ -130,6 +133,7 @@
 
     <ImageView
         android:id="@+id/bottomLeftCorner"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="180"
@@ -139,6 +143,7 @@
 
     <ImageView
         android:id="@+id/bottomRightCorner"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:rotation="90"
@@ -148,6 +153,7 @@
 
     <ImageView
         android:id="@+id/screenBorderLeft"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="0dp"
         android:src="@drawable/screen_border_side"
@@ -157,6 +163,7 @@
 
     <ImageView
         android:id="@+id/screenBorderRight"
+        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="0dp"
         android:src="@drawable/screen_border_side"
@@ -166,6 +173,7 @@
 
     <ImageView
         android:id="@+id/screenBorderBottom"
+        android:importantForAccessibility="no"
         android:layout_width="0dp"
         android:layout_height="16dp"
         android:src="@drawable/screen_border_bottom"
@@ -175,6 +183,7 @@
 
     <ImageView
         android:id="@+id/screenBorderTop"
+        android:importantForAccessibility="no"
         android:layout_width="0dp"
         android:layout_height="16dp"
         android:src="@drawable/screen_border_top"

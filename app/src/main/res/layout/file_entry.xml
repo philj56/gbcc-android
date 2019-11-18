@@ -7,6 +7,7 @@
 
     <ImageView
         android:id="@+id/fileIcon"
+        android:importantForAccessibility="no"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -18,6 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center|left"
+        android:gravity="center|start"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 </LinearLayout>

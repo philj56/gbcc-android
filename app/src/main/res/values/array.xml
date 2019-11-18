@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="shader_names_array">
+        <item>@string/settings_shader_nothing</item>
+        <item>@string/settings_shader_color_correct</item>
+        <item>@string/settings_shader_sub_pixel</item>
+        <item>@string/settings_shader_dot_matrix</item>
+    </string-array>
+
+    <string-array name="shader_values_array">
         <item>Nothing</item>
         <item>Colour Correct</item>
         <item>Subpixel</item>
@@ -9,11 +16,11 @@
 
 
     <string-array name="orientation_names_array">
-        <item>System</item>
-        <item>Portrait</item>
-        <item>Landscape (auto)</item>
-        <item>Landscape (left)</item>
-        <item>Landscape (right)</item>
+        <item>@string/settings_orientation_system</item>
+        <item>@string/settings_orientation_portrait</item>
+        <item>@string/settings_orientation_landscape_auto</item>
+        <item>@string/settings_orientation_landscape_left</item>
+        <item>@string/settings_orientation_landscape_right</item>
     </string-array>
 
     <string-array name="orientation_values_array">
@@ -26,11 +33,11 @@
 
 
     <string-array name="color_names_array">
-        <item>Berry</item>
-        <item>Dandelion</item>
-        <item>Grape</item>
-        <item>Kiwi</item>
-        <item>Teal</item>
+        <item>@string/settings_color_berry</item>
+        <item>@string/settings_color_dandelion</item>
+        <item>@string/settings_color_grape</item>
+        <item>@string/settings_color_kiwi</item>
+        <item>@string/settings_color_teal</item>
     </string-array>
 
     <string-array name="color_values_array">

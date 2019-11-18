@@ -5,14 +5,14 @@
     <item
         android:id="@+id/importItem"
         android:icon="@drawable/ic_library_add_white_24dp"
-        android:title="Import"
+        android:title="@string/import_rom"
         android:layout_centerVertical="true"
         app:showAsAction="ifRoom"
         app:maxButtonHeight="?attr/actionBarSize"/>
     <item
         android:id="@+id/settingsItem"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:title="Settings"
+        android:title="@string/settings"
         android:layout_centerVertical="true"
         app:showAsAction="ifRoom"
         app:maxButtonHeight="?attr/actionBarSize"/>
