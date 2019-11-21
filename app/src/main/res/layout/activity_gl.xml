@@ -5,8 +5,8 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gbcTeal"
     android:layoutDirection="ltr"
-    android:background="@color/colorGameBoyTeal"
     tools:context=".GLActivity">
 
     <com.philj56.gbcc.MyGLSurfaceView
@@ -104,39 +104,54 @@
 
     <ImageView
         android:id="@+id/topRightCorner"
-        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/device_border_top_corner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/topLeftCorner"
-        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:importantForAccessibility="no"
         android:rotation="270"
         android:src="@drawable/device_border_top_corner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/bottom"
-        android:importantForAccessibility="no"
+        android:id="@+id/bottomRightCorner"
         android:layout_width="0dp"
         android:layout_height="32dp"
+        android:importantForAccessibility="no"
         android:scaleType="fitXY"
-        android:src="@drawable/device_border_bottom"
+        android:src="@drawable/device_border_bottom_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toEndOf="@+id/bottomLeftCorner" />
+
+    <ImageView
+        android:id="@+id/bottomLeftCorner"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:scaleX="-1"
+        android:src="@drawable/device_border_bottom_corner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bottomRightCorner"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/screenBorderBottom"
-        android:importantForAccessibility="no"
         android:layout_width="0dp"
         android:layout_height="16dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/screen_border_bottom"
         app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
         app:layout_constraintStart_toStartOf="@+id/screenBorderLeft"
@@ -144,9 +159,9 @@
 
     <ImageView
         android:id="@+id/screenBorderLeft"
-        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="0dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/screen_border_side"
         app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
         app:layout_constraintEnd_toStartOf="@+id/screen"
@@ -154,9 +169,9 @@
 
     <ImageView
         android:id="@+id/screenBorderRight"
-        android:importantForAccessibility="no"
         android:layout_width="16dp"
         android:layout_height="0dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/screen_border_side"
         app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
         app:layout_constraintStart_toEndOf="@+id/screen"
@@ -164,9 +179,9 @@
 
     <ImageView
         android:id="@+id/screenBorderTop"
-        android:importantForAccessibility="no"
         android:layout_width="0dp"
         android:layout_height="16dp"
+        android:importantForAccessibility="no"
         android:src="@drawable/screen_border_top"
         app:layout_constraintBottom_toTopOf="@+id/screen"
         app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"

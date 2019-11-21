@@ -29,6 +29,11 @@
     <string name="settings_orientation_landscape_left">Landscape (left)</string>
     <string name="settings_orientation_landscape_right">Landscape (right)</string>
 
+    <string name="settings_skin">Device Skin</string>
+    <string name="settings_skin_auto">Auto</string>
+    <string name="settings_skin_dmg">DMG</string>
+    <string name="settings_skin_gbc">GBC</string>
+
     <string name="settings_color">GBC Colour</string>
     <string name="settings_color_berry">Berry</string>
     <string name="settings_color_dandelion">Dandelion</string>

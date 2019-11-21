@@ -3,6 +3,7 @@ package com.philj56.gbcc
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Rect
 import android.hardware.Sensor
@@ -12,10 +13,12 @@ import android.hardware.SensorManager
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
-import android.text.Layout
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
@@ -91,32 +94,90 @@ class GLActivity : Activity(), SensorEventListener {
         })
     }
 
+    private fun updateLayout(gbc: Boolean) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val bgColor = when (gbc) {
+            true -> Color.parseColor(prefs.getString("color", getString(R.string.gbcTeal)))
+            false -> ContextCompat.getColor(this, R.color.dmgBackground)
+        }
+        findViewById<View>(R.id.layout).setBackgroundColor(bgColor)
+
+        if (!gbc) {
+            val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
+            val borders = intArrayOf(
+                R.id.screenBorderTop,
+                R.id.screenBorderBottom,
+                R.id.screenBorderLeft,
+                R.id.screenBorderRight
+            )
+
+            borders.forEach { border ->
+                findViewById<ImageView>(border).setColorFilter(
+                    screenBorderColor,
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+            }
+
+            findViewById<ImageButton>(R.id.buttonA).setImageResource(R.drawable.ic_button_ab_dmg)
+            findViewById<ImageButton>(R.id.buttonB).setImageResource(R.drawable.ic_button_ab_dmg)
+
+            val buttonStart = findViewById<ImageButton>(R.id.buttonStart)
+            val buttonSelect = findViewById<ImageButton>(R.id.buttonSelect)
+
+            buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg)
+            buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg)
+
+            buttonStart.rotation = -45f
+            buttonSelect.rotation = -45f
+
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                val bottomLeft = findViewById<ImageView>(R.id.bottomLeftCorner)
+                val bottomRight = findViewById<ImageView>(R.id.bottomRightCorner)
+                val px = (resources.displayMetrics.density + 0.5f).toInt()
+
+                bottomLeft.layoutParams.apply {
+                    width = 16 * px
+                    height = width
+                }
+
+                bottomRight.layoutParams.apply {
+                    width = 64 * px
+                    height = width
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
-
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.setFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS, WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         setContentView(R.layout.activity_gl)
 
-        val bgColor = prefs.getString("color", getString(R.string.colorGameBoyTeal))
-        findViewById<View>(R.id.layout).setBackgroundColor(Color.parseColor(bgColor))
-
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-        checkFiles()
         val bundle = intent.extras
         filename = bundle?.getString("file") ?: ""
         if (filename == "") {
             Log.e("GBCC", "No rom provided.")
             finish()
         }
+
+        updateLayout(
+            when(prefs.getString("skin", "auto")) {
+                "dmg" -> false
+                "gbc" -> true
+                else -> filename.endsWith("gbc")
+            }
+        )
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+        checkFiles()
 
         if (savedInstanceState != null) {
             resume = resume || savedInstanceState.getBoolean("resume")
@@ -177,6 +238,9 @@ class GLActivity : Activity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.decorView.apply {
             systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -197,7 +261,6 @@ class GLActivity : Activity(), SensorEventListener {
             sensorManager.registerListener(this, accelerometer, 10000)
         }
     }
-
 
 
     override fun onPause() {

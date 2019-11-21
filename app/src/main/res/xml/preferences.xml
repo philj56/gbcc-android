@@ -32,7 +32,15 @@
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="@string/colorGameBoyTeal"
+        android:defaultValue="auto"
+        android:entries="@array/skin_names_array"
+        android:entryValues="@array/skin_values_array"
+        android:key="skin"
+        android:title="@string/settings_skin"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        android:defaultValue="@string/gbcTeal"
         android:entries="@array/color_names_array"
         android:entryValues="@array/color_values_array"
         android:key="color"

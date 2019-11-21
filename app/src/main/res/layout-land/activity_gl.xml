@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="ltr"
-    android:background="@color/colorGameBoyTeal"
+    android:background="@color/gbcTeal"
     tools:context=".GLActivity">
 
     <com.philj56.gbcc.MyGLSurfaceView

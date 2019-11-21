@@ -10,6 +10,6 @@
         android:bottomRightRadius="0dp"/>
 
     <solid
-        android:color="@color/screenBorder"/>
+        android:color="@color/gbcScreenBorder"/>
 
 </shape>

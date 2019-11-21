@@ -2,23 +2,27 @@
 <resources>
     <!-- Generic system colors -->
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">@color/colorGameBoyTeal</color>
+    <color name="colorPrimaryDark">@color/gbcTeal</color>
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="colorAccent">@color/colorGameBoyBerry</color>
-    <color name="colorPrimaryNight">@color/screenBorder</color>
+    <color name="colorAccent">@color/gbcBerry</color>
+    <color name="colorPrimaryNight">@color/gbcScreenBorder</color>
 
     <!-- Colors for specific purposes -->
-    <color name="screenBorder">#262E31</color>
-    <color name="colorGameBoyBerry">#FF0786</color>
-    <color name="colorGameBoyGrape">#AE46DE</color>
-    <color name="colorGameBoyKiwi">#B8FF2C</color>
-    <color name="colorGameBoyDandelion">#FDD827</color>
-    <color name="colorGameBoyTeal">#004F50</color>
+    <color name="dmgButton">#9E265A</color>
+    <color name="dmgScreenBorder">#918E92</color>
+    <color name="dmgBackground">#C4BEBB</color>
+
+    <color name="gbcScreenBorder">#262E31</color>
+    <color name="gbcBerry">#FF0786</color>
+    <color name="gbcGrape">#4C2D85</color>
+    <color name="gbcKiwi">#B8FF2C</color>
+    <color name="gbcDandelion">#FEC107</color>
+    <color name="gbcTeal">#004F50</color>
 
     <!-- Duplicate color entries as strings, as preferences screen can't handle colors -->
-    <string name="colorGameBoyBerry">#FF0786</string>
-    <string name="colorGameBoyGrape">#AE46DE</string>
-    <string name="colorGameBoyKiwi">#B8FF2C</string>
-    <string name="colorGameBoyDandelion">#FDD827</string>
-    <string name="colorGameBoyTeal">#004F50</string>
+    <string name="gbcBerry">#FF0786</string>
+    <string name="gbcGrape">#4C2D85</string>
+    <string name="gbcKiwi">#B8FF2C</string>
+    <string name="gbcDandelion">#FEC107</string>
+    <string name="gbcTeal">#004F50</string>
 </resources>
