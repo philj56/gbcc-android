@@ -67,9 +67,11 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	jobject obj,
 	jobject prefs) {
 	gbcc_window_initialise(&gbc);
+	gbcc_menu_init(&gbc);
 	if (gbc.core.initialised) {
 		update_preferences(env, prefs);
 	}
+
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -134,35 +136,44 @@ Java_com_philj56_gbcc_GLActivity_quit(
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_toggleMenu(
+	JNIEnv *env,
+	jobject obj/* this */,
+	jobject view) {
+	gbcc_input_process_key(&gbc, GBCC_KEY_MENU, true);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_press(
 	JNIEnv *env,
 	jobject obj/* this */,
 	jint key,
 	jboolean pressed) {
+	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "%d: %d", key, pressed);
 	switch (key) {
 		case 0:
-			gbc.core.keys.a = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_A, pressed);
 			break;
 		case 1:
-			gbc.core.keys.b = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_B, pressed);
 			break;
 		case 2:
-			gbc.core.keys.start = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_START, pressed);
 			break;
 		case 3:
-			gbc.core.keys.select = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_SELECT, pressed);
 			break;
 		case 4:
-			gbc.core.keys.dpad.up = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_UP, pressed);
 			break;
 		case 5:
-			gbc.core.keys.dpad.down = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_DOWN, pressed);
 			break;
 		case 6:
-			gbc.core.keys.dpad.left = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_LEFT, pressed);
 			break;
 		case 7:
-			gbc.core.keys.dpad.right = pressed;
+			gbcc_input_process_key(&gbc, GBCC_KEY_RIGHT, pressed);
 			break;
 	}
 }

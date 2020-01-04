@@ -41,6 +41,7 @@ class GLActivity : Activity(), SensorEventListener {
     private var resume = false
     private var dpadState = 0
 
+    external fun toggleMenu(view: View)
     private external fun loadRom(file: String, prefs: SharedPreferences)
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
@@ -201,10 +202,6 @@ class GLActivity : Activity(), SensorEventListener {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                     val x = motionEvent.x.toInt()
                     val y = motionEvent.y.toInt()
-                    press(4, up.contains(x, y))
-                    press(5, down.contains(x, y))
-                    press(6, left.contains(x, y))
-                    press(7, right.contains(x, y))
                     dpadState = 0
                     if (up.contains(x, y)) {
                         dpadState += 1
@@ -217,6 +214,30 @@ class GLActivity : Activity(), SensorEventListener {
                     }
                     if (right.contains(x, y)) {
                         dpadState += 8
+                    }
+
+                    val toggledOn = (lastState and dpadState) xor dpadState
+                    val toggledOff = (lastState or dpadState) xor dpadState
+
+                    if (toggledOn and 1 > 0) {
+                        press(4, true)
+                    } else if (toggledOff and 1 > 0) {
+                        press(4, false)
+                    }
+                    if (toggledOn and 2 > 0) {
+                        press(5, true)
+                    } else if (toggledOff and 2 > 0) {
+                        press(5, false)
+                    }
+                    if (toggledOn and 4 > 0) {
+                        press(6, true)
+                    } else if (toggledOff and 4 > 0) {
+                        press(6, false)
+                    }
+                    if (toggledOn and 8 > 0) {
+                        press(7, true)
+                    } else if (toggledOff and 8 > 0) {
+                        press(7, false)
                     }
 
                     if (lastState != dpadState) {

@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
+#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
+#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+
 set(LIBTYPE STATIC)
 set(OPENAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/openal-soft)
 add_subdirectory(${OPENAL_DIR} ./openal-soft)
@@ -17,11 +24,17 @@ add_definitions(-DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
                 -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/" )
 
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
+#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
+#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
 
 add_library(gbcc SHARED
             gbcc.cpp
@@ -40,6 +53,7 @@ add_library(gbcc SHARED
             ${GBCC_DIR}/src/input.c
             ${GBCC_DIR}/src/mbc.c
             ${GBCC_DIR}/src/memory.c
+            ${GBCC_DIR}/src/menu.c
             ${GBCC_DIR}/src/ops.c
             ${GBCC_DIR}/src/palettes.c
             ${GBCC_DIR}/src/ppu.c
@@ -48,8 +62,8 @@ add_library(gbcc SHARED
             ${GBCC_DIR}/src/screenshot.c
             ${GBCC_DIR}/src/time.c
             ${GBCC_DIR}/src/wav.c
-            ${GBCC_DIR}/src/android/window.c
-            ${GBCC_DIR}/src/android/vram_window.c
+            ${GBCC_DIR}/src/window.c
+            ${GBCC_DIR}/src/vram_window.c
             ${GBCC_DIR}/src/wav.c)
 
 target_link_libraries(gbcc
