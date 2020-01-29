@@ -20,7 +20,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
 import javax.microedition.khronos.egl.EGLConfig
@@ -40,6 +39,12 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var filename: String
     private var resume = false
     private var dpadState = 0
+
+    private lateinit var buttonA : ImageButton
+    private lateinit var buttonB : ImageButton
+    private lateinit var buttonStart : ImageButton
+    private lateinit var buttonSelect : ImageButton
+    private lateinit var dpad : View
 
     external fun toggleMenu(view: View)
     private external fun loadRom(file: String, prefs: SharedPreferences)
@@ -120,11 +125,8 @@ class GLActivity : Activity(), SensorEventListener {
                 )
             }
 
-            findViewById<ImageButton>(R.id.buttonA).setImageResource(R.drawable.ic_button_ab_dmg)
-            findViewById<ImageButton>(R.id.buttonB).setImageResource(R.drawable.ic_button_ab_dmg)
-
-            val buttonStart = findViewById<ImageButton>(R.id.buttonStart)
-            val buttonSelect = findViewById<ImageButton>(R.id.buttonSelect)
+            buttonA.setImageResource(R.drawable.ic_button_ab_dmg)
+            buttonB.setImageResource(R.drawable.ic_button_ab_dmg)
 
             buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg)
             buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg)
@@ -148,6 +150,28 @@ class GLActivity : Activity(), SensorEventListener {
                 }
             }
         }
+
+        buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
+        buttonA.scaleY = buttonA.scaleX
+        buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
+        buttonB.scaleY = buttonB.scaleX
+        buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
+        buttonStart.scaleY = buttonStart.scaleX
+        buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
+        buttonSelect.scaleY = buttonSelect.scaleX
+        dpad.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
+        dpad.scaleY = dpad.scaleX
+
+        buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
+        buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
+        buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
+        buttonB.translationY = prefs.getFloat(getString(R.string.b_offset_y_key), 0f)
+        buttonStart.translationX = prefs.getFloat(getString(R.string.start_offset_x_key), 0f)
+        buttonStart.translationY = prefs.getFloat(getString(R.string.start_offset_y_key), 0f)
+        buttonSelect.translationX = prefs.getFloat(getString(R.string.select_offset_x_key), 0f)
+        buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
+        dpad.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
+        dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,6 +189,12 @@ class GLActivity : Activity(), SensorEventListener {
             Log.e("GBCC", "No rom provided.")
             finish()
         }
+
+        buttonA = findViewById(R.id.buttonA)
+        buttonB = findViewById(R.id.buttonB)
+        buttonStart = findViewById(R.id.buttonStart)
+        buttonSelect = findViewById(R.id.buttonSelect)
+        dpad = findViewById(R.id.dpad)
 
         updateLayout(
             when(prefs.getString("skin", "auto")) {
@@ -184,10 +214,10 @@ class GLActivity : Activity(), SensorEventListener {
             resume = resume || savedInstanceState.getBoolean("resume")
         }
 
-        setButtonId(findViewById(R.id.buttonA), 0)
-        setButtonId(findViewById(R.id.buttonB), 1)
-        setButtonId(findViewById(R.id.buttonStart), 2)
-        setButtonId(findViewById(R.id.buttonSelect), 3)
+        setButtonId(buttonA, 0)
+        setButtonId(buttonB, 1)
+        setButtonId(buttonStart, 2)
+        setButtonId(buttonSelect, 3)
 
         dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {

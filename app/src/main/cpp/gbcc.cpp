@@ -10,10 +10,10 @@
 
 extern "C" {
 #pragma GCC visibility push(hidden)
-	#include <gbcc/gbcc.h>
-	#include <gbcc/core.h>
-	#include <gbcc/save.h>
-	#include <gbcc/window.h>
+	#include <gbcc.h>
+	#include <core.h>
+	#include <save.h>
+	#include <window.h>
 #pragma GCC visibility pop
 }
 

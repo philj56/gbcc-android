@@ -46,4 +46,13 @@
         android:key="color"
         android:title="@string/settings_color"
         app:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="arrange"
+        android:title="@string/settings_arrange"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.ArrangeActivity" />
+    </Preference>
 </PreferenceScreen>

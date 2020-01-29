@@ -1,6 +1,5 @@
 package com.philj56.gbcc
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration

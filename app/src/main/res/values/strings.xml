@@ -9,7 +9,7 @@
     <!-- GLActivity -->
     <string name="a_button_description">A</string>
     <string name="b_button_description">B</string>
-    <string name="start_button_description">Start</string>
+    <string name="start_button_description">Start</string>;q
     <string name="select_button_description">Select</string>
 
     <!-- SettingsActivity -->
@@ -41,8 +41,37 @@
     <string name="settings_color_kiwi">Kiwi</string>
     <string name="settings_color_teal">Teal</string>
 
+    <string name="settings_arrange">Rearrange Layout</string>
+
+    <!-- Arrange Activity -->
+    <string name="size_title">Button Sizes</string>
+    <string name="a_b_size">A &amp; B</string>
+    <string name="start_select_size">Start &amp; Select</string>
+    <string name="dpad_size">Dpad</string>
+    <string name="reset_sizes">Reset Sizes</string>
+    <string name="reset_layout">Reset Layout</string>
+
     <!-- Messages -->
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
     <string name="message_failed_name">Failed to retrieve file name</string>
     <string name="message_repeat_back">Press BACK again to exit</string>
+
+    <!-- Button offsets -->
+    <string name="a_offset_x_key">buttonAOffsetX</string>
+    <string name="a_offset_y_key">buttonAOffsetY</string>
+    <string name="b_offset_x_key">buttonBOffsetX</string>
+    <string name="b_offset_y_key">buttonBOffsetY</string>
+    <string name="start_offset_x_key">buttonStartOffsetX</string>
+    <string name="start_offset_y_key">buttonStartOffsetY</string>
+    <string name="select_offset_x_key">buttonSelectOffsetX</string>
+    <string name="select_offset_y_key">buttonSelectOffsetY</string>
+    <string name="dpad_offset_x_key">dpadOffsetX</string>
+    <string name="dpad_offset_y_key">dpadOffsetY</string>
+
+    <!-- Button scales -->
+    <string name="a_scale_key">buttonAScale</string>
+    <string name="b_scale_key">buttonBScale</string>
+    <string name="start_scale_key">buttonStartScale</string>
+    <string name="select_scale_key">buttonSelectScale</string>
+    <string name="dpad_scale_key">dpadScale</string>
 </resources>

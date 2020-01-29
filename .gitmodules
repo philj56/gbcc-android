@@ -4,6 +4,6 @@
 [submodule "app/libs/libpng"]
 	path = app/libs/libpng
 	url = https://github.com/glennrp/libpng.git
-[submodule "app/libs/GBCC"]
-	path = app/libs/GBCC
-	url = https://github.com/philj56/GBCC.git
+[submodule "app/libs/gbcc"]
+	path = app/libs/gbcc
+	url = https://github.com/philj56/gbcc.git

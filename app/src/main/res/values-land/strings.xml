@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Button offsets -->
+    <string name="a_offset_x_key">buttonAOffsetXLandscape</string>
+    <string name="a_offset_y_key">buttonAOffsetYLandscape</string>
+    <string name="b_offset_x_key">buttonBOffsetXLandscape</string>
+    <string name="b_offset_y_key">buttonBOffsetYLandscape</string>
+    <string name="start_offset_x_key">buttonStartOffsetXLandscape</string>
+    <string name="start_offset_y_key">buttonStartOffsetYLandscape</string>
+    <string name="select_offset_x_key">buttonSelectOffsetXLandscape</string>
+    <string name="select_offset_y_key">buttonSelectOffsetYLandscape</string>
+    <string name="dpad_offset_x_key">dpadOffsetXLandscape</string>
+    <string name="dpad_offset_y_key">dpadOffsetYLandscape</string>
+
+    <!-- Button scales -->
+    <string name="a_scale_key">buttonAScaleLandscape</string>
+    <string name="b_scale_key">buttonBScaleLandscape</string>
+    <string name="start_scale_key">buttonStartScaleLandscape</string>
+    <string name="select_scale_key">buttonSelectScaleLandscape</string>
+    <string name="dpad_scale_key">dpadScaleLandscape</string>
+</resources>

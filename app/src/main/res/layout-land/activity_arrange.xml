@@ -7,16 +7,15 @@
     android:layout_height="match_parent"
     android:layoutDirection="ltr"
     android:background="@color/gbcTeal"
-    tools:context=".GLActivity">
+    tools:context=".ArrangeActivity">
 
-    <com.philj56.gbcc.MyGLSurfaceView
+    <com.philj56.gbcc.ScreenPlaceholder
         android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:onClick="toggleMenu"
+        android:background="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +61,7 @@
         app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
         app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
 
-    <ImageButton
+    <com.philj56.gbcc.ResizableImage
         android:id="@+id/buttonA"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -80,7 +79,7 @@
         app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <com.philj56.gbcc.ResizableImage
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -96,7 +95,7 @@
         app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:layout_constraintTop_toBottomOf="@+id/buttonA" />
 
-    <ImageButton
+    <com.philj56.gbcc.ResizableImage
         android:id="@+id/buttonSelect"
         android:layout_width="64dp"
         android:layout_height="32dp"
@@ -116,7 +115,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_weight="0" />
 
-    <ImageButton
+    <com.philj56.gbcc.ResizableImage
         android:id="@+id/buttonStart"
         android:layout_width="64dp"
         android:layout_height="32dp"
@@ -137,7 +136,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_weight="0" />
 
-    <ImageView
+    <com.philj56.gbcc.ResizableImage
         android:id="@+id/dpad"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -191,5 +190,106 @@
         android:src="@drawable/device_border_top_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/resetSizes"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:onClick="resetSizes"
+        android:text="@string/reset_sizes"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sizeMenu"
+        app:layout_constraintEnd_toStartOf="@+id/resetLayout"
+        app:layout_constraintStart_toStartOf="@+id/sizeMenu" />
+
+    <Button
+        android:id="@+id/resetLayout"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:onClick="resetLayout"
+        android:text="@string/reset_layout"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sizeMenu"
+        app:layout_constraintEnd_toEndOf="@+id/sizeMenu"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/resetSizes" />
+
+    <LinearLayout
+        android:id="@+id/sizeMenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/screen"
+        app:layout_constraintEnd_toEndOf="@+id/screen"
+        app:layout_constraintStart_toStartOf="@+id/screen"
+        app:layout_constraintTop_toTopOf="@+id/screen">
+
+        <TextView
+            android:id="@+id/sizes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/size_title"
+            android:textAlignment="center"
+            android:textColor="@android:color/primary_text_dark"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/abSeekBarLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/a_b_size"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textSize="14sp" />
+
+        <SeekBar
+            android:id="@+id/abSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:progress="50" />
+
+        <TextView
+            android:id="@+id/startSelectSeekBarLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/start_select_size"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textSize="14sp" />
+
+        <SeekBar
+            android:id="@+id/startSelectSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:progress="50" />
+
+        <TextView
+            android:id="@+id/dpadSeekBarLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/dpad_size"
+            android:textColor="@android:color/secondary_text_dark"
+            android:textSize="14sp" />
+
+        <SeekBar
+            android:id="@+id/dpadSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:progress="50" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
