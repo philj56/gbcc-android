@@ -144,12 +144,18 @@ Java_com_philj56_gbcc_GLActivity_toggleMenu(
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_toggleTurbo(
+	JNIEnv *env,
+	jobject obj/* this */) {
+	gbcc_input_process_key(&gbc, GBCC_KEY_TURBO, true);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_press(
 	JNIEnv *env,
 	jobject obj/* this */,
 	jint key,
 	jboolean pressed) {
-	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "%d: %d", key, pressed);
 	switch (key) {
 		case 0:
 			gbcc_input_process_key(&gbc, GBCC_KEY_A, pressed);
@@ -175,6 +181,8 @@ Java_com_philj56_gbcc_GLActivity_press(
 		case 7:
 			gbcc_input_process_key(&gbc, GBCC_KEY_RIGHT, pressed);
 			break;
+		default:
+			break;
 	}
 }
 
@@ -184,7 +192,7 @@ Java_com_philj56_gbcc_GLActivity_saveState(
 	JNIEnv *env,
 	jobject obj/* this */,
 	jint state) {
-	gbc.save_state = state;
+	gbc.save_state = static_cast<int8_t>(state);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -192,7 +200,7 @@ Java_com_philj56_gbcc_GLActivity_loadState(
 	JNIEnv *env,
 	jobject obj/* this */,
 	jint state) {
-	gbc.load_state = state;
+	gbc.load_state = static_cast<int8_t>(state);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -203,7 +211,7 @@ Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
 	bool rumble = gbc.core.cart.rumble_state;
 	bool ret = (rumble != last_rumble);
 	last_rumble = rumble;
-	return (jboolean) ret;
+	return static_cast<jboolean>(ret);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -213,20 +221,20 @@ Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
 	jfloat x,
 	jfloat y) {
 	const float g = 9.81;
-	gbc.core.cart.mbc.accelerometer.real_x = 0x81D0u + (0x70 * x / g);
-	gbc.core.cart.mbc.accelerometer.real_y = 0x81D0u - (0x70 * y / g);
+	gbc.core.cart.mbc.accelerometer.real_x = static_cast<uint16_t>(0x81D0u + (0x70 * x / g));
+	gbc.core.cart.mbc.accelerometer.real_y = static_cast<uint16_t>(0x81D0u - (0x70 * y / g));
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasRumble(
 	JNIEnv *env,
 	jobject obj/* this */) {
-	return gbc.core.cart.rumble;
+	return static_cast<jboolean>(gbc.core.cart.rumble);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasAccelerometer(
 	JNIEnv *env,
 	jobject obj/* this */) {
-	return (gbc.core.cart.mbc.type == MBC7);
+	return static_cast<jboolean>(gbc.core.cart.mbc.type == MBC7);
 }

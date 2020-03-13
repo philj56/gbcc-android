@@ -32,6 +32,7 @@ private const val autoSaveState: Int = 10
 class GLActivity : Activity(), SensorEventListener {
 
     private val handler = Handler()
+    private lateinit var gestureDetector : GestureDetector
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
     private lateinit var vibrator: Vibrator
@@ -50,6 +51,7 @@ class GLActivity : Activity(), SensorEventListener {
     private external fun loadRom(file: String, prefs: SharedPreferences)
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
+    private external fun toggleTurbo()
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
     private external fun checkVibrationFun(): Boolean
@@ -78,6 +80,7 @@ class GLActivity : Activity(), SensorEventListener {
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(milliseconds)
         }
     }
@@ -204,6 +207,7 @@ class GLActivity : Activity(), SensorEventListener {
             }
         )
 
+        gestureDetector = GestureDetector(this, DpadListener())
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -222,6 +226,12 @@ class GLActivity : Activity(), SensorEventListener {
         dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {
                 return@OnTouchListener false
+            }
+            if (dpadState == 0) {
+                if (gestureDetector.onTouchEvent(motionEvent)) {
+                    toggleTurbo()
+                    return@OnTouchListener true
+                }
             }
             val up = Rect(0, 0, dpad.width, dpad.height / 3)
             val down = Rect(0, 2 * dpad.height / 3, dpad.width, dpad.height)
@@ -343,11 +353,12 @@ class GLActivity : Activity(), SensorEventListener {
 
     private fun checkFiles() {
         val filePath = filesDir
-        if (File("$filePath/shaders").exists()) {
-            //return
-        }
         assets.open("tileset.png").use { iStream ->
             val file = File("$filePath/tileset.png")
+            FileOutputStream(file).use { it.write(iStream.readBytes()) }
+        }
+        assets.open("print.wav").use { iStream ->
+            val file = File("$filePath/print.wav")
             FileOutputStream(file).use { it.write(iStream.readBytes()) }
         }
         assets.list("shaders")?.forEach { shader ->
@@ -356,6 +367,12 @@ class GLActivity : Activity(), SensorEventListener {
                 val file = File("$filePath/shaders/$shader")
                 FileOutputStream(file).use { it.write(iStream.readBytes()) }
             }
+        }
+    }
+
+    class DpadListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            return true
         }
     }
 

@@ -21,15 +21,17 @@ include_directories(${LIBPNG_DIR})
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
 include_directories(${GBCC_DIR}/src)
 
-add_definitions(-DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
-                -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/" )
-
+add_definitions(
+        -DPRINTER_SOUND_PATH="/data/user/0/com.philj56.gbcc/files/print.wav"
+        -DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
+        -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/"
+)
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full -fuse-ld=lld -fprofile-instr-use=${GBCC_DIR}/default.profdata")
 
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
 #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
