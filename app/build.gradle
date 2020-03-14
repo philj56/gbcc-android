@@ -19,6 +19,12 @@ android {
 				targets "gbcc"
 			}
 		}
+		splits {
+			abi {
+				enable true
+				universalApk true
+			}
+		}
 	}
 	buildTypes {
 		release {
@@ -60,3 +66,12 @@ dependencies {
 	androidTestImplementation 'androidx.test:runner:1.2.0'
 	androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+
+task copyAssets(type: Copy) {
+	from fileTree(dir: "$buildDir/libs/gbcc/shaders")
+	from "$buildDir/libs/gbcc/tileset.png"
+	from "$buildDir/libs/gbcc/print.wav"
+	into "$buildDir/src/main/assets"
+}
+
+preBuild.dependsOn copyAssets

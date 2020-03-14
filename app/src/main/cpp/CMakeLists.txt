@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto -fuse-ld=lld")
 
+
 set(LIBTYPE STATIC)
 set(ALSOFT_UTILS OFF)
 set(ALSOFT_EXAMPLES OFF)
@@ -17,12 +18,22 @@ set(OPENAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/openal-soft)
 add_subdirectory(${OPENAL_DIR} ./openal-soft)
 include_directories(${OPENAL_DIR}/include)
 
+
 set(PNG_SHARED OFF)
 set(PNG_TESTS OFF)
 set(LIBPNG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/libpng)
 add_subdirectory(${LIBPNG_DIR} ./libpng)
-configure_file(${LIBPNG_DIR}/scripts/pnglibconf.h.prebuilt ${LIBPNG_DIR}/pnglibconf.h COPYONLY)
 include_directories(${LIBPNG_DIR})
+
+file(
+	COPY ${LIBPNG_DIR}/scripts/pnglibconf.h.prebuilt
+	DESTINATION ${LIBPNG_DIR}
+)
+file(
+	RENAME ${LIBPNG_DIR}/pnglibconf.h.prebuilt
+	${LIBPNG_DIR}/pnglibconf.h
+)
+
 
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
 include_directories(${GBCC_DIR}/src)
