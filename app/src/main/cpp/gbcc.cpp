@@ -37,11 +37,17 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	arg = env->NewStringUTF("shader");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 
-	const char *shader_name = env->GetStringUTFChars(ret, nullptr);
+	const char *shader_name;
+	if (ret == NULL) {
+		shader_name = "Subpixel";
+	} else {
+		shader_name = env->GetStringUTFChars(ret, nullptr);
+	}
 	gbcc_window_use_shader(&gbc, shader_name);
 	env->DeleteLocalRef(arg);
-	env->ReleaseStringUTFChars(ret, shader_name);
-
+	if (ret != NULL) {
+		env->ReleaseStringUTFChars(ret, shader_name);
+	}
 
 	env->DeleteLocalRef(prefsClass);
 }
