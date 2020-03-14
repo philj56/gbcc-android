@@ -68,10 +68,9 @@ dependencies {
 }
 
 task copyAssets(type: Copy) {
-	from fileTree(dir: "$buildDir/libs/gbcc/shaders")
-	from "$buildDir/libs/gbcc/tileset.png"
-	from "$buildDir/libs/gbcc/print.wav"
-	into "$buildDir/src/main/assets"
+	from "libs/gbcc/tileset.png"
+	from "libs/gbcc/print.wav"
+	into "src/main/assets"
 }
 
-preBuild.dependsOn copyAssets
+assemble.dependsOn copyAssets

@@ -180,19 +180,19 @@ class ArrangeActivity : Activity() {
         }
     }
 
-    fun setSizes() {
+    private fun setSizes() {
         abSeekBar.progress = sizeToProgress(buttonA.scaleX)
         startSelectSeekBar.progress = sizeToProgress(buttonStart.scaleX)
         dpadSeekBar.progress = sizeToProgress(dpad.scaleX)
     }
 
-    fun resetSizes(view: View) {
+    fun resetSizes(@Suppress("UNUSED_PARAMETER") view: View) {
         abSeekBar.progress = 50
         startSelectSeekBar.progress = 50
         dpadSeekBar.progress = 50
     }
 
-    fun resetLayout(view: View) {
+    fun resetLayout(@Suppress("UNUSED_PARAMETER") view: View) {
         buttonA.translationX = 0f
         buttonA.translationY = 0f
         buttonB.translationX = 0f
@@ -286,7 +286,7 @@ class ResizableImage : AppCompatImageView {
     }
 
     private fun addLongClickListener() {
-        setOnLongClickListener(OnLongClickListener { view ->
+        setOnLongClickListener(OnLongClickListener {
             floating = true
             vibrate(10)
             return@OnLongClickListener false
@@ -301,6 +301,7 @@ class ResizableImage : AppCompatImageView {
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(milliseconds)
         }
     }
