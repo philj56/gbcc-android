@@ -1,0 +1,40 @@
+name: Build APK
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+
+    branches:
+      - master
+      - actions
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
+
+      - name: Build app
+        run: sudo ./gradlew build
+
+      - name: Upload debug apk
+        uses: actions/upload-artifact@v1
+        with:
+          name: gbcc.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
