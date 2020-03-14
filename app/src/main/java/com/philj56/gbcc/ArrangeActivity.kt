@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.ImageView
 import android.widget.SeekBar
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -248,7 +249,7 @@ class ArrangeActivity : Activity() {
     }
 }
 
-class ResizableImage : ImageView {
+class ResizableImage : AppCompatImageView {
     var floating: Boolean = false
     private val vibrator: Vibrator
 
@@ -305,7 +306,7 @@ class ResizableImage : ImageView {
     }
 }
 
-class ScreenPlaceholder : ImageView {
+class ScreenPlaceholder : AppCompatImageView {
 
     constructor(context: Context) : super(context) {
         setMeasuredDimension(160, 144)

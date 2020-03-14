@@ -1,21 +1,27 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto -fuse-ld=lld")
 
 set(LIBTYPE STATIC)
-set(ALSOFT_NO_QT5)
+set(ALSOFT_UTILS OFF)
+set(ALSOFT_EXAMPLES OFF)
+set(ALSOFT_CONFIG OFF)
+set(ALSOFT_HRTF_DEFS OFF)
+set(ALSOFT_AMBDEC OFF)
 set(OPENAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/openal-soft)
 add_subdirectory(${OPENAL_DIR} ./openal-soft)
 include_directories(${OPENAL_DIR}/include)
 
 set(PNG_SHARED OFF)
+set(PNG_TESTS OFF)
 set(LIBPNG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/libpng)
 add_subdirectory(${LIBPNG_DIR} ./libpng)
+configure_file(${LIBPNG_DIR}/scripts/pnglibconf.h.prebuilt ${LIBPNG_DIR}/pnglibconf.h COPYONLY)
 include_directories(${LIBPNG_DIR})
 
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
@@ -27,17 +33,11 @@ add_definitions(
         -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/"
 )
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto=full -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full -fuse-ld=lld -fprofile-instr-use=${GBCC_DIR}/default.profdata")
-
-#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto=full")
-#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto=full")
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto=full")
-#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -flto=full")
-#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto=full")
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -flto -fuse-ld=lld -fprofile-instr-use=${GBCC_DIR}/default.profdata")
 
 add_library(gbcc SHARED
             gbcc.cpp
