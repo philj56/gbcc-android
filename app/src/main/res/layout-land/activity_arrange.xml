@@ -144,10 +144,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
+        android:contentDescription="@string/dpad_description"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_button_dpad"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

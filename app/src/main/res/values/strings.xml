@@ -9,7 +9,8 @@
     <!-- GLActivity -->
     <string name="a_button_description">A</string>
     <string name="b_button_description">B</string>
-    <string name="start_button_description">Start</string>;q
+    <string name="dpad_description">Dpad</string>
+    <string name="start_button_description">Start</string>
     <string name="select_button_description">Select</string>
 
     <!-- SettingsActivity -->
