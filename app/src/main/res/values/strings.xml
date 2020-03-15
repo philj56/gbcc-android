@@ -14,6 +14,7 @@
     <string name="select_button_description">Select</string>
 
     <!-- SettingsActivity -->
+    <string name="settings_title">Settings</string>
     <string name="settings_fps">Show FPS counter</string>
     <string name="settings_auto_resume">Auto-resume</string>
 
@@ -43,6 +44,7 @@
     <string name="settings_color_teal">Teal</string>
 
     <string name="settings_arrange">Rearrange Layout</string>
+    <string name="settings_licenses">Licenses</string>
 
     <!-- Arrange Activity -->
     <string name="size_title">Button Sizes</string>
@@ -51,6 +53,9 @@
     <string name="dpad_size">Dpad</string>
     <string name="reset_sizes">Reset Sizes</string>
     <string name="reset_layout">Reset Layout</string>
+
+    <!-- License Activity -->
+    <string name="license_title">Licenses</string>
 
     <!-- Messages -->
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>

@@ -22,9 +22,15 @@
 		<activity android:name=".GLActivity"
 			android:parentActivityName="MainActivity"/>
 		<activity android:name=".SettingsActivity"
-			android:parentActivityName="MainActivity"/>
+			android:parentActivityName="MainActivity"
+            android:label="@string/settings_title"/>
 		<activity android:name=".ArrangeActivity"
 			android:parentActivityName=".SettingsActivity"/>
+        <activity android:name=".LicenseListActivity"
+            android:parentActivityName=".SettingsActivity"
+            android:label="@string/license_title"/>
+        <activity android:name=".LicenseActivity"
+            android:parentActivityName=".LicenseListActivity"/>
 		<activity android:name=".MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
