@@ -138,6 +138,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	pthread_join(emu_thread, nullptr);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);
+	gbcc_menu_destroy(&gbc);
 	free(fname);
 }
 
