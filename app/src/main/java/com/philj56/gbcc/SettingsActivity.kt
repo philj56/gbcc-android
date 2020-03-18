@@ -3,8 +3,10 @@ package com.philj56.gbcc
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.text.InputType
 import android.util.AttributeSet
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 
@@ -25,6 +27,12 @@ class SettingsActivity : AppCompatActivity() {
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        val turbo = preferenceManager.findPreference<EditTextPreference>("turbo_speed")
+        turbo?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            editText.selectAll();
+        }
     }
 }
 

@@ -3,7 +3,7 @@
     <string-array name="shader_names_array">
         <item>@string/settings_shader_nothing</item>
         <item>@string/settings_shader_color_correct</item>
-        <item>@string/settings_shader_sub_pixel</item>
+        <item>@string/settings_shader_subpixel</item>
         <item>@string/settings_shader_dot_matrix</item>
     </string-array>
 

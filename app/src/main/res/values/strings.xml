@@ -15,13 +15,19 @@
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
-    <string name="settings_fps">Show FPS counter</string>
     <string name="settings_auto_resume">Auto-resume</string>
+    <string name="settings_auto_save">Auto-save</string>
+    <string name="settings_frame_blend">Frame-blending</string>
+    <string name="settings_turbo_speed">Turbo limit</string>
+    <string name="settings_vsync">Vsync</string>
+    <string name="settings_interlacing">Interlacing</string>
+    <string name="settings_fps">Show FPS counter</string>
 
-    <string name="settings_shader">Shader</string>
+    <string name="settings_shader_gbc">GBC Shader</string>
+    <string name="settings_shader_dmg">DMG Shader</string>
     <string name="settings_shader_nothing">Nothing</string>
     <string name="settings_shader_color_correct">Colour Correct</string>
-    <string name="settings_shader_sub_pixel">Sub-pixel</string>
+    <string name="settings_shader_subpixel">Subpixel</string>
     <string name="settings_shader_dot_matrix">Dot Matrix</string>
 
     <string name="settings_orientation">Screen Orientation</string>

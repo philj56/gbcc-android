@@ -12,15 +12,53 @@
     <SwitchPreference
         app:defaultValue="false"
         app:iconSpaceReserved="false"
+        app:key="auto_save"
+        app:title="@string/settings_auto_save" />
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="frame_blend"
+        app:title="@string/settings_frame_blend" />
+
+    <EditTextPreference
+        app:defaultValue="0"
+        app:iconSpaceReserved="false"
+        app:key="turbo_speed"
+        app:title="@string/settings_turbo_speed" />
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="vsync"
+        app:title="@string/settings_vsync" />
+
+    <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="interlacing"
+        app:title="@string/settings_interlacing" />
+
+    <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
         app:key="show_fps"
         app:title="@string/settings_fps" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="Subpixel"
+        android:defaultValue="@string/settings_shader_dot_matrix"
         android:entries="@array/shader_names_array"
         android:entryValues="@array/shader_values_array"
-        android:key="shader"
-        android:title="@string/settings_shader"
+        android:key="shader_dmg"
+        android:title="@string/settings_shader_dmg"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        android:defaultValue="@string/settings_shader_subpixel"
+        android:entries="@array/shader_names_array"
+        android:entryValues="@array/shader_values_array"
+        android:key="shader_gbc"
+        android:title="@string/settings_shader_gbc"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference

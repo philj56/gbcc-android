@@ -28,18 +28,46 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	jclass prefsClass = env->GetObjectClass(prefs);
 
 	id = env->GetMethodID(prefsClass, "getBoolean", "(Ljava/lang/String;Z)Z");
+	arg = env->NewStringUTF("auto_save");
+	gbc.autosave = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
+	arg = env->NewStringUTF("frame_blend");
+	gbc.window.frame_blending = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
+	arg = env->NewStringUTF("vsync");
+	gbc.core.sync_to_video = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
+	arg = env->NewStringUTF("interlacing");
+	gbc.window.interlacing = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("show_fps");
 	gbc.window.fps.show = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 
-
 	id = env->GetMethodID(prefsClass, "getString", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
-	arg = env->NewStringUTF("shader");
+	arg = env->NewStringUTF("turbo_speed");
+	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
+	if (ret != NULL) {
+		const char *tmp = env->GetStringUTFChars(ret, nullptr);
+		gbc.turbo_speed = atof(tmp);
+		env->ReleaseStringUTFChars(ret, tmp);
+	}
+	env->DeleteLocalRef(arg);
+
+	if (gbc.core.mode == GBC) {
+		arg = env->NewStringUTF("shader_gbc");
+	} else {
+		arg = env->NewStringUTF("shader_dmg");
+	}
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 
 	const char *shader_name;
 	if (ret == NULL) {
-		shader_name = "Subpixel";
+		if (gbc.core.mode == GBC) {
+			shader_name = "Subpixel";
+		} else {
+			shader_name = "Dot Matrix";
+		}
 	} else {
 		shader_name = env->GetStringUTFChars(ret, nullptr);
 	}
@@ -139,6 +167,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);
 	gbcc_menu_destroy(&gbc);
+	gbcc_window_deinitialise(&gbc);
 	free(fname);
 }
 
