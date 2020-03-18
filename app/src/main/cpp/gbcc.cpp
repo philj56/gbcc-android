@@ -7,6 +7,7 @@
 #include <cmath>
 #include <android/log.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 extern "C" {
 #pragma GCC visibility push(hidden)
@@ -163,6 +164,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	jobject obj/* this */) {
 
 	gbc.quit = true;
+	sem_post(&gbc.core.ppu.vsync_semaphore);
 	pthread_join(emu_thread, nullptr);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);

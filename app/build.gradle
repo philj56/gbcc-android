@@ -35,10 +35,7 @@ android {
 			minifyEnabled = true
 		}
 		debug {
-			proguardFiles getDefaultProguardFile(
-					'proguard-android-optimize.txt'),
-					'proguard-rules.pro'
-			minifyEnabled = true
+			minifyEnabled = false
         }
 	}
 	externalNativeBuild {
