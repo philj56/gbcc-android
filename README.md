@@ -5,6 +5,8 @@ on accuracy. See the [main repository](https://github.com/philj56/gbcc) for
 details.
 
 ## Install
+You can get gbcc on [Google Play](https://play.google.com/store/apps/details?id=com.philj56.gbcc).
+
 ### Prebuilt packages ![](https://github.com/philj56/gbcc-android/workflows/Build%20APK/badge.svg)
 Debug packages are generated on each commit. To download them, navigate to the
 [actions](https://github.com/philj56/gbcc-android/actions) tab (you'll need to
