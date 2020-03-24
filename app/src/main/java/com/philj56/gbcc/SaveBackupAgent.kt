@@ -64,13 +64,17 @@ class SaveBackupAgent : BackupAgent() {
         mtime: Long
     ) {
         if (data != null && destination != null) {
-            destination.outputStream().use {output ->
-                val buffer = ByteArray(size.toInt())
-                ParcelFileDescriptor.AutoCloseInputStream(data).use {
-                    it.read(buffer, 0, size.toInt())
+            when(type) {
+                TYPE_DIRECTORY -> destination.mkdirs()
+                TYPE_FILE -> destination.outputStream().use { output ->
+                    val buffer = ByteArray(size.toInt())
+                    ParcelFileDescriptor.AutoCloseInputStream(data).use {
+                        it.read(buffer, 0, size.toInt())
+                    }
+                    output.write(buffer)
                 }
-                output.write(buffer)
             }
+
             if (destination.extension == "zip") {
                 val zip = ZipInputStream(destination.inputStream())
                 var entry: ZipEntry

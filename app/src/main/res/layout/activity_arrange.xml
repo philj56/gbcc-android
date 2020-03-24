@@ -241,6 +241,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:labelFor="@id/abSeekBar"
             android:text="@string/a_b_size"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="14sp" />
@@ -258,6 +259,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:labelFor="@id/startSelectSeekBar"
             android:text="@string/start_select_size"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="14sp" />
@@ -275,6 +277,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:labelFor="@id/dpadSeekBar"
             android:text="@string/dpad_size"
             android:textColor="@android:color/secondary_text_dark"
             android:textSize="14sp" />
