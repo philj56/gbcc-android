@@ -15,10 +15,7 @@ import android.app.backup.BackupDataInput
 import android.app.backup.BackupDataOutput
 import android.app.backup.FullBackupDataOutput
 import android.os.ParcelFileDescriptor
-import android.util.Log
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -66,12 +63,15 @@ class SaveBackupAgent : BackupAgent() {
         if (data != null && destination != null) {
             when(type) {
                 TYPE_DIRECTORY -> destination.mkdirs()
-                TYPE_FILE -> destination.outputStream().use { output ->
-                    val buffer = ByteArray(size.toInt())
-                    ParcelFileDescriptor.AutoCloseInputStream(data).use {
-                        it.read(buffer, 0, size.toInt())
+                TYPE_FILE -> {
+                    destination.parentFile?.mkdirs()
+                    destination.outputStream().use { output ->
+                        val buffer = ByteArray(size.toInt())
+                        ParcelFileDescriptor.AutoCloseInputStream(data).use {
+                            it.read(buffer, 0, size.toInt())
+                        }
+                        output.write(buffer)
                     }
-                    output.write(buffer)
                 }
             }
 
