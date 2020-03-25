@@ -28,9 +28,13 @@ extern "C" {
 #pragma GCC visibility pop
 }
 
+#define MAX_SHADER_LEN 32
+
 pthread_t emu_thread;
 struct gbcc gbc;
 char *fname;
+char shader[MAX_SHADER_LEN];
+
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -43,16 +47,16 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	gbc.autosave = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("frame_blend");
-	gbc.window.frame_blending = env->CallBooleanMethod(prefs, id, arg, false);
+	gbc.frame_blending = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("vsync");
 	gbc.core.sync_to_video = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("interlacing");
-	gbc.window.interlacing = env->CallBooleanMethod(prefs, id, arg, false);
+	gbc.interlacing = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("show_fps");
-	gbc.window.fps.show = env->CallBooleanMethod(prefs, id, arg, false);
+	gbc.show_fps = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 
 	id = env->GetMethodID(prefsClass, "getString", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
@@ -60,7 +64,7 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 	if (ret != NULL) {
 		const char *tmp = env->GetStringUTFChars(ret, nullptr);
-		gbc.turbo_speed = atof(tmp);
+		gbc.turbo_speed = static_cast<float>(atof(tmp));
 		env->ReleaseStringUTFChars(ret, tmp);
 	}
 	env->DeleteLocalRef(arg);
@@ -72,22 +76,18 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	}
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 
-	const char *shader_name;
 	if (ret == NULL) {
 		if (gbc.core.mode == GBC) {
-			shader_name = "Subpixel";
+			strncpy(shader, "Subpixel", MAX_SHADER_LEN);
 		} else {
-			shader_name = "Dot Matrix";
+			strncpy(shader, "Dot Matrix", MAX_SHADER_LEN);
 		}
 	} else {
-		shader_name = env->GetStringUTFChars(ret, nullptr);
+		const char *name = env->GetStringUTFChars(ret, nullptr);
+		strncpy(shader, name, MAX_SHADER_LEN);
+		env->ReleaseStringUTFChars(ret, name);
 	}
-	gbcc_window_use_shader(&gbc, shader_name);
 	env->DeleteLocalRef(arg);
-	if (ret != NULL) {
-		env->ReleaseStringUTFChars(ret, shader_name);
-	}
-
 	env->DeleteLocalRef(prefsClass);
 }
 
@@ -115,6 +115,7 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	gbcc_menu_init(&gbc);
 	if (gbc.core.initialised) {
 		update_preferences(env, prefs);
+		gbcc_window_use_shader(&gbc, shader);
 	}
 
 }
@@ -123,6 +124,10 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_updateWindow(
 	JNIEnv *env,
 	jobject obj) {
+	if (!gbc.window.initialised) {
+		gbcc_window_initialise(&gbc);
+		gbcc_window_use_shader(&gbc, shader);
+	}
 	if (gbc.core.initialised) {
 		gbcc_window_update(&gbc);
 	}

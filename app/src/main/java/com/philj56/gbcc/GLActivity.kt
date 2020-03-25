@@ -460,8 +460,6 @@ class MyGLRenderer(_context: Context) : GLSurfaceView.Renderer {
     private val context: Context = _context
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
-        // Set the background frame colour
-        GLES30.glClearColor(1.0f, 0.0f, 0.0f, 1.0f)
         initWindow(PreferenceManager.getDefaultSharedPreferences(context))
     }
 
