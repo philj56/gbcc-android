@@ -11,8 +11,8 @@ android {
 		applicationId "com.philj56.gbcc"
 		minSdkVersion 21
 		targetSdkVersion 29
-		versionCode 4
-		versionName "beta4"
+		versionCode 5
+		versionName "beta5"
 		archivesBaseName = "gbcc"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
@@ -71,4 +71,4 @@ task copyAssets(type: Copy) {
 	into "src/main/assets"
 }
 
-assemble.dependsOn copyAssets
+preBuild.dependsOn copyAssets

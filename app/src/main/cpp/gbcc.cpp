@@ -113,6 +113,7 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	jobject prefs) {
 	gbcc_window_initialise(&gbc);
 	gbcc_menu_init(&gbc);
+	gbcc_menu_update(&gbc);
 	if (gbc.core.initialised) {
 		update_preferences(env, prefs);
 		gbcc_window_use_shader(&gbc, shader);
@@ -183,7 +184,6 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	pthread_join(emu_thread, nullptr);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);
-	gbcc_menu_destroy(&gbc);
 	gbcc_window_deinitialise(&gbc);
 	free(fname);
 }
@@ -239,6 +239,32 @@ Java_com_philj56_gbcc_GLActivity_press(
 	}
 }
 
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_isPressed(
+	JNIEnv *env,
+	jobject obj/* this */,
+	jint key) {
+	switch (key) {
+		case 0:
+			return static_cast<jboolean>(gbc.core.keys.a);
+		case 1:
+			return static_cast<jboolean>(gbc.core.keys.b);
+		case 2:
+			return static_cast<jboolean>(gbc.core.keys.start);
+		case 3:
+			return static_cast<jboolean>(gbc.core.keys.select);
+		case 4:
+			return static_cast<jboolean>(gbc.core.keys.dpad.up);
+		case 5:
+			return static_cast<jboolean>(gbc.core.keys.dpad.down);
+		case 6:
+			return static_cast<jboolean>(gbc.core.keys.dpad.left);
+		case 7:
+			return static_cast<jboolean>(gbc.core.keys.dpad.right);
+		default:
+			return static_cast<jboolean>(false);
+	}
+}
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_saveState(

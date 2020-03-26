@@ -61,6 +61,7 @@ class GLActivity : Activity(), SensorEventListener {
     private external fun loadRom(file: String, prefs: SharedPreferences)
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
+    private external fun isPressed(button: Int) : Boolean
     private external fun toggleTurbo()
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
@@ -95,22 +96,45 @@ class GLActivity : Activity(), SensorEventListener {
         }
     }
 
-    private fun setButtonId(view: View, button: Int) {
-        view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
-            if (touchView != view) {
+    private fun setButtonIds(views: Array<View>, buttons: Array<Int>) {
+        fun inBounds(view: View, x: Int, y: Int): Boolean {
+            val rect = Rect();
+            val location = IntArray(2)
+            view.getDrawingRect(rect)
+            view.getLocationOnScreen(location)
+            rect.offset(location[0], location[1])
+            return rect.contains(x, y)
+        }
+        views.forEachIndexed { index, view ->
+            view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
+                if (touchView != view) {
+                    return@OnTouchListener false
+                }
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        press(buttons[index], true)
+                        vibrate(10)
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        press(buttons[index], false)
+                    }
+                    MotionEvent.ACTION_MOVE -> run {
+                        val x = motionEvent.rawX.toInt()
+                        val y = motionEvent.rawY.toInt()
+                        views.forEachIndexed { index2, view2 ->
+                            if (view2 != view) {
+                                val press = inBounds(view2, x, y)
+                                if (press && !isPressed(buttons[index2])) {
+                                    vibrate(10)
+                                }
+                                press(buttons[index2], press)
+                            }
+                        }
+                    }
+                }
                 return@OnTouchListener false
-            }
-            when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    press(button, true)
-                    vibrate(10)
-                }
-                MotionEvent.ACTION_UP -> {
-                    press(button, false)
-                }
-            }
-            return@OnTouchListener false
-        })
+            })
+        }
     }
 
     private fun updateLayout(gbc: Boolean) {
@@ -228,10 +252,8 @@ class GLActivity : Activity(), SensorEventListener {
             resume = resume || savedInstanceState.getBoolean("resume")
         }
 
-        setButtonId(buttonA, 0)
-        setButtonId(buttonB, 1)
-        setButtonId(buttonStart, 2)
-        setButtonId(buttonSelect, 3)
+        setButtonIds(arrayOf(buttonA, buttonB), arrayOf(0, 1))
+        setButtonIds(arrayOf(buttonStart, buttonSelect), arrayOf(2, 3))
 
         dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {
