@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
             setTheme(R.style.AppTheme)
         }
         super.onCreate(savedInstanceState)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         baseDir = getExternalFilesDir(null) ?: filesDir
         currentDir = baseDir
         setContentView(R.layout.activity_main)
