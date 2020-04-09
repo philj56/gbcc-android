@@ -28,6 +28,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import java.io.File
@@ -49,6 +50,7 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var checkVibration: Runnable
     private lateinit var filename: String
     private var resume = false
+    private var loadedSuccessfully = false
     private var dpadState = 0
 
     private lateinit var buttonA : ImageButton
@@ -58,7 +60,8 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var dpad : View
 
     external fun toggleMenu(view: View)
-    private external fun loadRom(file: String, prefs: SharedPreferences)
+    private external fun loadRom(file: String, prefs: SharedPreferences): Boolean
+    private external fun getErrorMessage(): String
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
     private external fun isPressed(button: Int) : Boolean
@@ -342,7 +345,15 @@ class GLActivity : Activity(), SensorEventListener {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
-        loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
+        loadedSuccessfully = loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
+        if (!loadedSuccessfully) {
+            Toast.makeText(this,
+                "Error loading ROM:\n" + getErrorMessage().trim(),
+                Toast.LENGTH_SHORT
+            ).show()
+            finish()
+            return
+        }
         if (resume) {
             loadState(autoSaveState)
             resume = false
@@ -358,6 +369,9 @@ class GLActivity : Activity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
+        if (!loadedSuccessfully) {
+            return
+        }
         sensorManager.unregisterListener(this)
         handler.removeCallbacks(checkVibration)
         saveState(autoSaveState)

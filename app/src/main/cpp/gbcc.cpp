@@ -145,7 +145,7 @@ Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
 	gbc.window.height = height;
 }
 
-extern "C" JNIEXPORT void JNICALL
+extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
         JNIEnv *env,
         jobject obj,/* this */
@@ -161,6 +161,10 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 
 	gbcc_audio_initialise(&gbc);
 	gbcc_initialise(&gbc.core, fname);
+	if (!gbc.core.initialised) {
+		/* Something went wrong during initialisation */
+		return static_cast<jboolean>(false);
+	}
 	gbc.quit = false;
 	gbc.has_focus = true;
 
@@ -172,6 +176,14 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		gbc.load_state = 10;
 	}
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
+	return static_cast<jboolean>(true);
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_philj56_gbcc_GLActivity_getErrorMessage(
+		JNIEnv *env,
+		jobject obj/* this */) {
+	return env->NewStringUTF(gbc.core.error_msg);
 }
 
 extern "C" JNIEXPORT void JNICALL
