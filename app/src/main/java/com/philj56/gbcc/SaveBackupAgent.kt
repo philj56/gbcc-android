@@ -50,6 +50,14 @@ class SaveBackupAgent : BackupAgent() {
         }
         zip.close()
         fullBackupFile(zipfile, data)
+
+        // Backup shared prefs
+        val prefs = filesDir.resolve("../shared_prefs")
+        if (prefs.exists()) {
+            prefs.listFiles()?.forEach {
+                fullBackupFile(it, data)
+            }
+        }
     }
 
     override fun onRestoreFile(
