@@ -5,6 +5,9 @@
     <string name="directory_tree">Files<xliff:g>%1$s</xliff:g></string>
     <string name="import_rom">Import</string>
     <string name="settings">Settings</string>
+    <string name="create_folder">Create Folder</string>
+    <string name="create_folder_hint">Folder name</string>
+    <string name="delete">Delete</string>
 
     <!-- GLActivity -->
     <string name="a_button_description">A</string>
@@ -64,8 +67,10 @@
     <string name="license_title">Licenses</string>
 
     <!-- Messages -->
+    <string name="message_importing">Importing <xliff:g>%1$d</xliff:g> items</string>
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
     <string name="message_failed_name">Failed to retrieve file name</string>
+    <string name="message_failed_create_folder">Failed to create folder <xliff:g>%1$s</xliff:g></string>
     <string name="message_repeat_back">Press BACK again to exit</string>
 
     <!-- Button offsets -->

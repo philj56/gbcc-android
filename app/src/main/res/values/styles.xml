@@ -14,15 +14,27 @@
         <item name="android:textDirection">locale</item>
     </style>
 
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppThemeDark" parent="AppTheme">
         <item name="android:statusBarColor">#000000</item>
         <item name="toolbarStyle">@style/ToolbarDark</item>
     </style>
 
+    <style name="AppThemeDark.NoActionBar" parent="AppThemeDark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!-- Colour the toolbar correctly. -->
-    <style name="Toolbar" parent="AppTheme">
+    <style name="Toolbar">
         <item name="android:minHeight">?actionBarSize</item>
         <item name="android:background">@color/colorPrimary</item>
+        <item name="titleTextAppearance">@style/TextAppearance.AppCompat.Title</item>
+        <item name="titleMarginStart">16dp</item>
     </style>
 
     <style name="ToolbarDark" parent="Toolbar">
@@ -36,6 +48,8 @@
 
     <style name="SettingsThemeDark" parent="AppThemeDark">
         <item name="preferenceTheme">@style/WidePreferenceThemeOverlay</item>
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
     </style>
 
     <style name="WidePreferenceThemeOverlay" parent="PreferenceThemeOverlay">

@@ -8,6 +8,8 @@
     <color name="colorPrimaryNight">@color/gbcScreenBorder</color>
 
     <!-- Colors for specific purposes -->
+    <color name="fileSelected">@color/colorPrimary</color>
+    <color name="fileToolbar">#1A2225</color>
     <color name="dmgButton">#9E265A</color>
     <color name="dmgScreenBorder">#918E92</color>
     <color name="dmgBackground">#C4BEBB</color>

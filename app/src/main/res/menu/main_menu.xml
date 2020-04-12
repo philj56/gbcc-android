@@ -6,14 +6,18 @@
         android:id="@+id/importItem"
         android:icon="@drawable/ic_library_add_white_24dp"
         android:title="@string/import_rom"
-        android:layout_centerVertical="true"
-        app:showAsAction="ifRoom"
-        app:maxButtonHeight="?attr/actionBarSize"/>
+        app:maxButtonHeight="?attr/actionBarSize"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/folderItem"
+        android:icon="@drawable/ic_create_new_folder_white_24dp"
+        android:title="@string/create_folder"
+        app:maxButtonHeight="?attr/actionBarSize"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/settingsItem"
         android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings"
-        android:layout_centerVertical="true"
-        app:showAsAction="ifRoom"
-        app:maxButtonHeight="?attr/actionBarSize"/>
+        app:maxButtonHeight="?attr/actionBarSize"
+        app:showAsAction="always" />
 </menu>
