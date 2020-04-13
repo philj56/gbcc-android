@@ -41,6 +41,7 @@
         <item name="android:background">@color/colorPrimaryNight</item>
     </style>
 
+
     <!-- Settings screen theme. -->
     <style name="SettingsTheme" parent="AppTheme">
         <item name="preferenceTheme">@style/WidePreferenceThemeOverlay</item>

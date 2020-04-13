@@ -3,12 +3,14 @@
     <!-- Generic system colors -->
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">@color/gbcTeal</color>
-    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnPrimary">#DEFFFFFF</color>
     <color name="colorAccent">@color/gbcBerry</color>
     <color name="colorPrimaryNight">@color/gbcScreenBorder</color>
 
     <!-- Colors for specific purposes -->
     <color name="fileSelected">@color/colorPrimary</color>
+    <color name="fileDefault">#00000000</color>
+    <color name="fileDivider">#33000000</color>
     <color name="fileToolbar">#1A2225</color>
     <color name="dmgButton">#9E265A</color>
     <color name="dmgScreenBorder">#918E92</color>

@@ -85,6 +85,14 @@
         android:title="@string/settings_color"
         app:iconSpaceReserved="false" />
 
+    <com.philj56.gbcc.SummaryListPreference
+        android:defaultValue="auto"
+        android:entries="@array/night_mode_names_array"
+        android:entryValues="@array/night_mode_values_array"
+        android:key="night_mode"
+        android:title="@string/settings_night_mode"
+        app:iconSpaceReserved="false" />
+
     <Preference
         android:key="arrange"
         android:title="@string/settings_arrange"

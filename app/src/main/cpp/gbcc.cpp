@@ -33,6 +33,7 @@ extern "C" {
 pthread_t emu_thread;
 struct gbcc gbc;
 char *fname;
+char *save_dir;
 char shader[MAX_SHADER_LEN];
 
 
@@ -150,14 +151,21 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
         JNIEnv *env,
         jobject obj,/* this */
         jstring file,
+        jstring saveDir,
         jobject prefs) {
 
 	const char *string = env->GetStringUTFChars(file, nullptr);
 
-	fname = (char *)malloc(strlen(string) + 1);
-	memcpy(fname, string, strlen(string));
-	fname[strlen(string)] = '\0';
+	size_t name_len = strlen(string) + 1;
+	fname = (char *)malloc(name_len);
+	memcpy(fname, string, name_len);
 	env->ReleaseStringUTFChars(file, string);
+
+	string = env->GetStringUTFChars(saveDir, nullptr);
+	name_len = strlen(string) + 1;
+	save_dir = (char *)malloc(name_len);
+	memcpy(save_dir, string, name_len);
+	env->ReleaseStringUTFChars(saveDir, string);
 
 	gbcc_audio_initialise(&gbc);
 	gbcc_initialise(&gbc.core, fname);
@@ -167,6 +175,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	}
 	gbc.quit = false;
 	gbc.has_focus = true;
+	gbc.save_directory = save_dir;
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	if (gbc.window.initialised) {
@@ -198,6 +207,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	gbcc_audio_destroy(&gbc);
 	gbcc_window_deinitialise(&gbc);
 	free(fname);
+	free(save_dir);
 }
 
 extern "C" JNIEXPORT void JNICALL

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
@@ -11,14 +12,31 @@
         android:id="@+id/mainToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarTheme" />
+        android:theme="?attr/actionBarTheme"
+        app:popupTheme="@style/AppThemeDayNight"
+        app:title="@string/app_name" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fileToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/fileToolbar"
         android:theme="?attr/actionBarTheme"
-        android:background="@color/fileToolbar"/>
+        android:visibility="gone"
+        app:popupTheme="@style/AppThemeDayNight"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+        app:title="@string/select_items" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/moveToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fileToolbar"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="gone"
+        app:popupTheme="@style/AppThemeDayNight"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+        app:title="@string/select_destination" />
 
     <TextView
         android:id="@+id/directoryTree"
@@ -33,7 +51,6 @@
     <ListView
         android:id="@+id/fileList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </ListView>
+        android:layout_height="match_parent"
+        android:divider="@null" />
 </LinearLayout>

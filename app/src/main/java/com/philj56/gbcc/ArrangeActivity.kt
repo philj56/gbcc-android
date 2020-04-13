@@ -20,6 +20,8 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.ImageView
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -29,7 +31,7 @@ import kotlin.math.min
 import kotlin.math.pow
 
 
-class ArrangeActivity : Activity() {
+class ArrangeActivity : AppCompatActivity() {
     private val seekBarListener = SeekBarListener()
     private val scaleFactorRange : Float = 2f
 
@@ -134,6 +136,8 @@ class ArrangeActivity : Activity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppThemeDayNight_NoActionBar)
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         super.onCreate(savedInstanceState)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)

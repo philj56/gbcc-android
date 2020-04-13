@@ -37,21 +37,21 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.min
 
-
 private const val autoSaveState: Int = 10
 
 class GLActivity : Activity(), SensorEventListener {
 
     private val handler = Handler()
     private lateinit var gestureDetector : GestureDetector
-    private lateinit var sensorManager: SensorManager
-    private lateinit var accelerometer: Sensor
-    private lateinit var vibrator: Vibrator
-    private lateinit var checkVibration: Runnable
-    private lateinit var filename: String
+    private lateinit var sensorManager : SensorManager
+    private lateinit var accelerometer : Sensor
+    private lateinit var vibrator : Vibrator
+    private lateinit var checkVibration : Runnable
+    private lateinit var filename : String
     private var resume = false
     private var loadedSuccessfully = false
     private var dpadState = 0
+    private lateinit var saveDir : String
 
     private lateinit var buttonA : ImageButton
     private lateinit var buttonB : ImageButton
@@ -60,7 +60,7 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var dpad : View
 
     external fun toggleMenu(view: View)
-    private external fun loadRom(file: String, prefs: SharedPreferences): Boolean
+    private external fun loadRom(file: String, saveDir: String, prefs: SharedPreferences): Boolean
     private external fun getErrorMessage(): String
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
@@ -101,7 +101,7 @@ class GLActivity : Activity(), SensorEventListener {
 
     private fun setButtonIds(views: Array<View>, buttons: Array<Int>) {
         fun inBounds(view: View, x: Int, y: Int): Boolean {
-            val rect = Rect();
+            val rect = Rect()
             val location = IntArray(2)
             view.getDrawingRect(rect)
             view.getLocationOnScreen(location)
@@ -217,6 +217,9 @@ class GLActivity : Activity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val save = filesDir.resolve("saves")
+        save.mkdirs()
+        saveDir = save.absolutePath
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -345,7 +348,7 @@ class GLActivity : Activity(), SensorEventListener {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
-        loadedSuccessfully = loadRom(filename, PreferenceManager.getDefaultSharedPreferences(this))
+        loadedSuccessfully = loadRom(filename, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
         if (!loadedSuccessfully) {
             Toast.makeText(this,
                 "Error loading ROM:\n" + getErrorMessage().trim(),

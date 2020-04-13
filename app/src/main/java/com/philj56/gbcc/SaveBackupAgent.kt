@@ -37,11 +37,11 @@ class SaveBackupAgent : BackupAgent() {
     }
 
     override fun onFullBackup(data: FullBackupDataOutput?) {
-        val zipfile = File(getExternalFilesDir(null), "saves.zip")
+        val zipfile = filesDir.resolve("saves.zip")
         val zip = ZipOutputStream(FileOutputStream(zipfile))
         zip.setMethod(ZipOutputStream.DEFLATED)
         zip.setLevel(9)
-        getExternalFilesDir(null)?.walk()?.forEach {file ->
+        filesDir.resolve("saves").walk().forEach { file ->
             if (file.extension == "sav") {
                 zip.putNextEntry(ZipEntry(file.name))
                 file.inputStream().copyTo(zip)
@@ -85,9 +85,10 @@ class SaveBackupAgent : BackupAgent() {
 
             if (destination.extension == "zip") {
                 val zip = ZipInputStream(destination.inputStream())
+                val saveDir = filesDir.resolve("saves")
                 var entry: ZipEntry
                 while (zip.nextEntry.also { entry = it } != null) {
-                    val file = File(getExternalFilesDir(null), entry.name)
+                    val file = saveDir.resolve(entry.name)
                     file.outputStream().use { zip.copyTo(it) }
                     zip.closeEntry()
                 }

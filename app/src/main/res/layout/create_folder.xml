@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:hint="@string/create_folder_hint"
-        android:inputType="textPersonName" />
+        android:inputType="text" />
 
 </FrameLayout>
