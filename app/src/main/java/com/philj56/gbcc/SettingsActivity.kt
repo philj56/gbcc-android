@@ -22,12 +22,12 @@ import androidx.preference.PreferenceFragmentCompat
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.SettingsThemeDayNight)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
     }
 }
 
+@Suppress("unused")
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)

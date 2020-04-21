@@ -4,7 +4,7 @@
     android:padding="0dp">
 
     <SwitchPreference
-        app:defaultValue="false"
+        app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="auto_resume"
         app:title="@string/settings_auto_resume" />
@@ -78,7 +78,7 @@
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="@string/gbcTeal"
+        android:defaultValue="Teal"
         android:entries="@array/color_names_array"
         android:entryValues="@array/color_values_array"
         android:key="color"

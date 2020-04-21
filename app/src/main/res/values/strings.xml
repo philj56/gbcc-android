@@ -80,7 +80,10 @@
     <string name="license_title">Licenses</string>
 
     <!-- Messages -->
-    <string name="message_importing">Importing <xliff:g>%1$d</xliff:g> items</string>
+    <plurals name="message_importing">
+        <item quantity="one">Importing %d item</item>
+        <item quantity="other">Importing %d items</item>
+    </plurals>
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
     <string name="message_no_export">No saves to export</string>
     <plurals name="message_export_complete">

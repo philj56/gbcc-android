@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
         )
-        setTheme(R.style.AppThemeDayNight_NoActionBar)
         super.onCreate(savedInstanceState)
         baseDir = getExternalFilesDir(null) ?: filesDir
         currentDir = baseDir
@@ -182,7 +181,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         supportFragmentManager.fragments.forEach {
-            Log.d("Frag", it.toString())
             if (it is DialogFragment) {
                 it.dismissAllowingStateLoss()
             }
@@ -355,7 +353,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun importFile(uri: Uri) {
-        Log.d("File", uri.toString())
         val iStream = contentResolver.openInputStream(uri)
         if (iStream == null) {
             runOnUiThread {
@@ -415,7 +412,7 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             Toast.makeText(
                                 baseContext,
-                                getString(R.string.message_importing).format(clipData.itemCount),
+                                resources.getQuantityString(R.plurals.message_importing, clipData.itemCount, clipData.itemCount),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

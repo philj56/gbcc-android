@@ -54,11 +54,11 @@
     </string-array>
 
     <string-array name="color_values_array">
-        <item>@string/gbcBerry</item>
-        <item>@string/gbcDandelion</item>
-        <item>@string/gbcGrape</item>
-        <item>@string/gbcKiwi</item>
-        <item>@string/gbcTeal</item>
+        <item>Berry</item>
+        <item>Dandelion</item>
+        <item>Grape</item>
+        <item>Kiwi</item>
+        <item>Teal</item>
     </string-array>
 
 

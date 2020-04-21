@@ -18,12 +18,13 @@
 		android:label="@string/app_name"
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
-		android:theme="@style/AppTheme">
+		android:theme="@style/AppThemeDayNight">
 		<activity android:name=".GLActivity"
 			android:parentActivityName="MainActivity"/>
 		<activity android:name=".SettingsActivity"
 			android:parentActivityName="MainActivity"
-            android:label="@string/settings_title"/>
+            android:label="@string/settings_title"
+			android:theme="@style/SettingsThemeDayNight"/>
 		<activity android:name=".ArrangeActivity"
 			android:parentActivityName=".SettingsActivity"/>
         <activity android:name=".LicenseListActivity"
@@ -31,7 +32,8 @@
             android:label="@string/license_title"/>
         <activity android:name=".LicenseActivity"
             android:parentActivityName=".LicenseListActivity"/>
-		<activity android:name=".MainActivity">
+		<activity android:name=".MainActivity"
+			android:theme="@style/AppThemeDayNight.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

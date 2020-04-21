@@ -17,7 +17,6 @@ import java.io.File
 
 class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppThemeDayNight)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license)
         val name = intent.extras?.getString("file") ?: ""

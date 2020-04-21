@@ -10,7 +10,6 @@
 
 package com.philj56.gbcc
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -49,10 +48,17 @@ class ArrangeActivity : AppCompatActivity() {
 
     private fun updateLayout(gbc: Boolean) {
         val bgColor = when (gbc) {
-            true -> Color.parseColor(prefs.getString("color", getString(R.string.gbcTeal)))
-            false -> ContextCompat.getColor(this, R.color.dmgBackground)
+            true -> when (prefs.getString("color", "Teal")) {
+                "Berry" -> R.color.gbcBerry
+                "Dandelion" -> R.color.gbcDandelion
+                "Grape" -> R.color.gbcGrape
+                "Kiwi" -> R.color.gbcKiwi
+                "Teal" -> R.color.gbcTeal
+                else -> R.color.gbcTeal
+            }
+            false -> R.color.dmgBackground
         }
-        findViewById<View>(R.id.layout).setBackgroundColor(bgColor)
+        window.setBackgroundDrawableResource(bgColor)
 
         abSeekBar = findViewById(R.id.abSeekBar)
         startSelectSeekBar = findViewById(R.id.startSelectSeekBar)
@@ -136,7 +142,6 @@ class ArrangeActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppThemeDayNight_NoActionBar)
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         super.onCreate(savedInstanceState)
 

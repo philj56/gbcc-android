@@ -11,7 +11,6 @@
 package com.philj56.gbcc
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +21,6 @@ class LicenseListActivity : AppCompatActivity() {
     private lateinit var adapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppThemeDayNight)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license_list)
         adapter = ArrayAdapter<String>(this, R.layout.license_entry, R.id.licenseEntry, licenses)

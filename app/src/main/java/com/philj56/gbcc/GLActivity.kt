@@ -144,10 +144,17 @@ class GLActivity : Activity(), SensorEventListener {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         val bgColor = when (gbc) {
-            true -> Color.parseColor(prefs.getString("color", getString(R.string.gbcTeal)))
-            false -> ContextCompat.getColor(this, R.color.dmgBackground)
+            true -> when (prefs.getString("color", "Teal")) {
+                "Berry" -> R.color.gbcBerry
+                "Dandelion" -> R.color.gbcDandelion
+                "Grape" -> R.color.gbcGrape
+                "Kiwi" -> R.color.gbcKiwi
+                "Teal" -> R.color.gbcTeal
+                else -> R.color.gbcTeal
+            }
+            false -> R.color.dmgBackground
         }
-        findViewById<View>(R.id.layout).setBackgroundColor(bgColor)
+        window.setBackgroundDrawableResource(bgColor)
 
         if (!gbc) {
             val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
