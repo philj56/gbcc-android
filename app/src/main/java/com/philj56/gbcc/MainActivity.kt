@@ -87,6 +87,20 @@ class MainActivity : AppCompatActivity() {
         currentDir = baseDir
         setContentView(R.layout.activity_main)
 
+        // Check if the version has changed since last launch, and perform some setup if so
+        AsyncTask.execute {
+            val lastLaunchVersion = filesDir.resolve("lastLaunchVersion")
+            if (!lastLaunchVersion.exists()) {
+                lastLaunchVersion.createNewFile()
+                lastLaunchVersion.writeText("${BuildConfig.VERSION_CODE}\n")
+
+                getExternalFilesDir(null)?.resolve("Tutorial.gbc")?.outputStream()?.use {
+                    assets.open("Tutorial.gbc").copyTo(it)
+                }
+                runOnUiThread { updateFiles() }
+            }
+        }
+
         // Set up the toolbars
         mainToolbar.inflateMenu(R.menu.main_menu)
         mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
