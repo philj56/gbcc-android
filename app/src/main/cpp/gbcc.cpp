@@ -113,8 +113,7 @@ bool check_autoresume(JNIEnv *env, jobject prefs) {
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	JNIEnv *env,
-	jobject obj,
-	jobject prefs) {
+	jobject obj) {
 	gbcc_window_initialise(&gbc);
     gbcc_window_use_shader(&gbc, shader);
     gbcc_menu_init(&gbc);
@@ -147,7 +146,6 @@ Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
 	jobject obj,
 	jint width,
 	jint height) {
-	__android_log_print(ANDROID_LOG_DEBUG, "GBCC", "Resized to %dx%d", width, height);
 	gbc.window.width = width;
 	gbc.window.height = height;
 }

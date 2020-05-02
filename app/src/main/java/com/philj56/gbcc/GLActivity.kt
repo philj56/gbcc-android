@@ -15,14 +15,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
@@ -362,7 +359,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onResume() {
         super.onResume()
-        screen.onResume()
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -402,12 +398,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 )
             }
         }
+        screen.onResume()
     }
 
 
     override fun onPause() {
+        screen.onPause()
         if (!loadedSuccessfully) {
-            screen.onPause()
             super.onPause()
             return
         }
@@ -416,7 +413,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         saveState(autoSaveState)
         quit()
         resume = true
-        screen.onPause()
         super.onPause()
     }
 
@@ -543,7 +539,7 @@ class MyGLSurfaceView : GLSurfaceView {
             // Create an OpenGL ES 3.0 context
             setEGLContextClientVersion(3)
 
-            renderer = MyGLRenderer(context)
+            renderer = MyGLRenderer()
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(renderer)
@@ -600,12 +596,10 @@ class MyGLSurfaceView : GLSurfaceView {
     }
 }
 
-class MyGLRenderer(_context: Context) : GLSurfaceView.Renderer {
-
-    private val context: Context = _context
+class MyGLRenderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
-        initWindow(PreferenceManager.getDefaultSharedPreferences(context))
+        initWindow()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -617,7 +611,7 @@ class MyGLRenderer(_context: Context) : GLSurfaceView.Renderer {
         resizeWindow(width, height)
     }
 
-    private external fun initWindow(prefs: SharedPreferences)
+    private external fun initWindow()
     private external fun updateWindow()
     private external fun resizeWindow(width: Int, height: Int)
 
