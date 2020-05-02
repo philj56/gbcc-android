@@ -10,38 +10,52 @@
 
 package com.philj56.gbcc
 
-import android.app.Activity
+import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Color
+import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
 import android.util.AttributeSet
 import android.util.Log
+import android.util.Size
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
+import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.min
 
 private const val autoSaveState: Int = 10
+private const val REQUEST_CODE_PERMISSIONS = 10
 
-class GLActivity : Activity(), SensorEventListener {
+class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private val handler = Handler()
+    private val executor = Executors.newSingleThreadExecutor()
     private lateinit var gestureDetector : GestureDetector
     private lateinit var sensorManager : SensorManager
     private lateinit var accelerometer : Sensor
@@ -50,6 +64,7 @@ class GLActivity : Activity(), SensorEventListener {
     private lateinit var filename : String
     private var resume = false
     private var loadedSuccessfully = false
+    private var cameraPermissionRefused = false
     private var dpadState = 0
     private lateinit var saveDir : String
 
@@ -70,8 +85,11 @@ class GLActivity : Activity(), SensorEventListener {
     private external fun loadState(state: Int)
     private external fun checkVibrationFun(): Boolean
     private external fun updateAccelerometer(x: Float, y: Float)
+    private external fun updateCamera(array: ByteArray, width: Int, height: Int, rotation: Int, rowStride: Int)
+    private external fun useNullCamera()
     private external fun hasRumble(): Boolean
     private external fun hasAccelerometer(): Boolean
+    private external fun isCamera(): Boolean
 
 
     init {
@@ -344,6 +362,7 @@ class GLActivity : Activity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
+        screen.onResume()
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -374,12 +393,22 @@ class GLActivity : Activity(), SensorEventListener {
         if (hasAccelerometer()) {
             sensorManager.registerListener(this, accelerometer, 10000)
         }
+        if (isCamera()) {
+            if (checkCameraPermission()) {
+                startCamera()
+            } else if (!cameraPermissionRefused) {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.CAMERA), REQUEST_CODE_PERMISSIONS
+                )
+            }
+        }
     }
 
 
     override fun onPause() {
-        super.onPause()
         if (!loadedSuccessfully) {
+            screen.onPause()
+            super.onPause()
             return
         }
         sensorManager.unregisterListener(this)
@@ -387,6 +416,8 @@ class GLActivity : Activity(), SensorEventListener {
         saveState(autoSaveState)
         quit()
         resume = true
+        screen.onPause()
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -407,10 +438,28 @@ class GLActivity : Activity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (checkCameraPermission()) {
+                startCamera()
+            } else {
+                cameraPermissionRefused = true
+                useNullCamera()
+            }
+        }
+    }
+
+    private fun checkCameraPermission() = (ContextCompat.checkSelfPermission(baseContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+
     private fun checkFiles() {
         val filePath = filesDir
         assets.open("tileset.png").use { iStream ->
             val file = File("$filePath/tileset.png")
+            FileOutputStream(file).use { it.write(iStream.readBytes()) }
+        }
+        assets.open("camera.png").use { iStream ->
+            val file = File("$filePath/camera.png")
             FileOutputStream(file).use { it.write(iStream.readBytes()) }
         }
         assets.open("print.wav").use { iStream ->
@@ -424,6 +473,43 @@ class GLActivity : Activity(), SensorEventListener {
                 FileOutputStream(file).use { it.write(iStream.readBytes()) }
             }
         }
+    }
+
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+        cameraProviderFuture.addListener(Runnable {
+            val cameraProvider = cameraProviderFuture.get()
+
+            // I assume that 320x240 is available on every camera out there
+            // Though if it fails, the camera will still work
+            val targetResolution = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                Size(320, 240)
+            } else {
+                Size(240, 320)
+            }
+
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setTargetResolution(targetResolution)
+                .build()
+
+            imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
+                // Images are always in YUV_420_888 format, with Y as plane 0
+                // with a pixel stride of 1, so we can just grab the greyscale from here
+                val yplane = image.planes[0]
+                val arr = ByteArray(yplane.buffer.remaining())
+                yplane.buffer.get(arr)
+                updateCamera(arr, image.width, image.height, image.imageInfo.rotationDegrees, yplane.rowStride)
+                image.close()
+            })
+
+            val cameraSelector = CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .build()
+
+            cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+        }, ContextCompat.getMainExecutor(this))
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {
@@ -498,6 +584,19 @@ class MyGLSurfaceView : GLSurfaceView {
         }
 
         setMeasuredDimension(width, height)
+    }
+
+    override fun onPause() {
+        destroyWindow()
+        super.onPause()
+    }
+
+    private external fun destroyWindow()
+
+    companion object {
+        init {
+            System.loadLibrary("gbcc")
+        }
     }
 }
 

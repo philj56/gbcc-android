@@ -22,20 +22,23 @@
 extern "C" {
 #pragma GCC visibility push(hidden)
 	#include <gbcc.h>
-	#include <core.h>
+    #include <camera/camera.h>
+    #include <core.h>
 	#include <save.h>
-	#include <window.h>
+    #include <window.h>
 #pragma GCC visibility pop
 }
 
 #define MAX_SHADER_LEN 32
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-pthread_t emu_thread;
-struct gbcc gbc;
-char *fname;
-char *save_dir;
-char shader[MAX_SHADER_LEN];
-
+static pthread_t emu_thread;
+static struct gbcc gbc;
+static char *fname;
+static char *save_dir;
+static char shader[MAX_SHADER_LEN];
+static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -113,23 +116,26 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	jobject obj,
 	jobject prefs) {
 	gbcc_window_initialise(&gbc);
-	gbcc_menu_init(&gbc);
+    gbcc_window_use_shader(&gbc, shader);
+    gbcc_menu_init(&gbc);
 	gbcc_menu_update(&gbc);
-	if (gbc.core.initialised) {
-		update_preferences(env, prefs);
-		gbcc_window_use_shader(&gbc, shader);
-	}
+}
 
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
+        JNIEnv *env,
+        jobject obj) {
+    gbcc_menu_destroy(&gbc);
+    // Have to destroy the window manually, as the OpenGL context is likely to be gone by now
+    gbc.window.initialised = false;
+    gbcc_fontmap_destroy(&gbc.window.font);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_updateWindow(
 	JNIEnv *env,
 	jobject obj) {
-	if (!gbc.window.initialised) {
-		gbcc_window_initialise(&gbc);
-		gbcc_window_use_shader(&gbc, shader);
-	}
 	if (gbc.core.initialised) {
 		gbcc_window_update(&gbc);
 	}
@@ -171,6 +177,8 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	gbcc_initialise(&gbc.core, fname);
 	if (!gbc.core.initialised) {
 		/* Something went wrong during initialisation */
+		free(fname);
+		free(saveDir);
 		return static_cast<jboolean>(false);
 	}
 	gbc.quit = false;
@@ -178,9 +186,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	gbc.save_directory = save_dir;
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
-	if (gbc.window.initialised) {
-		update_preferences(env, prefs);
-	}
+	update_preferences(env, prefs);
 	if (check_autoresume(env, prefs)) {
 		gbc.load_state = 10;
 	}
@@ -205,7 +211,6 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	pthread_join(emu_thread, nullptr);
 	gbcc_free(&gbc.core);
 	gbcc_audio_destroy(&gbc);
-	gbcc_window_deinitialise(&gbc);
 	free(fname);
 	free(save_dir);
 }
@@ -338,4 +343,114 @@ Java_com_philj56_gbcc_GLActivity_hasAccelerometer(
 	JNIEnv *env,
 	jobject obj/* this */) {
 	return static_cast<jboolean>(gbc.core.cart.mbc.type == MBC7);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_isCamera(
+        JNIEnv *env,
+        jobject obj/* this */) {
+    return static_cast<jboolean>(gbc.core.cart.mbc.type == CAMERA);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_updateCamera(
+        JNIEnv *env,
+        jobject obj/* this */,
+        jbyteArray array,
+        jint width,
+        jint height,
+        jint rotation,
+        jint rowStride) {
+    jbyte *image = env->GetByteArrayElements(array, NULL);
+
+    // Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
+    int box_size = MIN(width, height) / 128 / 2 + 1;
+
+    // First we perform the horizontal blur
+    uint8_t *new_row = static_cast<uint8_t *>(calloc(width, 1));
+    for (int j = 0; j < height; j++) {
+        jbyte *row = &image[j * rowStride];
+        int sum = 0;
+        int div = 0;
+
+        for (int i = -box_size; i < width; i++) {
+            if (i < width - box_size) {
+                sum += static_cast<uint8_t>(row[i + box_size]);
+            } else {
+                div--;
+            }
+            if (i >= box_size) {
+                sum -= static_cast<uint8_t>(row[i - box_size]);
+            } else {
+                div++;
+            }
+
+            if (i >= 0) {
+                new_row[i] = static_cast<uint8_t>(sum / div);
+            }
+        }
+        memcpy(row, new_row, width);
+    }
+    free(new_row);
+
+    // Then the vertical blur
+    uint8_t *new_col = static_cast<uint8_t *>(calloc(height, 1));
+    for (int i = 0; i < width; i++) {
+        int sum = 0;
+        int div = 0;
+
+        for (int j = -box_size; j < height; j++) {
+            if (j < height - box_size) {
+                sum += static_cast<uint8_t>(image[(j + box_size) * rowStride + i]);
+            } else {
+                div--;
+            }
+            if (j >= box_size) {
+                sum -= static_cast<uint8_t>(image[(j - box_size) * rowStride + i]);
+            } else {
+                div++;
+            }
+
+            if (i >= 0) {
+                new_col[j] = static_cast<uint8_t>(sum / div);
+            }
+        }
+        for (int j = 0; j < height; j++) {
+            image[j * rowStride + i] = new_col[j];
+        }
+    }
+    free(new_col);
+
+    // Then we nearest-neighbour downscale and rotate
+    double scale = MIN(height, width) / 128.0;
+    for (int j = 0; j < 128; j++) {
+        for (int i = 0; i < 128; i++) {
+            int src_idx = (int)(j * scale) * rowStride + (int)(i * scale);
+            int dst_idx;
+            if (rotation == 90) {
+                dst_idx = i * 128 + (127 - j);
+            } else if (rotation == 180) {
+                dst_idx = (127 - j) * 128 + (127 - i);
+            } else if (rotation == 270) {
+                dst_idx = (127 - i) * 128 + j;
+            } else {
+                dst_idx = j * 128 + i;
+            }
+
+            camera_image[dst_idx] = static_cast<uint8_t>(image[src_idx]);
+        }
+    }
+
+    env->ReleaseByteArrayElements(array, image, JNI_ABORT);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_useNullCamera(
+        JNIEnv *env,
+        jobject obj/* this */) {
+    gbcc_camera_default_image(camera_image);
+}
+
+void gbcc_camera_platform_capture_image(uint8_t image[GB_CAMERA_SENSOR_SIZE]) {
+	memcpy(image, camera_image, GB_CAMERA_SENSOR_SIZE);
 }

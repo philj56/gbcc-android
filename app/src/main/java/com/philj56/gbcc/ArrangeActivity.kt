@@ -13,7 +13,6 @@ package com.philj56.gbcc
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.*
 import android.util.AttributeSet
 import android.view.*

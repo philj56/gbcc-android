@@ -1,6 +1,7 @@
 #version 300 es
 
 precision highp float;
+precision highp sampler3D;
 
 in vec2 Texcoord;
 

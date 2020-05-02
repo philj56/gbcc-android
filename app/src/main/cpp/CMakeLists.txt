@@ -41,7 +41,8 @@ include_directories(${GBCC_DIR}/src)
 add_definitions(
         -DPRINTER_SOUND_PATH="/data/user/0/com.philj56.gbcc/files/print.wav"
         -DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
-        -DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/"
+		-DCAMERA_PATH="/data/user/0/com.philj56.gbcc/files/camera.png"
+		-DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/"
 )
 
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")
@@ -56,7 +57,8 @@ add_library(gbcc SHARED
             ${GBCC_DIR}/src/args.c
             ${GBCC_DIR}/src/audio.c
             ${GBCC_DIR}/src/bit_utils.c
-            ${GBCC_DIR}/src/colour.c
+			${GBCC_DIR}/src/camera/camera.c
+			${GBCC_DIR}/src/colour.c
             ${GBCC_DIR}/src/config.c
             ${GBCC_DIR}/src/cpu.c
             ${GBCC_DIR}/src/debug.c

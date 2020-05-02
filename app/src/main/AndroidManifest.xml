@@ -6,8 +6,14 @@
 		android:glEsVersion="0x00030000"
 		android:required="true" />
 
+	<uses-feature
+		android:name="android.hardware.camera"
+		android:required="false" />
+
 	<uses-permission
 		android:name="android.permission.VIBRATE" />
+	<uses-permission
+		android:name="android.permission.CAMERA" />
 	
 	<application
 		android:allowBackup="true"
@@ -20,7 +26,8 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppThemeDayNight">
 		<activity android:name=".GLActivity"
-			android:parentActivityName="MainActivity"/>
+			android:parentActivityName="MainActivity"
+			android:theme="@style/AppThemeDayNight.NoActionBar"/>
 		<activity android:name=".SettingsActivity"
 			android:parentActivityName="MainActivity"
             android:label="@string/settings_title"
