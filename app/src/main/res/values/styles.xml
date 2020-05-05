@@ -29,6 +29,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppThemeDayNight.Fullscreen" parent="AppThemeDayNight.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <!-- Colour the toolbar correctly. -->
     <style name="Toolbar">
         <item name="android:minHeight">?actionBarSize</item>

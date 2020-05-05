@@ -25,10 +25,10 @@ set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
 include_directories(${GBCC_DIR}/src)
 
 add_definitions(
-        -DPRINTER_SOUND_PATH="/data/user/0/com.philj56.gbcc/files/print.wav"
-        -DTILESET_PATH="/data/user/0/com.philj56.gbcc/files/tileset.png"
-		-DCAMERA_PATH="/data/user/0/com.philj56.gbcc/files/camera.png"
-		-DSHADER_PATH="/data/user/0/com.philj56.gbcc/files/shaders/"
+        -DPRINTER_SOUND_PATH="print.wav"
+        -DTILESET_PATH="tileset.png"
+		-DCAMERA_PATH="camera.png"
+		-DSHADER_PATH="shaders/"
 )
 
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -flto -fprofile-instr-use=${GBCC_DIR}/default.profdata")

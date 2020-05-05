@@ -28,7 +28,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.util.Size
 import android.view.*
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -66,13 +65,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private var dpadState = 0
     private lateinit var saveDir : String
 
-    private lateinit var buttonA : ImageButton
-    private lateinit var buttonB : ImageButton
-    private lateinit var buttonStart : ImageButton
-    private lateinit var buttonSelect : ImageButton
-    private lateinit var dpad : View
-
     external fun toggleMenu(view: View)
+    private external fun chdir(dirName: String)
     private external fun loadRom(file: String, sampleRate: Int, samplesPerBuffer: Int, saveDir: String, prefs: SharedPreferences): Boolean
     private external fun getErrorMessage(): String
     private external fun quit()
@@ -174,15 +168,15 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
         if (!gbc) {
             val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
-            val borders = intArrayOf(
-                R.id.screenBorderTop,
-                R.id.screenBorderBottom,
-                R.id.screenBorderLeft,
-                R.id.screenBorderRight
+            val borders = arrayOf(
+                screenBorderTop,
+                screenBorderBottom,
+                screenBorderLeft,
+                screenBorderRight
             )
 
-            borders.forEach { border ->
-                findViewById<ImageView>(border).setColorFilter(
+            borders.forEach {
+                it.setColorFilter(
                     screenBorderColor,
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
@@ -239,28 +233,25 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        chdir(filesDir.absolutePath)
+
+        window.decorView.setOnSystemUiVisibilityChangeListener {
+            hideNavigation()
+        }
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
+        setContentView(R.layout.activity_gl)
 
         val save = filesDir.resolve("saves")
         save.mkdirs()
         saveDir = save.absolutePath
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-
-        setContentView(R.layout.activity_gl)
-
         val bundle = intent.extras
         filename = bundle?.getString("file") ?: ""
         if (filename == "") {
             Log.e("GBCC", "No rom provided.")
             finish()
         }
-
-        buttonA = findViewById(R.id.buttonA)
-        buttonB = findViewById(R.id.buttonB)
-        buttonStart = findViewById(R.id.buttonStart)
-        buttonSelect = findViewById(R.id.buttonSelect)
-        dpad = findViewById(R.id.dpad)
 
         updateLayout(
             when(prefs.getString("skin", "auto")) {
@@ -358,19 +349,24 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         })
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideNavigation()
+        }
+    }
+
+    private fun hideNavigation() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+    }
+
     override fun onResume() {
         super.onResume()
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.decorView.apply {
-            systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        }
 
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
@@ -415,15 +411,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onPause() {
         screen.onPause()
-        if (!loadedSuccessfully) {
-            super.onPause()
-            return
+        if (loadedSuccessfully) {
+            sensorManager.unregisterListener(this)
+            handler.removeCallbacks(checkVibration)
+            saveState(autoSaveState)
+            quit()
+            resume = true
         }
-        sensorManager.unregisterListener(this)
-        handler.removeCallbacks(checkVibration)
-        saveState(autoSaveState)
-        quit()
-        resume = true
         super.onPause()
     }
 
@@ -457,27 +451,30 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
     }
 
-    private fun checkCameraPermission() = (ContextCompat.checkSelfPermission(baseContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+    private fun checkCameraPermission() : Boolean {
+        val permissionStatus = ContextCompat.checkSelfPermission(baseContext, Manifest.permission.CAMERA)
+        return permissionStatus == PackageManager.PERMISSION_GRANTED
+    }
 
     private fun checkFiles() {
         val filePath = filesDir
         assets.open("tileset.png").use { iStream ->
             val file = File("$filePath/tileset.png")
-            FileOutputStream(file).use { it.write(iStream.readBytes()) }
+            FileOutputStream(file).use { iStream.copyTo(it) }
         }
         assets.open("camera.png").use { iStream ->
             val file = File("$filePath/camera.png")
-            FileOutputStream(file).use { it.write(iStream.readBytes()) }
+            FileOutputStream(file).use { iStream.copyTo(it) }
         }
         assets.open("print.wav").use { iStream ->
             val file = File("$filePath/print.wav")
-            FileOutputStream(file).use { it.write(iStream.readBytes()) }
+            FileOutputStream(file).use { iStream.copyTo(it) }
         }
         assets.list("shaders")?.forEach { shader ->
             File("$filePath/shaders").mkdirs()
             assets.open("shaders/$shader").use { iStream ->
                 val file = File("$filePath/shaders/$shader")
-                FileOutputStream(file).use { it.write(iStream.readBytes()) }
+                FileOutputStream(file).use { iStream.copyTo(it) }
             }
         }
     }

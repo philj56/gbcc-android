@@ -18,14 +18,15 @@
 #include <android/log.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <unistd.h>
 
 extern "C" {
 #pragma GCC visibility push(hidden)
 	#include <gbcc.h>
-    #include <camera/camera.h>
-    #include <core.h>
+	#include <camera/camera.h>
+	#include <core.h>
 	#include <save.h>
-    #include <window.h>
+	#include <window.h>
 #pragma GCC visibility pop
 }
 
@@ -112,53 +113,68 @@ bool check_autoresume(JNIEnv *env, jobject prefs) {
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_initWindow(
-	JNIEnv *env,
-	jobject obj) {
+		JNIEnv *env,
+		jobject obj) {
 	gbcc_window_initialise(&gbc);
-    gbcc_window_use_shader(&gbc, shader);
-    gbcc_menu_init(&gbc);
+	gbcc_window_use_shader(&gbc, shader);
+	gbcc_menu_init(&gbc);
 	gbcc_menu_update(&gbc);
 }
 
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
-        JNIEnv *env,
-        jobject obj) {
-    gbcc_menu_destroy(&gbc);
-    // Have to destroy the window manually, as the OpenGL context is likely to be gone by now
-    gbc.window.initialised = false;
-    gbcc_fontmap_destroy(&gbc.window.font);
+		JNIEnv *env,
+		jobject obj) {
+	if (gbc.window.initialised) {
+		gbcc_menu_destroy(&gbc);
+		// Have to destroy the window manually, as the OpenGL context is likely to be gone by now
+		gbc.window.initialised = false;
+		gbcc_fontmap_destroy(&gbc.window.font);
+	}
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_updateWindow(
-	JNIEnv *env,
-	jobject obj) {
+		JNIEnv *env,
+		jobject obj) {
 	if (gbc.core.initialised) {
+		if (!gbc.window.initialised) {
+			gbcc_window_initialise(&gbc);
+		}
 		gbcc_window_update(&gbc);
 	}
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
-	JNIEnv *env,
-	jobject obj,
-	jint width,
-	jint height) {
+		JNIEnv *env,
+		jobject obj,
+		jint width,
+		jint height) {
 	gbc.window.width = width;
 	gbc.window.height = height;
 }
 
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_chdir(
+		JNIEnv *env,
+		jobject obj,/* this */
+		jstring dirName) {
+	const char *path = env->GetStringUTFChars(dirName, nullptr);
+	chdir(path);
+	env->ReleaseStringUTFChars(dirName, path);
+}
+
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
-        JNIEnv *env,
-        jobject obj,/* this */
-        jstring file,
-        jint sampleRate,
-        jint samplesPerBuffer,
-        jstring saveDir,
-        jobject prefs) {
+		JNIEnv *env,
+		jobject obj,/* this */
+		jstring file,
+		jint sampleRate,
+		jint samplesPerBuffer,
+		jstring saveDir,
+		jobject prefs) {
 
 	const char *string = env->GetStringUTFChars(file, nullptr);
 
@@ -203,8 +219,8 @@ Java_com_philj56_gbcc_GLActivity_getErrorMessage(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_quit(
-	JNIEnv *env,
-	jobject obj/* this */) {
+		JNIEnv *env,
+		jobject obj/* this */) {
 
 	gbc.quit = true;
 	sem_post(&gbc.core.ppu.vsync_semaphore);
@@ -217,25 +233,25 @@ Java_com_philj56_gbcc_GLActivity_quit(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleMenu(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jobject view) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jobject view) {
 	gbcc_input_process_key(&gbc, GBCC_KEY_MENU, true);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleTurbo(
-	JNIEnv *env,
-	jobject obj/* this */) {
+		JNIEnv *env,
+		jobject obj/* this */) {
 	gbcc_input_process_key(&gbc, GBCC_KEY_TURBO, true);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_press(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jint key,
-	jboolean pressed) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jint key,
+		jboolean pressed) {
 	switch (key) {
 		case 0:
 			gbcc_input_process_key(&gbc, GBCC_KEY_A, pressed);
@@ -268,9 +284,9 @@ Java_com_philj56_gbcc_GLActivity_press(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_isPressed(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jint key) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jint key) {
 	switch (key) {
 		case 0:
 			return static_cast<jboolean>(gbc.core.keys.a);
@@ -295,24 +311,24 @@ Java_com_philj56_gbcc_GLActivity_isPressed(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_saveState(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jint state) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jint state) {
 	gbc.save_state = static_cast<int8_t>(state);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_loadState(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jint state) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jint state) {
 	gbc.load_state = static_cast<int8_t>(state);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
-	JNIEnv *env,
-	jobject obj/* this */) {
+		JNIEnv *env,
+		jobject obj/* this */) {
 	static bool last_rumble = false;
 	bool rumble = gbc.core.cart.rumble_state;
 	bool ret = (rumble != last_rumble);
@@ -322,10 +338,10 @@ Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
-	JNIEnv *env,
-	jobject obj/* this */,
-	jfloat x,
-	jfloat y) {
+		JNIEnv *env,
+		jobject obj/* this */,
+		jfloat x,
+		jfloat y) {
 	const float g = 9.81;
 	gbc.core.cart.mbc.accelerometer.real_x = static_cast<uint16_t>(0x81D0u + (0x70 * x / g));
 	gbc.core.cart.mbc.accelerometer.real_y = static_cast<uint16_t>(0x81D0u - (0x70 * y / g));
@@ -333,122 +349,122 @@ Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasRumble(
-	JNIEnv *env,
-	jobject obj/* this */) {
+		JNIEnv *env,
+		jobject obj/* this */) {
 	return static_cast<jboolean>(gbc.core.cart.rumble);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasAccelerometer(
-	JNIEnv *env,
-	jobject obj/* this */) {
+		JNIEnv *env,
+		jobject obj/* this */) {
 	return static_cast<jboolean>(gbc.core.cart.mbc.type == MBC7);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_isCamera(
-        JNIEnv *env,
-        jobject obj/* this */) {
-    return static_cast<jboolean>(gbc.core.cart.mbc.type == CAMERA);
+		JNIEnv *env,
+		jobject obj/* this */) {
+	return static_cast<jboolean>(gbc.core.cart.mbc.type == CAMERA);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_updateCamera(
-        JNIEnv *env,
-        jobject obj/* this */,
-        jbyteArray array,
-        jint width,
-        jint height,
-        jint rotation,
-        jint rowStride) {
-    jbyte *image = env->GetByteArrayElements(array, NULL);
+		JNIEnv *env,
+		jobject obj/* this */,
+		jbyteArray array,
+		jint width,
+		jint height,
+		jint rotation,
+		jint rowStride) {
+	jbyte *image = env->GetByteArrayElements(array, NULL);
 
-    // Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
-    int box_size = MIN(width, height) / 128 / 2 + 1;
+	// Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
+	int box_size = MIN(width, height) / 128 / 2 + 1;
 
-    // First we perform the horizontal blur
-    uint8_t *new_row = static_cast<uint8_t *>(calloc(width, 1));
-    for (int j = 0; j < height; j++) {
-        jbyte *row = &image[j * rowStride];
-        int sum = 0;
-        int div = 0;
+	// First we perform the horizontal blur
+	uint8_t *new_row = static_cast<uint8_t *>(calloc(width, 1));
+	for (int j = 0; j < height; j++) {
+		jbyte *row = &image[j * rowStride];
+		int sum = 0;
+		int div = 0;
 
-        for (int i = -box_size; i < width; i++) {
-            if (i < width - box_size) {
-                sum += static_cast<uint8_t>(row[i + box_size]);
-            } else {
-                div--;
-            }
-            if (i >= box_size) {
-                sum -= static_cast<uint8_t>(row[i - box_size]);
-            } else {
-                div++;
-            }
+		for (int i = -box_size; i < width; i++) {
+			if (i < width - box_size) {
+				sum += static_cast<uint8_t>(row[i + box_size]);
+			} else {
+				div--;
+			}
+			if (i >= box_size) {
+				sum -= static_cast<uint8_t>(row[i - box_size]);
+			} else {
+				div++;
+			}
 
-            if (i >= 0) {
-                new_row[i] = static_cast<uint8_t>(sum / div);
-            }
-        }
-        memcpy(row, new_row, width);
-    }
-    free(new_row);
+			if (i >= 0) {
+				new_row[i] = static_cast<uint8_t>(sum / div);
+			}
+		}
+		memcpy(row, new_row, width);
+	}
+	free(new_row);
 
-    // Then the vertical blur
-    uint8_t *new_col = static_cast<uint8_t *>(calloc(height, 1));
-    for (int i = 0; i < width; i++) {
-        int sum = 0;
-        int div = 0;
+	// Then the vertical blur
+	uint8_t *new_col = static_cast<uint8_t *>(calloc(height, 1));
+	for (int i = 0; i < width; i++) {
+		int sum = 0;
+		int div = 0;
 
-        for (int j = -box_size; j < height; j++) {
-            if (j < height - box_size) {
-                sum += static_cast<uint8_t>(image[(j + box_size) * rowStride + i]);
-            } else {
-                div--;
-            }
-            if (j >= box_size) {
-                sum -= static_cast<uint8_t>(image[(j - box_size) * rowStride + i]);
-            } else {
-                div++;
-            }
+		for (int j = -box_size; j < height; j++) {
+			if (j < height - box_size) {
+				sum += static_cast<uint8_t>(image[(j + box_size) * rowStride + i]);
+			} else {
+				div--;
+			}
+			if (j >= box_size) {
+				sum -= static_cast<uint8_t>(image[(j - box_size) * rowStride + i]);
+			} else {
+				div++;
+			}
 
-            if (i >= 0) {
-                new_col[j] = static_cast<uint8_t>(sum / div);
-            }
-        }
-        for (int j = 0; j < height; j++) {
-            image[j * rowStride + i] = new_col[j];
-        }
-    }
-    free(new_col);
+			if (i >= 0) {
+				new_col[j] = static_cast<uint8_t>(sum / div);
+			}
+		}
+		for (int j = 0; j < height; j++) {
+			image[j * rowStride + i] = new_col[j];
+		}
+	}
+	free(new_col);
 
-    // Then we nearest-neighbour downscale and rotate
-    double scale = MIN(height, width) / 128.0;
-    for (int j = 0; j < 128; j++) {
-        for (int i = 0; i < 128; i++) {
-            int src_idx = (int)(j * scale) * rowStride + (int)(i * scale);
-            int dst_idx;
-            if (rotation == 90) {
-                dst_idx = i * 128 + (127 - j);
-            } else if (rotation == 180) {
-                dst_idx = (127 - j) * 128 + (127 - i);
-            } else if (rotation == 270) {
-                dst_idx = (127 - i) * 128 + j;
-            } else {
-                dst_idx = j * 128 + i;
-            }
+	// Then we nearest-neighbour downscale and rotate
+	double scale = MIN(height, width) / 128.0;
+	for (int j = 0; j < 128; j++) {
+		for (int i = 0; i < 128; i++) {
+			int src_idx = (int)(j * scale) * rowStride + (int)(i * scale);
+			int dst_idx;
+			if (rotation == 90) {
+				dst_idx = i * 128 + (127 - j);
+			} else if (rotation == 180) {
+				dst_idx = (127 - j) * 128 + (127 - i);
+			} else if (rotation == 270) {
+				dst_idx = (127 - i) * 128 + j;
+			} else {
+				dst_idx = j * 128 + i;
+			}
 
-            camera_image[dst_idx] = static_cast<uint8_t>(image[src_idx]);
-        }
-    }
+			camera_image[dst_idx] = static_cast<uint8_t>(image[src_idx]);
+		}
+	}
 
-    env->ReleaseByteArrayElements(array, image, JNI_ABORT);
+	env->ReleaseByteArrayElements(array, image, JNI_ABORT);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_useNullCamera(
-        JNIEnv *env,
-        jobject obj/* this */) {
-    gbcc_camera_default_image(camera_image);
+		JNIEnv *env,
+		jobject obj/* this */) {
+	gbcc_camera_default_image(camera_image);
 }
 
 void gbcc_camera_platform_capture_image(uint8_t image[GB_CAMERA_SENSOR_SIZE]) {
