@@ -20,6 +20,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioManager
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
@@ -72,7 +73,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var dpad : View
 
     external fun toggleMenu(view: View)
-    private external fun loadRom(file: String, saveDir: String, prefs: SharedPreferences): Boolean
+    private external fun loadRom(file: String, sampleRate: Int, samplesPerBuffer: Int, saveDir: String, prefs: SharedPreferences): Boolean
     private external fun getErrorMessage(): String
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
@@ -370,7 +371,17 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
-        loadedSuccessfully = loadRom(filename, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
+
+        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
+            Integer.parseInt(str).takeUnless { it == 0 }
+        } ?: 44100
+        val framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.let { str ->
+            Integer.parseInt(str).takeUnless { it == 0 }
+        } ?: 256
+        Log.d("GBCC", "Using $sampleRate Hz audio, $framesPerBuffer samples per buffer")
+
+        loadedSuccessfully = loadRom(filename, sampleRate, framesPerBuffer, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
         if (!loadedSuccessfully) {
             Toast.makeText(this,
                 "Error loading ROM:\n" + getErrorMessage().trim(),

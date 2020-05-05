@@ -155,6 +155,8 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
         JNIEnv *env,
         jobject obj,/* this */
         jstring file,
+        jint sampleRate,
+        jint samplesPerBuffer,
         jstring saveDir,
         jobject prefs) {
 
@@ -171,7 +173,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	memcpy(save_dir, string, name_len);
 	env->ReleaseStringUTFChars(saveDir, string);
 
-	gbcc_audio_initialise(&gbc);
+	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 	gbcc_initialise(&gbc.core, fname);
 	if (!gbc.core.initialised) {
 		/* Something went wrong during initialisation */
