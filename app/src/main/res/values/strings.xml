@@ -18,6 +18,7 @@
     <string name="move">Move</string>
 
     <!-- GLActivity -->
+    <string name="screen_description">Screen</string>
     <string name="a_button_description">A</string>
     <string name="b_button_description">B</string>
     <string name="dpad_description">Dpad</string>
