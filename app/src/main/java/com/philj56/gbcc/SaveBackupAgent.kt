@@ -44,7 +44,7 @@ class SaveBackupAgent : BackupAgent() {
         filesDir.resolve("saves").walk().forEach { file ->
             if (file.extension == "sav") {
                 zip.putNextEntry(ZipEntry(file.name))
-                file.inputStream().copyTo(zip)
+                file.inputStream().use { it.copyTo(zip) }
                 zip.closeEntry()
             }
         }
@@ -84,15 +84,18 @@ class SaveBackupAgent : BackupAgent() {
             }
 
             if (destination.extension == "zip") {
-                val zip = ZipInputStream(destination.inputStream())
-                val saveDir = filesDir.resolve("saves")
-                var entry: ZipEntry
-                while (zip.nextEntry.also { entry = it } != null) {
-                    val file = saveDir.resolve(entry.name)
-                    file.outputStream().use { zip.copyTo(it) }
-                    zip.closeEntry()
+                destination.inputStream().use { input ->
+                    ZipInputStream(input).use { zip ->
+                        val saveDir = filesDir.resolve("saves")
+                        var entry = zip.nextEntry
+                        while (entry != null) {
+                            val file = saveDir.resolve(entry.name)
+                            file.outputStream().use { zip.copyTo(it) }
+                            zip.closeEntry()
+                            entry = zip.nextEntry
+                        }
+                    }
                 }
-                zip.close()
             }
         }
     }

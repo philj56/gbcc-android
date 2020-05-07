@@ -43,7 +43,9 @@ import androidx.transition.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.math.max
 import kotlin.math.min
@@ -329,7 +331,7 @@ class MainActivity : AppCompatActivity() {
     private fun performFileSearch() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/octet-stream"
+            type = "*/*"
         }
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         startActivityForResult(intent, IMPORT_REQUEST_CODE)
@@ -367,6 +369,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun importFile(uri: Uri) {
+        fun doCopy(input: InputStream, name: String) {
+            val dir = if (name.endsWith("sav")) {
+                filesDir.resolve("saves")
+            } else {
+                currentDir
+            }
+            val file = File(dir, name)
+            file.parentFile?.mkdirs()
+            file.outputStream().use { output ->
+                input.copyTo(output)
+            }
+            Log.i("Imported", file.name)
+        }
         val iStream = contentResolver.openInputStream(uri)
         if (iStream == null) {
             runOnUiThread {
@@ -378,35 +393,43 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             val name = getFileName(uri)
-            if (name == null) {
-                runOnUiThread {
-                    Toast.makeText(
-                        baseContext,
-                        getString(R.string.message_failed_name),
-                        Toast.LENGTH_SHORT
-                    ).show()
+            when {
+                name == null -> {
+                    runOnUiThread {
+                        Toast.makeText(
+                            baseContext,
+                            getString(R.string.message_failed_name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-                return
-            }
-            if (!name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
-                runOnUiThread {
-                    Toast.makeText(
-                        baseContext,
-                        getString(R.string.message_failed_import).format(name),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                name.matches(Regex(".*\\.(gbc?|sav|s[0-9])")) -> {
+                    doCopy(iStream, name)
                 }
-                return
+                contentResolver.getType(uri).equals("application/zip")
+                        or contentResolver.getType(uri).equals("application/x-zip-compressed")
+                        or name.endsWith("zip") -> {
+                    ZipInputStream(iStream).use { zip ->
+                        var entry = zip.nextEntry
+                        while (entry != null) {
+                            if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
+                                doCopy(zip, entry.name)
+                            }
+                            entry = zip.nextEntry
+                        }
+                    }
+                }
+                else -> {
+                    runOnUiThread {
+                        Toast.makeText(
+                            baseContext,
+                            getString(R.string.message_failed_import).format(name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
-            val data = iStream.use { it.readBytes() }
-            val dir = if (name.endsWith("sav")) {
-                filesDir.resolve("saves")
-            } else {
-                currentDir
-            }
-            val file = File(dir, name)
-            FileOutputStream(file).use { it.write(data) }
-            Log.i("Imported", file.name)
+            iStream.close()
         }
     }
 
@@ -445,12 +468,15 @@ class MainActivity : AppCompatActivity() {
             AsyncTask.execute {
                 var count = 0
                 filesDir.resolve("saves").walk().forEach { file ->
-                    val zip = ZipOutputStream(contentResolver.openOutputStream(data))
-                    if (file.extension == "sav") {
-                        count += 1
-                        zip.putNextEntry(ZipEntry(file.name))
-                        file.inputStream().copyTo(zip)
-                        zip.closeEntry()
+                    contentResolver.openOutputStream(data).use {
+                        ZipOutputStream(it).use { zip ->
+                            if (file.extension == "sav") {
+                                count += 1
+                                zip.putNextEntry(ZipEntry(file.name))
+                                file.inputStream().use { it.copyTo(zip) }
+                                zip.closeEntry()
+                            }
+                        }
                     }
                 }
                 runOnUiThread {

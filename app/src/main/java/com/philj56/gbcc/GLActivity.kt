@@ -67,6 +67,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     external fun toggleMenu(view: View)
     private external fun chdir(dirName: String)
+    private external fun checkRom(file: String): Boolean
     private external fun loadRom(file: String, sampleRate: Int, samplesPerBuffer: Int, saveDir: String, prefs: SharedPreferences): Boolean
     private external fun getErrorMessage(): String
     private external fun quit()
@@ -252,6 +253,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             Log.e("GBCC", "No rom provided.")
             finish()
         }
+        if (!checkRom(filename)) {
+            Toast.makeText(this,
+                "Error loading ROM:\n" + getErrorMessage().trim(),
+                Toast.LENGTH_SHORT
+            ).show()
+            finish()
+        }
 
         updateLayout(
             when(prefs.getString("skin", "auto")) {
@@ -410,8 +418,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
 
     override fun onPause() {
-        screen.onPause()
         if (loadedSuccessfully) {
+            screen.onPause()
             sensorManager.unregisterListener(this)
             handler.removeCallbacks(checkVibration)
             saveState(autoSaveState)

@@ -167,6 +167,28 @@ Java_com_philj56_gbcc_GLActivity_chdir(
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_checkRom(
+		JNIEnv *env,
+		jobject obj,/* this */
+		jstring file) {
+	const char *string = env->GetStringUTFChars(file, nullptr);
+	gbcc_initialise(&gbc.core, string);
+	env->ReleaseStringUTFChars(file, string);
+	bool ret = gbc.core.initialised;
+	if (gbc.core.initialised) {
+		gbcc_free(&gbc.core);
+	}
+	return static_cast<jboolean>(ret);
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_philj56_gbcc_GLActivity_getErrorMessage(
+		JNIEnv *env,
+		jobject obj/* this */) {
+	return env->NewStringUTF(gbc.core.error_msg);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
 		JNIEnv *env,
 		jobject obj,/* this */
@@ -189,7 +211,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	memcpy(save_dir, string, name_len);
 	env->ReleaseStringUTFChars(saveDir, string);
 
-	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 	gbcc_initialise(&gbc.core, fname);
 	if (!gbc.core.initialised) {
 		/* Something went wrong during initialisation */
@@ -200,6 +221,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	gbc.quit = false;
 	gbc.has_focus = true;
 	gbc.save_directory = save_dir;
+	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	update_preferences(env, prefs);
@@ -208,13 +230,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	}
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 	return static_cast<jboolean>(true);
-}
-
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_philj56_gbcc_GLActivity_getErrorMessage(
-		JNIEnv *env,
-		jobject obj/* this */) {
-	return env->NewStringUTF(gbc.core.error_msg);
 }
 
 extern "C" JNIEXPORT void JNICALL

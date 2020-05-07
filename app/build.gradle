@@ -11,8 +11,8 @@ android {
 		applicationId "com.philj56.gbcc"
 		minSdkVersion 21
 		targetSdkVersion 29
-		versionCode 14
-		versionName "beta14"
+		versionCode 15
+		versionName "beta15"
 		archivesBaseName = "gbcc"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
@@ -33,6 +33,7 @@ android {
 					'proguard-android-optimize.txt'),
 					'proguard-rules.pro'
 			minifyEnabled = true
+			shrinkResources = true
 		}
 		debug {
 			minifyEnabled = false
