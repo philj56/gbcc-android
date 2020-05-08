@@ -44,13 +44,24 @@ import java.io.FileOutputStream
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.atan2
 import kotlin.math.min
 
 private const val autoSaveState: Int = 10
 private const val REQUEST_CODE_PERMISSIONS = 10
 
-class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
+private const val BUTTON_CODE_A = 0
+private const val BUTTON_CODE_B = 1
+private const val BUTTON_CODE_START = 2
+private const val BUTTON_CODE_SELECT = 3
+private const val BUTTON_CODE_UP = 4
+private const val BUTTON_CODE_DOWN = 5
+private const val BUTTON_CODE_LEFT = 6
+private const val BUTTON_CODE_RIGHT = 7
 
+class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private val handler = Handler()
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var gestureDetector : GestureDetector
@@ -280,8 +291,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             resume = resume || savedInstanceState.getBoolean("resume")
         }
 
-        setButtonIds(arrayOf(buttonA, buttonB), arrayOf(0, 1))
-        setButtonIds(arrayOf(buttonStart, buttonSelect), arrayOf(2, 3))
+        setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
+        setButtonIds(arrayOf(buttonStart, buttonSelect), arrayOf(BUTTON_CODE_START, BUTTON_CODE_SELECT))
 
         dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {
@@ -320,24 +331,24 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     val toggledOff = (lastState or dpadState) xor dpadState
 
                     if (toggledOn and 1 > 0) {
-                        press(4, true)
+                        press(BUTTON_CODE_UP, true)
                     } else if (toggledOff and 1 > 0) {
-                        press(4, false)
+                        press(BUTTON_CODE_UP, false)
                     }
                     if (toggledOn and 2 > 0) {
-                        press(5, true)
+                        press(BUTTON_CODE_DOWN, true)
                     } else if (toggledOff and 2 > 0) {
-                        press(5, false)
+                        press(BUTTON_CODE_DOWN, false)
                     }
                     if (toggledOn and 4 > 0) {
-                        press(6, true)
+                        press(BUTTON_CODE_LEFT, true)
                     } else if (toggledOff and 4 > 0) {
-                        press(6, false)
+                        press(BUTTON_CODE_LEFT, false)
                     }
                     if (toggledOn and 8 > 0) {
-                        press(7, true)
+                        press(BUTTON_CODE_RIGHT, true)
                     } else if (toggledOff and 8 > 0) {
-                        press(7, false)
+                        press(BUTTON_CODE_RIGHT, false)
                     }
 
                     if (lastState != dpadState) {
@@ -346,10 +357,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 }
                 MotionEvent.ACTION_UP -> {
                     dpadState = 0
-                    press(4, false)
-                    press(5, false)
-                    press(6, false)
-                    press(7, false)
+                    press(BUTTON_CODE_UP, false)
+                    press(BUTTON_CODE_DOWN, false)
+                    press(BUTTON_CODE_LEFT, false)
+                    press(BUTTON_CODE_RIGHT, false)
                 }
             }
 
@@ -522,6 +533,86 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
             cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
+            || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
+            if (event.repeatCount == 0) {
+                if (gamepadPress(keyCode, true)) {
+                    return true
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
+            || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
+            if (event.repeatCount == 0) {
+                if (gamepadPress(keyCode, false)) {
+                    return true
+                }
+            }
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    override fun onGenericMotionEvent(event: MotionEvent): Boolean {
+        fun getCenteredAxis(event: MotionEvent, axis: Int): Float {
+            event.device.getMotionRange(axis, event.source)?.apply {
+                val value = event.getAxisValue(axis)
+                if (abs(value) > 0.5f) {
+                    return value
+                }
+            }
+            return 0f
+        }
+        if (event.source and InputDevice.SOURCE_DPAD != InputDevice.SOURCE_DPAD) {
+            val x = event.getAxisValue(MotionEvent.AXIS_HAT_X)
+            val y = event.getAxisValue(MotionEvent.AXIS_HAT_Y)
+            press(BUTTON_CODE_UP, y.compareTo(-1.0f) == 0)
+            press(BUTTON_CODE_DOWN, y.compareTo(1.0f) == 0)
+            press(BUTTON_CODE_LEFT, x.compareTo(-1.0f) == 0)
+            press(BUTTON_CODE_RIGHT, x.compareTo(1.0f) == 0)
+        }
+        if (event.source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
+            && event.action == MotionEvent.ACTION_MOVE) {
+            val x = getCenteredAxis(event, MotionEvent.AXIS_X)
+            val y = getCenteredAxis(event, MotionEvent.AXIS_Y)
+            if (x == 0.0f || y == 0.0f) {
+                if (x != 0.0f) {
+                    press(BUTTON_CODE_RIGHT, x > 0)
+                    press(BUTTON_CODE_LEFT, x < 0)
+                }
+                if (y != 0.0f) {
+                    press(BUTTON_CODE_UP, y < 0)
+                    press(BUTTON_CODE_DOWN, y > 0)
+                }
+            } else {
+                val sector = atan2(y, x) * 8 / PI.toFloat()  // Divide circle into sixteenths
+                press(BUTTON_CODE_UP, -1 > sector && sector > -7)
+                press(BUTTON_CODE_RIGHT, 3 > sector && sector > -3)
+                press(BUTTON_CODE_DOWN, 7 > sector && sector > 1)
+                press(BUTTON_CODE_LEFT, -5 > sector || sector > 5)
+            }
+        }
+        return super.onGenericMotionEvent(event)
+    }
+
+    private fun gamepadPress(keyCode: Int, pressed: Boolean): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_BUTTON_A -> press(BUTTON_CODE_B, pressed)
+            KeyEvent.KEYCODE_BUTTON_B -> press(BUTTON_CODE_A, pressed)
+            KeyEvent.KEYCODE_BUTTON_START -> press(BUTTON_CODE_START, pressed)
+            KeyEvent.KEYCODE_BUTTON_SELECT -> press(BUTTON_CODE_SELECT, pressed)
+            KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) { toggleMenu(screen) }
+            KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) { toggleTurbo() }
+            KeyEvent.KEYCODE_BUTTON_L1 -> if (pressed) { onBackPressed() }
+            else -> return false
+        }
+        return true
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {
