@@ -42,7 +42,6 @@ import androidx.preference.PreferenceManager
 import androidx.transition.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -334,7 +333,11 @@ class MainActivity : AppCompatActivity() {
             type = "*/*"
         }
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        startActivityForResult(intent, IMPORT_REQUEST_CODE)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, IMPORT_REQUEST_CODE)
+        } else {
+            Toast.makeText(baseContext, getString(R.string.message_no_files_app), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun selectExportDir() {
@@ -348,7 +351,11 @@ class MainActivity : AppCompatActivity() {
             type = "application/zip"
         }
         intent.putExtra(Intent.EXTRA_TITLE, "saves.zip")
-        startActivityForResult(intent, EXPORT_REQUEST_CODE)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, EXPORT_REQUEST_CODE)
+        } else {
+            Toast.makeText(baseContext, getString(R.string.message_no_files_app), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getFileName(uri: Uri): String? {

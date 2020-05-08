@@ -81,6 +81,7 @@
     <string name="license_title">Licenses</string>
 
     <!-- Messages -->
+    <string name="message_no_files_app">No app to select files!</string>
     <plurals name="message_importing">
         <item quantity="one">Importing %d item</item>
         <item quantity="other">Importing %d items</item>

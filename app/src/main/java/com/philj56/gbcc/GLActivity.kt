@@ -66,7 +66,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var gestureDetector : GestureDetector
     private lateinit var sensorManager : SensorManager
-    private lateinit var accelerometer : Sensor
+    private var accelerometer : Sensor? = null
     private lateinit var vibrator : Vibrator
     private lateinit var checkVibration : Runnable
     private lateinit var filename : String
@@ -607,6 +607,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             KeyEvent.KEYCODE_BUTTON_B -> press(BUTTON_CODE_A, pressed)
             KeyEvent.KEYCODE_BUTTON_START -> press(BUTTON_CODE_START, pressed)
             KeyEvent.KEYCODE_BUTTON_SELECT -> press(BUTTON_CODE_SELECT, pressed)
+            KeyEvent.KEYCODE_DPAD_UP -> press(BUTTON_CODE_UP, pressed)
+            KeyEvent.KEYCODE_DPAD_DOWN -> press(BUTTON_CODE_DOWN, pressed)
+            KeyEvent.KEYCODE_DPAD_LEFT -> press(BUTTON_CODE_LEFT, pressed)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> press(BUTTON_CODE_RIGHT, pressed)
             KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) { toggleMenu(screen) }
             KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) { toggleTurbo() }
             KeyEvent.KEYCODE_BUTTON_L1 -> if (pressed) { onBackPressed() }
