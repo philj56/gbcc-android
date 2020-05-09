@@ -103,11 +103,15 @@
     </Preference>
 
     <Preference
-        android:key="licenses"
-        android:title="@string/settings_licenses"
+        android:key="license"
+        android:title="@string/settings_license"
         app:iconSpaceReserved="false">
         <intent
             android:targetPackage="com.philj56.gbcc"
-            android:targetClass="com.philj56.gbcc.LicenseListActivity" />
+            android:targetClass="com.philj56.gbcc.LicenseActivity">
+            <extra
+                android:name="file"
+                android:value="gbcc" />
+        </intent>
     </Preference>
 </PreferenceScreen>

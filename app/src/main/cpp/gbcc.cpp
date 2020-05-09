@@ -39,6 +39,7 @@ static struct gbcc gbc;
 static char *fname;
 static char *save_dir;
 static char shader[MAX_SHADER_LEN];
+static gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
 
 void update_preferences(JNIEnv *env, jobject prefs) {
@@ -130,7 +131,6 @@ Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
 		gbcc_menu_destroy(&gbc);
 		// Have to destroy the window manually, as the OpenGL context is likely to be gone by now
 		gbc.window.initialised = false;
-		gbcc_fontmap_destroy(&gbc.window.font);
 	}
 }
 
@@ -476,12 +476,66 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_philj56_gbcc_GLActivity_useNullCamera(
+Java_com_philj56_gbcc_GLActivity_initialiseTileset(
+		JNIEnv *env,
+		jobject obj,/* this */
+		jint width,
+		jint height,
+		jbyteArray data) {
+	fontmap.bitmap = static_cast<uint8_t *>(calloc(width * height, 1));
+	fontmap.tile_width = width / 16;
+	fontmap.tile_height = height / 16;
+	jbyte *image = env->GetByteArrayElements(data, NULL);
+	// Have to use a for loop as the data is converted to int
+	// when loaded by Android, even though it's greyscale
+	for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++) {
+			int idx = j * width + i;
+			fontmap.bitmap[idx] = static_cast<uint8_t>(image[4 * idx]);
+		}
+	}
+	env->ReleaseByteArrayElements(data, image, JNI_ABORT);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_destroyTileset(
 		JNIEnv *env,
 		jobject obj/* this */) {
-	gbcc_camera_default_image(camera_image);
+	free(fontmap.bitmap);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_setCameraImage(
+		JNIEnv *env,
+		jobject obj,/* this */
+		jbyteArray data) {
+	jbyte *image = env->GetByteArrayElements(data, NULL);
+	// Have to use a for loop as the data is converted to int
+	// when loaded by Android, even though it's greyscale
+	for (int j = 0; j < GB_CAMERA_SENSOR_HEIGHT; j++) {
+		for (int i = 0; i < GB_CAMERA_SENSOR_WIDTH; i++) {
+			int idx = j * GB_CAMERA_SENSOR_WIDTH + i;
+			camera_image[idx] = static_cast<uint8_t>(image[4 * idx]);
+		}
+	}
+	env->ReleaseByteArrayElements(data, image, JNI_ABORT);
 }
 
 void gbcc_camera_platform_capture_image(uint8_t image[GB_CAMERA_SENSOR_SIZE]) {
 	memcpy(image, camera_image, GB_CAMERA_SENSOR_SIZE);
+}
+
+extern "C" void gbcc_screenshot(struct gbcc *gbc) {
+    return;
+}
+
+extern "C" void gbcc_fontmap_load(struct gbcc_fontmap *font) {
+    font->bitmap = fontmap.bitmap;
+    font->tile_width = fontmap.tile_width;
+	font->tile_height = fontmap.tile_height;
+	return;
+}
+
+extern "C" void gbcc_fontmap_destroy(struct gbcc_fontmap *font) {
+	return;
 }

@@ -15,6 +15,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -41,6 +42,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_gl.*
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -90,7 +92,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun checkVibrationFun(): Boolean
     private external fun updateAccelerometer(x: Float, y: Float)
     private external fun updateCamera(array: ByteArray, width: Int, height: Int, rotation: Int, rowStride: Int)
-    private external fun useNullCamera()
+    private external fun initialiseTileset(width: Int, height: Int, data: ByteArray)
+    private external fun destroyTileset()
+    private external fun setCameraImage(data: ByteArray)
     private external fun hasRumble(): Boolean
     private external fun hasAccelerometer(): Boolean
     private external fun isCamera(): Boolean
@@ -440,6 +444,11 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         super.onPause()
     }
 
+    override fun onDestroy() {
+        destroyTileset()
+        super.onDestroy()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("resume", true)
@@ -465,7 +474,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 startCamera()
             } else {
                 cameraPermissionRefused = true
-                useNullCamera()
             }
         }
     }
@@ -477,13 +485,17 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun checkFiles() {
         val filePath = filesDir
-        assets.open("tileset.png").use { iStream ->
-            val file = File("$filePath/tileset.png")
-            FileOutputStream(file).use { iStream.copyTo(it) }
+        assets.open("tileset.png").use {
+            val bitmap = BitmapFactory.decodeStream(it)
+            val buf = ByteBuffer.allocate(bitmap.allocationByteCount)
+            bitmap.copyPixelsToBuffer(buf)
+            initialiseTileset(bitmap.width, bitmap.height, buf.array())
         }
-        assets.open("camera.png").use { iStream ->
-            val file = File("$filePath/camera.png")
-            FileOutputStream(file).use { iStream.copyTo(it) }
+        assets.open("camera.png").use {
+            val bitmap = BitmapFactory.decodeStream(it)
+            val buf = ByteBuffer.allocate(bitmap.allocationByteCount)
+            bitmap.copyPixelsToBuffer(buf)
+            setCameraImage(buf.array())
         }
         assets.open("print.wav").use { iStream ->
             val file = File("$filePath/print.wav")

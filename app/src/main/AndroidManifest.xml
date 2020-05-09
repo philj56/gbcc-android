@@ -49,12 +49,9 @@
 			android:parentActivityName=".SettingsActivity"
 			android:theme="@style/AppThemeDayNight.Fullscreen"/>
 
-        <activity android:name=".LicenseListActivity"
-            android:parentActivityName=".SettingsActivity"
-            android:label="@string/license_title"/>
-
         <activity android:name=".LicenseActivity"
-            android:parentActivityName=".LicenseListActivity"/>
+            android:parentActivityName=".SettingsActivity"
+			android:label="@string/settings_license"/>
 
 		<activity android:name=".MainActivity"
 			android:theme="@style/AppThemeDayNight.NoActionBar">

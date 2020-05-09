@@ -67,7 +67,7 @@
     <string name="settings_night_mode_off">Off</string>
 
     <string name="settings_arrange">Rearrange Layout</string>
-    <string name="settings_licenses">Licenses</string>
+    <string name="settings_license">License</string>
 
     <!-- Arrange Activity -->
     <string name="size_title">Button Sizes</string>

@@ -4,22 +4,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -g -flto")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -g -flto")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -g -flto")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g -flto")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -g -flto -fuse-ld=lld")
-
-set(PNG_SHARED OFF)
-set(PNG_TESTS OFF)
-set(LIBPNG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/libpng)
-add_subdirectory(${LIBPNG_DIR} ./libpng)
-include_directories(${LIBPNG_DIR})
-
-file(
-	COPY ${LIBPNG_DIR}/scripts/pnglibconf.h.prebuilt
-	DESTINATION ${LIBPNG_DIR}
-)
-file(
-	RENAME ${LIBPNG_DIR}/pnglibconf.h.prebuilt
-	${LIBPNG_DIR}/pnglibconf.h
-)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -O3 -g -flto")
 
 set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
 include_directories(${GBCC_DIR}/src)
@@ -49,7 +34,6 @@ add_library(gbcc SHARED
             ${GBCC_DIR}/src/config.c
             ${GBCC_DIR}/src/cpu.c
             ${GBCC_DIR}/src/debug.c
-            ${GBCC_DIR}/src/fontmap.c
             ${GBCC_DIR}/src/gbcc.c
             ${GBCC_DIR}/src/hdma.c
             ${GBCC_DIR}/src/init.c
@@ -62,7 +46,6 @@ add_library(gbcc SHARED
             ${GBCC_DIR}/src/ppu.c
             ${GBCC_DIR}/src/printer.c
             ${GBCC_DIR}/src/save.c
-            ${GBCC_DIR}/src/screenshot.c
             ${GBCC_DIR}/src/time_diff.c
             ${GBCC_DIR}/src/wav.c
             ${GBCC_DIR}/src/window.c
@@ -74,5 +57,4 @@ target_link_libraries(gbcc
                       log
                       EGL
                       GLESv3
-                      OpenSLES
-                      png_static)
+                      OpenSLES)

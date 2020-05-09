@@ -20,7 +20,7 @@ class LicenseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license)
         val name = intent.extras?.getString("file") ?: ""
-        title = name
+        //title = name
 
         assets.open(File("licenses", name).path).use{
             findViewById<TextView>(R.id.licenseText).text = String(it.readBytes())
