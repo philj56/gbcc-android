@@ -11,8 +11,8 @@ android {
 		applicationId "com.philj56.gbcc"
 		minSdkVersion 21
 		targetSdkVersion 29
-		versionCode 15
-		versionName "beta15"
+		versionCode 16
+		versionName "beta16"
 		archivesBaseName = "gbcc"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
