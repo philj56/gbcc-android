@@ -23,7 +23,7 @@
 extern "C" {
 #pragma GCC visibility push(hidden)
 	#include <gbcc.h>
-	#include <camera/camera.h>
+	#include <camera.h>
 	#include <core.h>
 	#include <save.h>
 	#include <window.h>
@@ -442,7 +442,7 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 				div++;
 			}
 
-			if (i >= 0) {
+			if (j >= 0) {
 				new_col[j] = static_cast<uint8_t>(sum / div);
 			}
 		}
@@ -521,7 +521,16 @@ Java_com_philj56_gbcc_GLActivity_setCameraImage(
 	env->ReleaseByteArrayElements(data, image, JNI_ABORT);
 }
 
-void gbcc_camera_platform_capture_image(uint8_t image[GB_CAMERA_SENSOR_SIZE]) {
+void gbcc_camera_platform_initialise(struct gbcc_camera_platform *camera) {
+	(void) camera;
+}
+
+void gbcc_camera_platform_destroy(struct gbcc_camera_platform *camera) {
+	(void) camera;
+}
+
+void gbcc_camera_platform_capture_image(struct gbcc_camera_platform *camera, uint8_t image[GB_CAMERA_SENSOR_SIZE]) {
+	(void) camera;
 	memcpy(image, camera_image, GB_CAMERA_SENSOR_SIZE);
 }
 

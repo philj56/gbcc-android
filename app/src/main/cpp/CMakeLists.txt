@@ -29,7 +29,7 @@ add_library(gbcc SHARED
 			${GBCC_DIR}/src/audio.c
 			${GBCC_DIR}/src/audio_platform/opensl.c
             ${GBCC_DIR}/src/bit_utils.c
-			${GBCC_DIR}/src/camera/camera.c
+			${GBCC_DIR}/src/camera.c
 			${GBCC_DIR}/src/colour.c
             ${GBCC_DIR}/src/config.c
             ${GBCC_DIR}/src/cpu.c
