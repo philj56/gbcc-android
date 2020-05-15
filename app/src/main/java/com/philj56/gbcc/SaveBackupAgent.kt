@@ -87,6 +87,8 @@ class SaveBackupAgent : BackupAgent() {
                 destination.inputStream().use { input ->
                     ZipInputStream(input).use { zip ->
                         val saveDir = filesDir.resolve("saves")
+                        saveDir.mkdirs()
+
                         var entry = zip.nextEntry
                         while (entry != null) {
                             val file = saveDir.resolve(entry.name)

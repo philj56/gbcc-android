@@ -42,6 +42,7 @@ import androidx.preference.PreferenceManager
 import androidx.transition.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -91,12 +92,24 @@ class MainActivity : AppCompatActivity() {
         // Check if the version has changed since last launch, and perform some setup if so
         AsyncTask.execute {
             val lastLaunchVersion = filesDir.resolve("lastLaunchVersion")
-            if (!lastLaunchVersion.exists()) {
+            if (!lastLaunchVersion.exists()
+                || !lastLaunchVersion.readText().startsWith("${BuildConfig.VERSION_CODE}")) {
                 lastLaunchVersion.createNewFile()
                 lastLaunchVersion.writeText("${BuildConfig.VERSION_CODE}\n")
 
                 getExternalFilesDir(null)?.resolve("Tutorial.gbc")?.outputStream()?.use {
                     assets.open("Tutorial.gbc").copyTo(it)
+                }
+                assets.open("print.wav").use { iStream ->
+                    val file = File("$filesDir/print.wav")
+                    FileOutputStream(file).use { iStream.copyTo(it) }
+                }
+                assets.list("shaders")?.forEach { shader ->
+                    File("$filesDir/shaders").mkdirs()
+                    assets.open("shaders/$shader").use { iStream ->
+                        val file = File("$filesDir/shaders/$shader")
+                        FileOutputStream(file).use { iStream.copyTo(it) }
+                    }
                 }
                 runOnUiThread { updateFiles() }
             }
@@ -475,8 +488,8 @@ class MainActivity : AppCompatActivity() {
             AsyncTask.execute {
                 var count = 0
                 filesDir.resolve("saves").walk().forEach { file ->
-                    contentResolver.openOutputStream(data).use {
-                        ZipOutputStream(it).use { zip ->
+                    contentResolver.openOutputStream(data).use { outputStream ->
+                        ZipOutputStream(outputStream).use { zip ->
                             if (file.extension == "sav") {
                                 count += 1
                                 zip.putNextEntry(ZipEntry(file.name))

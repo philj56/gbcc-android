@@ -497,17 +497,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             bitmap.copyPixelsToBuffer(buf)
             setCameraImage(buf.array())
         }
-        assets.open("print.wav").use { iStream ->
-            val file = File("$filePath/print.wav")
-            FileOutputStream(file).use { iStream.copyTo(it) }
-        }
-        assets.list("shaders")?.forEach { shader ->
-            File("$filePath/shaders").mkdirs()
-            assets.open("shaders/$shader").use { iStream ->
-                val file = File("$filePath/shaders/$shader")
-                FileOutputStream(file).use { iStream.copyTo(it) }
-            }
-        }
     }
 
     private fun startCamera() {
