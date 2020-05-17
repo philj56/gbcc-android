@@ -40,8 +40,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_gl.*
-import java.io.File
-import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
@@ -390,7 +388,11 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onResume() {
         super.onResume()
+        screen.onResume()
+        startGBCC()
+    }
 
+    private fun startGBCC() {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
             Integer.parseInt(str).takeUnless { it == 0 }
@@ -428,19 +430,22 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 )
             }
         }
-        screen.onResume()
     }
 
-
-    override fun onPause() {
+    private fun stopGBCC() {
         if (loadedSuccessfully) {
-            screen.onPause()
             sensorManager.unregisterListener(this)
             handler.removeCallbacks(checkVibration)
             saveState(autoSaveState)
             quit()
             resume = true
         }
+    }
+
+
+    override fun onPause() {
+        stopGBCC()
+        screen.onPause()
         super.onPause()
     }
 
@@ -484,7 +489,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun checkFiles() {
-        val filePath = filesDir
         assets.open("tileset.png").use {
             val bitmap = BitmapFactory.decodeStream(it)
             val buf = ByteBuffer.allocate(bitmap.allocationByteCount)
@@ -694,9 +698,9 @@ class MyGLSurfaceView : GLSurfaceView {
         setMeasuredDimension(width, height)
     }
 
-    override fun onPause() {
+    override fun surfaceDestroyed(holder: SurfaceHolder?) {
         destroyWindow()
-        super.onPause()
+        super.surfaceDestroyed(holder)
     }
 
     private external fun destroyWindow()
