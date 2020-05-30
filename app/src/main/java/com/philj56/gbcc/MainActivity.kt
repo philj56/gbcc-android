@@ -487,9 +487,9 @@ class MainActivity : AppCompatActivity() {
             val data = resultData.data ?: return
             AsyncTask.execute {
                 var count = 0
-                filesDir.resolve("saves").walk().forEach { file ->
-                    contentResolver.openOutputStream(data).use { outputStream ->
-                        ZipOutputStream(outputStream).use { zip ->
+                contentResolver.openOutputStream(data).use { outputStream ->
+                    ZipOutputStream(outputStream).use { zip ->
+                        filesDir.resolve("saves").walk().forEach { file ->
                             if (file.extension == "sav") {
                                 count += 1
                                 zip.putNextEntry(ZipEntry(file.name))
