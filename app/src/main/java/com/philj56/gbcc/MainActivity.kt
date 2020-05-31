@@ -44,9 +44,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 import kotlin.math.max
 import kotlin.math.min
 
@@ -353,6 +357,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun selectExportDir() {
         val saveDir = filesDir.resolve("saves")
         if (!saveDir.isDirectory || saveDir.list()?.isEmpty() == true) {
@@ -363,7 +368,8 @@ class MainActivity : AppCompatActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/zip"
         }
-        intent.putExtra(Intent.EXTRA_TITLE, "saves.zip")
+        val date = SimpleDateFormat("yyyyMMdd").format(Date())
+        intent.putExtra(Intent.EXTRA_TITLE, "gbcc_saves_$date.zip")
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, EXPORT_REQUEST_CODE)
         } else {
