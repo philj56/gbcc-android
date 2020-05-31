@@ -11,19 +11,19 @@
 package com.philj56.gbcc
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_license.*
 import java.io.File
 
 class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license)
-        val name = intent.extras?.getString("file") ?: ""
-        //title = name
+        title = intent.extras?.getString("title") ?: ""
+        val file = intent.extras?.getString("file") ?: ""
 
-        assets.open(File("licenses", name).path).use{
-            findViewById<TextView>(R.id.licenseText).text = String(it.readBytes())
+        assets.open(File("licenses", file).path).use{
+            licenseText.text = String(it.readBytes())
         }
     }
 }
