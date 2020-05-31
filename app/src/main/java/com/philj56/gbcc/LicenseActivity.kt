@@ -14,6 +14,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_license.*
 import java.io.File
+import java.nio.file.Paths
 
 class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +23,6 @@ class LicenseActivity : AppCompatActivity() {
         title = intent.extras?.getString("title") ?: ""
         val file = intent.extras?.getString("file") ?: ""
 
-        assets.open(File("licenses", file).path).use{
-            licenseText.text = String(it.readBytes())
-        }
+        licenseText.text = assets.open(File("licenses", file).path).bufferedReader().use { it.readText() }
     }
 }

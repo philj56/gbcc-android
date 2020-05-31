@@ -257,7 +257,7 @@ class ArrangeActivity : AppCompatActivity() {
 }
 
 class ResizableImage : AppCompatImageView {
-    var floating: Boolean = false
+    private var floating: Boolean = false
     private val vibrator: Vibrator
 
     constructor(context: Context) : super(context) {
@@ -276,7 +276,7 @@ class ResizableImage : AppCompatImageView {
         setOnTouchListener(OnTouchListener { view, motionEvent ->
 
             if (!floating) {
-                return@OnTouchListener false
+                return@OnTouchListener view.performClick()
             }
 
             when (motionEvent.actionMasked) {
@@ -295,16 +295,13 @@ class ResizableImage : AppCompatImageView {
     private fun addLongClickListener() {
         setOnLongClickListener(OnLongClickListener {
             floating = true
-            vibrate(10)
+            vibrate()
             return@OnLongClickListener false
         })
     }
 
-    private fun vibrate(milliseconds: Long) {
-        if (milliseconds == 0L) {
-            vibrator.cancel()
-            return
-        }
+    private fun vibrate() {
+        val milliseconds: Long = 10
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {

@@ -11,6 +11,7 @@
 package com.philj56.gbcc
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -123,6 +124,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setButtonIds(views: Array<View>, buttons: Array<Int>) {
         fun inBounds(view: View, x: Int, y: Int): Boolean {
             val rect = Rect()
@@ -245,6 +247,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         chdir(filesDir.absolutePath)

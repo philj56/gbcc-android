@@ -17,14 +17,12 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_license_list.*
 
 class LicenseListActivity : AppCompatActivity() {
-    private lateinit var licenseNames: ArrayList<String>
-    private lateinit var licenseFiles: ArrayList<String>
-    private lateinit var adapter: ArrayAdapter<String>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_license_list)
-        adapter = ArrayAdapter<String>(this, R.layout.license_entry, R.id.licenseEntry, licenseNames)
+        val licenseNames = resources.getStringArray(R.array.license_names_array)
+        val licenseFiles = resources.getStringArray(R.array.license_values_array)
+        val adapter = ArrayAdapter(this, R.layout.license_entry, R.id.licenseEntry, licenseNames)
         licenseList.adapter = adapter
         licenseList.setOnItemClickListener { _, _, position, _ ->
             val name = licenseNames[position]
@@ -34,23 +32,6 @@ class LicenseListActivity : AppCompatActivity() {
                 putExtra("file", file)
             }
             startActivity(intent)
-        }
-    }
-
-    override fun onContentChanged() {
-        super.onContentChanged()
-        updateLicenses()
-    }
-
-    private fun updateLicenses() {
-        licenseNames = resources.getStringArray(R.array.license_names_array).sortedWith(
-            compareBy(String.CASE_INSENSITIVE_ORDER, { it })
-        ).toCollection(ArrayList())
-        licenseFiles = resources.getStringArray(R.array.license_values_array).toCollection(ArrayList())
-        if (::adapter.isInitialized) {
-            adapter.clear()
-            adapter.addAll(licenseNames)
-            adapter.notifyDataSetChanged()
         }
     }
 }
