@@ -511,8 +511,9 @@ class MainActivity : AppCompatActivity() {
                 // Go through the imported saves and prompt to overwrite if they already exist
                 val existing = ArrayList<File>()
                 val saveDir = filesDir.resolve(SAVE_DIR)
-                for (file in saveDir.resolve(IMPORTED_SAVE_SUBDIR).walk()) {
-                    if (file == saveDir.resolve(IMPORTED_SAVE_SUBDIR)) {
+                val importDir = saveDir.resolve(IMPORTED_SAVE_SUBDIR)
+                for (file in importDir.walk()) {
+                    if (file == importDir) {
                         continue
                     }
                     val dest = saveDir.resolve(file.name)
@@ -522,9 +523,13 @@ class MainActivity : AppCompatActivity() {
                         file.renameTo(dest)
                     }
                 }
-                existing.sort()
-                val dialog = ImportOverwriteDialogFragment(existing)
-                dialog.show(supportFragmentManager, "")
+                if (existing.size > 0) {
+                    existing.sort()
+                    val dialog = ImportOverwriteDialogFragment(existing)
+                    dialog.show(supportFragmentManager, "")
+                } else {
+                    importDir.delete()
+                }
             }
         } else if (requestCode == EXPORT_REQUEST_CODE) {
             val data = resultData.data ?: return
