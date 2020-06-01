@@ -16,6 +16,7 @@
         <item quantity="other">Are you sure you wish to delete these %d items?</item>
     </plurals>
     <string name="move">Move</string>
+    <string name="overwrite_confirmation">Select save files to overwrite:</string>
 
     <!-- GLActivity -->
     <string name="screen_description">Screen</string>
@@ -85,6 +86,10 @@
     <plurals name="message_importing">
         <item quantity="one">Importing %d item</item>
         <item quantity="other">Importing %d items</item>
+    </plurals>
+    <plurals name="message_imported">
+        <item quantity="one">Imported %d item</item>
+        <item quantity="other">Imported %d items</item>
     </plurals>
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
     <string name="message_no_export">No saves to export</string>

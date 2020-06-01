@@ -57,6 +57,8 @@ import kotlin.math.min
 private const val IMPORT_REQUEST_CODE: Int = 10
 private const val EXPORT_REQUEST_CODE: Int = 11
 private const val BACK_DELAY: Int = 2000
+private const val SAVE_DIR: String = "saves"
+private const val IMPORTED_SAVE_SUBDIR: String = "imported"
 
 class MainActivity : AppCompatActivity() {
 
@@ -82,7 +84,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         AppCompatDelegate.setDefaultNightMode(
-            when (PreferenceManager.getDefaultSharedPreferences(this).getString("night_mode", null)) {
+            when (PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("night_mode", null)) {
                 "on" -> AppCompatDelegate.MODE_NIGHT_YES
                 "off" -> AppCompatDelegate.MODE_NIGHT_NO
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
@@ -97,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         AsyncTask.execute {
             val lastLaunchVersion = filesDir.resolve("lastLaunchVersion")
             if (!lastLaunchVersion.exists()
-                || !lastLaunchVersion.readText().startsWith("${BuildConfig.VERSION_CODE}")) {
+                || !lastLaunchVersion.readText().startsWith("${BuildConfig.VERSION_CODE}")
+            ) {
                 lastLaunchVersion.createNewFile()
                 lastLaunchVersion.writeText("${BuildConfig.VERSION_CODE}\n")
 
@@ -136,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         fileTransition.addTransition(SlideShrink().setDuration(300))
         fileTransition.ordering = TransitionSet.ORDERING_TOGETHER
 
-        deleteTransitionSet.addListener(object: TransitionListenerAdapter() {
+        deleteTransitionSet.addListener(object : TransitionListenerAdapter() {
             override fun onTransitionEnd(transition: Transition) {
                 adapter.selected.forEach { file ->
                     files.remove(file)
@@ -157,12 +161,13 @@ class MainActivity : AppCompatActivity() {
         deleteTransitionSet.addTransition(toolbarTransition)
         deleteTransitionSet.ordering = TransitionSet.ORDERING_TOGETHER
 
-        adapter = FileAdapter(this, R.layout.file_entry, R.id.fileEntry, files)
+        adapter = FileAdapter(this, R.layout.entry_file, R.id.fileEntry, files)
         fileList.adapter = adapter
-        fileList.setOnItemClickListener{ _, _, position, _ ->
+        fileList.setOnItemClickListener { _, _, position, _ ->
             val file = fileList.adapter.getItem(position) as File
             when (selectionMode) {
-                SelectionMode.DELETE -> {}
+                SelectionMode.DELETE -> {
+                }
                 SelectionMode.MOVE -> {
                     if (file.isDirectory) {
                         currentDir = file
@@ -193,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        fileList.setOnItemLongClickListener{ _, _, position, _ ->
+        fileList.setOnItemLongClickListener { _, _, position, _ ->
             val file = fileList.adapter.getItem(position) as File
             if (adapter.selected.isEmpty()) {
                 selectionMode = SelectionMode.SELECT
@@ -289,7 +294,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.confirmMoveItem -> {
                 AsyncTask.execute {
-                    moveSelection.forEach {file ->
+                    moveSelection.forEach { file ->
                         val newFile = File(currentDir, file.name)
                         file.renameTo(newFile)
                     }
@@ -353,15 +358,20 @@ class MainActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, IMPORT_REQUEST_CODE)
         } else {
-            Toast.makeText(baseContext, getString(R.string.message_no_files_app), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                baseContext,
+                getString(R.string.message_no_files_app),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun selectExportDir() {
-        val saveDir = filesDir.resolve("saves")
+        val saveDir = filesDir.resolve(SAVE_DIR)
         if (!saveDir.isDirectory || saveDir.list()?.isEmpty() == true) {
-            Toast.makeText(baseContext, getString(R.string.message_no_export), Toast.LENGTH_SHORT).show()
+            Toast.makeText(baseContext, getString(R.string.message_no_export), Toast.LENGTH_SHORT)
+                .show()
             return
         }
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
@@ -373,7 +383,11 @@ class MainActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, EXPORT_REQUEST_CODE)
         } else {
-            Toast.makeText(baseContext, getString(R.string.message_no_files_app), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                baseContext,
+                getString(R.string.message_no_files_app),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -397,17 +411,18 @@ class MainActivity : AppCompatActivity() {
     private fun importFile(uri: Uri) {
         fun doCopy(input: InputStream, name: String) {
             val dir = if (name.endsWith("sav")) {
-                filesDir.resolve("saves")
+                filesDir.resolve(SAVE_DIR).resolve(IMPORTED_SAVE_SUBDIR)
             } else {
                 currentDir
             }
-            val file = File(dir, name)
+            val file = dir.resolve(name)
             file.parentFile?.mkdirs()
             file.outputStream().use { output ->
                 input.copyTo(output)
             }
-            Log.i("Imported", file.name)
+            Log.d("Imported", file.name)
         }
+
         val iStream = contentResolver.openInputStream(uri)
         if (iStream == null) {
             runOnUiThread {
@@ -475,7 +490,11 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread {
                             Toast.makeText(
                                 baseContext,
-                                resources.getQuantityString(R.plurals.message_importing, clipData.itemCount, clipData.itemCount),
+                                resources.getQuantityString(
+                                    R.plurals.message_importing,
+                                    clipData.itemCount,
+                                    clipData.itemCount
+                                ),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -488,6 +507,24 @@ class MainActivity : AppCompatActivity() {
                 }
                 // updateFiles needs to be run on the main thread, however
                 runOnUiThread { updateFiles() }
+
+                // Go through the imported saves and prompt to overwrite if they already exist
+                val existing = ArrayList<File>()
+                val saveDir = filesDir.resolve(SAVE_DIR)
+                for (file in saveDir.resolve(IMPORTED_SAVE_SUBDIR).walk()) {
+                    if (file == saveDir.resolve(IMPORTED_SAVE_SUBDIR)) {
+                        continue
+                    }
+                    val dest = saveDir.resolve(file.name)
+                    if (dest.exists()) {
+                        existing.add(file)
+                    } else {
+                        file.renameTo(dest)
+                    }
+                }
+                existing.sort()
+                val dialog = ImportOverwriteDialogFragment(existing)
+                dialog.show(supportFragmentManager, "")
             }
         } else if (requestCode == EXPORT_REQUEST_CODE) {
             val data = resultData.data ?: return
@@ -495,7 +532,7 @@ class MainActivity : AppCompatActivity() {
                 var count = 0
                 contentResolver.openOutputStream(data).use { outputStream ->
                     ZipOutputStream(outputStream).use { zip ->
-                        filesDir.resolve("saves").walk().forEach { file ->
+                        filesDir.resolve(SAVE_DIR).walk().forEach { file ->
                             if (file.extension == "sav") {
                                 count += 1
                                 zip.putNextEntry(ZipEntry(file.name))
@@ -508,9 +545,14 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     Toast.makeText(
                         baseContext,
-                        resources.getQuantityString(R.plurals.message_export_complete, count, count),
+                        resources.getQuantityString(
+                            R.plurals.message_export_complete,
+                            count,
+                            count
+                        ),
                         Toast.LENGTH_SHORT
-                    ).show() }
+                    ).show()
+                }
             }
         }
     }
@@ -529,12 +571,17 @@ class MainActivity : AppCompatActivity() {
 
         timeBackPressed = System.currentTimeMillis()
 
-        Toast.makeText(baseContext, getString(R.string.message_repeat_back), Toast.LENGTH_SHORT).show()
+        Toast.makeText(baseContext, getString(R.string.message_repeat_back), Toast.LENGTH_SHORT)
+            .show()
     }
 }
 
-class FileAdapter(context: Context, resource: Int, textViewResourceId: Int, private val objects: List<File>)
-    : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
+class FileAdapter(
+    context: Context,
+    resource: Int,
+    textViewResourceId: Int,
+    private val objects: List<File>
+) : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
 
     val selected = HashSet<File>()
 
@@ -564,6 +611,27 @@ class FileAdapter(context: Context, resource: Int, textViewResourceId: Int, priv
     }
 }
 
+class ImportOverwriteAdapter(
+    context: Context,
+    resource: Int,
+    textViewResourceId: Int,
+    private val objects: List<File>
+) : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
+
+    val selected = HashSet<File>()
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view: View = super.getView(position, convertView, parent)
+        val textView: CheckedTextView = view.findViewById(R.id.importOverwriteText)
+        val file: File = objects[position]
+
+        textView.isChecked = file in selected
+
+        textView.text = file.nameWithoutExtension
+        return view
+    }
+}
+
 class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
@@ -578,7 +646,8 @@ class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragm
                 .setNegativeButton(android.R.string.cancel) { _, _ ->
                     if (activity is MainActivity) {
                         (activity as MainActivity).cancelDelete()
-                    } }
+                    }
+                }
                 .create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
@@ -588,7 +657,7 @@ class CreateFolderDialogFragment : DialogFragment() {
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val textView = it.layoutInflater.inflate(R.layout.create_folder, null, false)
+            val textView = it.layoutInflater.inflate(R.layout.dialog_create_folder, null, false)
             val input = textView?.findViewById<EditText>(R.id.createFolderInput)
 
             val builder = AlertDialog.Builder(it)
@@ -607,7 +676,8 @@ class CreateFolderDialogFragment : DialogFragment() {
             }
 
             input?.addTextChangedListener { editor ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = editor?.isNotBlank() ?: false
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled =
+                    editor?.isNotBlank() ?: false
             }
             input?.setOnFocusChangeListener { v, hasFocus ->
                 v.postDelayed(50) {
@@ -625,12 +695,69 @@ class CreateFolderDialogFragment : DialogFragment() {
     }
 }
 
+class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : DialogFragment() {
+    @SuppressLint("InflateParams")
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val adapter = ImportOverwriteAdapter(requireContext(), R.layout.entry_import_overwrite, R.id.importOverwriteText, files)
+            adapter.selected.addAll(files)
+            val view = it.layoutInflater.inflate(R.layout.dialog_import_overwrite, null, false)
+            val listView = view.findViewById<ListView>(R.id.listView)
+            listView.adapter = adapter
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val file = listView.adapter.getItem(position) as File
+                val item = listView.getChildAt(position - listView.firstVisiblePosition)
+                if (file in adapter.selected) {
+                    adapter.selected.remove(file)
+                } else {
+                    adapter.selected.add(file)
+                }
+                item.findViewById<CheckedTextView>(R.id.importOverwriteText).isChecked = file in adapter.selected
+            }
+
+            val saveDir = requireContext().filesDir.resolve("saves")
+            fun deleteFiles() {
+                saveDir.resolve(IMPORTED_SAVE_SUBDIR).deleteRecursively()
+            }
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(resources.getString(R.string.overwrite_confirmation))
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    AsyncTask.execute {
+                        adapter.selected.forEach { file ->
+                            val dest = saveDir.resolve(file.name)
+                            dest.delete()
+                            file.renameTo(dest)
+                        }
+                        activity?.runOnUiThread {
+                            Toast.makeText(
+                                context,
+                                resources.getQuantityString(
+                                    R.plurals.message_imported,
+                                    adapter.selected.size,
+                                    adapter.selected.size
+                                ),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        deleteFiles()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> deleteFiles() }
+                .setView(view)
+                .setOnDismissListener { deleteFiles() }
+            return builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+}
+
 class SlideShrink : Transition() {
 
     companion object {
         private const val PROPNAME_HEIGHT = "com.philj56.gbcc.slideshrink:SlideShrink:height"
-        private const val PROPNAME_LAYOUT_HEIGHT = "com.philj56.gbcc.slideshrink:SlideShrink:layoutParams.height"
+        private const val PROPNAME_LAYOUT_HEIGHT =
+            "com.philj56.gbcc.slideshrink:SlideShrink:layoutParams.height"
     }
+
     override fun captureStartValues(transitionValues: TransitionValues) {
         captureValues(transitionValues)
     }
@@ -688,7 +815,8 @@ class CircularReveal : Visibility() {
             view.width / 2,
             view.height / 2,
             0.0f,
-            max(view.width, view.height).toFloat())
+            max(view.width, view.height).toFloat()
+        )
         view.alpha = 0.0f
         animator.addListener(
             onStart = { view.alpha = 1.0f }
@@ -710,6 +838,7 @@ class CircularReveal : Visibility() {
             view.width / 2,
             view.height / 2,
             max(view.width, view.height).toFloat(),
-            0.0f)
+            0.0f
+        )
     }
 }

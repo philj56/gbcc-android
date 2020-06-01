@@ -22,9 +22,9 @@ class LicenseListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_license_list)
         val licenseNames = resources.getStringArray(R.array.license_names_array)
         val licenseFiles = resources.getStringArray(R.array.license_values_array)
-        val adapter = ArrayAdapter(this, R.layout.license_entry, R.id.licenseEntry, licenseNames)
-        licenseList.adapter = adapter
-        licenseList.setOnItemClickListener { _, _, position, _ ->
+        val adapter = ArrayAdapter(this, R.layout.entry_license, R.id.licenseEntry, licenseNames)
+        listView.adapter = adapter
+        listView.setOnItemClickListener { _, _, position, _ ->
             val name = licenseNames[position]
             val file = licenseFiles[position]
             val intent = Intent(this, LicenseActivity::class.java).apply {
