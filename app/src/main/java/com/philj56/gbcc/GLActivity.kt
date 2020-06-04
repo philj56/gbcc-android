@@ -738,12 +738,6 @@ class MyGLSurfaceView : GLSurfaceView {
     }
 
     private external fun destroyWindow()
-
-    companion object {
-        init {
-            System.loadLibrary("gbcc")
-        }
-    }
 }
 
 class MyGLRenderer : GLSurfaceView.Renderer {
@@ -764,10 +758,4 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private external fun initWindow()
     private external fun updateWindow()
     private external fun resizeWindow(width: Int, height: Int)
-
-    companion object {
-        init {
-            System.loadLibrary("gbcc")
-        }
-    }
 }
