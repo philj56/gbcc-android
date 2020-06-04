@@ -25,8 +25,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center|start"
+            android:paddingStart="0dp"
+            android:paddingEnd="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/file_entry_text"/>
+            android:textColor="@color/file_entry_text" />
     </LinearLayout>
 
     <ImageView
