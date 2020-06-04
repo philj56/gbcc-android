@@ -41,6 +41,7 @@ static char *save_dir;
 static char shader[MAX_SHADER_LEN];
 static gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
+static pthread_mutex_t render_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -151,7 +152,11 @@ Java_com_philj56_gbcc_MyGLRenderer_updateWindow(
 		if (!gbc.window.initialised) {
 			gbcc_window_initialise(&gbc);
 		}
+		if (pthread_mutex_trylock(&render_mutex) != 0) {
+			return;
+		}
 		gbcc_window_update(&gbc);
+		pthread_mutex_unlock(&render_mutex);
 	}
 }
 
@@ -249,7 +254,16 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	gbc.quit = true;
 	sem_post(&gbc.core.ppu.vsync_semaphore);
 	pthread_join(emu_thread, nullptr);
-	gbcc_free(&gbc.core);
+
+	// Don't allow the screen to be drawn to while we're freeing the core
+	const struct timespec wait_time = { .tv_sec = 0, .tv_nsec = 100000000 };
+	if (pthread_mutex_timedlock(&render_mutex, &wait_time) == 0) {
+		gbcc_free(&gbc.core);
+		pthread_mutex_unlock(&render_mutex);
+	} else {
+		// If we failed to acquire the lock, just free anyway
+		gbcc_free(&gbc.core);
+	}
 	gbcc_audio_destroy(&gbc);
 	free(fname);
 	free(save_dir);
