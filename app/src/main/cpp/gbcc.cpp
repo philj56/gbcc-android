@@ -75,6 +75,15 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	}
 	env->DeleteLocalRef(arg);
 
+	arg = env->NewStringUTF("palette");
+	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
+	if (ret != NULL) {
+		const char *tmp = env->GetStringUTFChars(ret, nullptr);
+		gbc.core.ppu.palette = gbcc_get_palette(tmp);
+		env->ReleaseStringUTFChars(ret, tmp);
+	}
+	env->DeleteLocalRef(arg);
+
 	if (gbc.core.mode == GBC) {
 		arg = env->NewStringUTF("shader_gbc");
 	} else {

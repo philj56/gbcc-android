@@ -78,6 +78,14 @@
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
+        android:defaultValue="Default"
+        android:entries="@array/dmg_palettes_array"
+        android:entryValues="@array/dmg_palettes_array"
+        android:key="palette"
+        android:title="@string/settings_palette"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
         android:defaultValue="Teal"
         android:entries="@array/color_names_array"
         android:entryValues="@array/color_values_array"

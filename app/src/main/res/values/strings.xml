@@ -55,6 +55,8 @@
     <string name="settings_skin_dmg">DMG</string>
     <string name="settings_skin_gbc">GBC</string>
 
+    <string name="settings_palette">DMG Palette</string>
+
     <string name="settings_color">GBC Colour</string>
     <string name="settings_color_berry">Berry</string>
     <string name="settings_color_dandelion">Dandelion</string>

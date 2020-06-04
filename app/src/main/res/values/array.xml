@@ -62,6 +62,24 @@
     </string-array>
 
 
+    <string-array name="dmg_palettes_array">
+        <item>Default</item>
+		<item>Monochrome</item>
+		<item>Brown</item>
+		<item>Red</item>
+		<item>Dark-Brown</item>
+		<item>Pastel</item>
+		<item>Orange</item>
+		<item>Yellow</item>
+		<item>Blue</item>
+		<item>Dark-Blue</item>
+		<item>Grey</item>
+		<item>Green</item>
+		<item>Dark-Green</item>
+		<item>Invert</item>
+    </string-array>
+
+
     <string-array name="night_mode_names_array">
         <item>@string/settings_night_mode_system</item>
         <item>@string/settings_night_mode_on</item>
