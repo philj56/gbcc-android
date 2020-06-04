@@ -30,6 +30,9 @@ extern "C" {
 #pragma GCC visibility pop
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 #define MAX_SHADER_LEN 32
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -41,7 +44,7 @@ static char *save_dir;
 static char shader[MAX_SHADER_LEN];
 static gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
-static pthread_mutex_t render_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t render_mutex = PTHREAD_MUTEX_INITIALIZER; //NOLINT
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -69,16 +72,16 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	id = env->GetMethodID(prefsClass, "getString", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
 	arg = env->NewStringUTF("turbo_speed");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
-	if (ret != NULL) {
+	if (ret != nullptr) {
 		const char *tmp = env->GetStringUTFChars(ret, nullptr);
-		gbc.turbo_speed = static_cast<float>(atof(tmp));
+		gbc.turbo_speed = static_cast<float>(strtod(tmp, nullptr));
 		env->ReleaseStringUTFChars(ret, tmp);
 	}
 	env->DeleteLocalRef(arg);
 
 	arg = env->NewStringUTF("palette");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
-	if (ret != NULL) {
+	if (ret != nullptr) {
 		const char *tmp = env->GetStringUTFChars(ret, nullptr);
 		gbc.core.ppu.palette = gbcc_get_palette(tmp);
 		env->ReleaseStringUTFChars(ret, tmp);
@@ -92,7 +95,7 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	}
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		if (gbc.core.mode == GBC) {
 			strncpy(shader, "Subpixel", MAX_SHADER_LEN);
 		} else {
@@ -232,6 +235,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		free(saveDir);
 		return static_cast<jboolean>(false);
 	}
+
 	gbc.quit = false;
 	gbc.has_focus = true;
 	gbc.save_directory = save_dir;
@@ -415,13 +419,13 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 		jint height,
 		jint rotation,
 		jint rowStride) {
-	jbyte *image = env->GetByteArrayElements(array, NULL);
+	jbyte *image = env->GetByteArrayElements(array, nullptr);
 
 	// Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
 	int box_size = MIN(width, height) / 128 / 2 + 1;
 
 	// First we perform the horizontal blur
-	uint8_t *new_row = static_cast<uint8_t *>(calloc(width, 1));
+	auto *new_row = static_cast<uint8_t *>(calloc(width, 1));
 	for (int j = 0; j < height; j++) {
 		jbyte *row = &image[j * rowStride];
 		int sum = 0;
@@ -448,7 +452,7 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 	free(new_row);
 
 	// Then the vertical blur
-	uint8_t *new_col = static_cast<uint8_t *>(calloc(height, 1));
+	auto *new_col = static_cast<uint8_t *>(calloc(height, 1));
 	for (int i = 0; i < width; i++) {
 		int sum = 0;
 		int div = 0;
@@ -508,7 +512,7 @@ Java_com_philj56_gbcc_GLActivity_initialiseTileset(
 	fontmap.bitmap = static_cast<uint8_t *>(calloc(width * height, 1));
 	fontmap.tile_width = width / 16;
 	fontmap.tile_height = height / 16;
-	jbyte *image = env->GetByteArrayElements(data, NULL);
+	jbyte *image = env->GetByteArrayElements(data, nullptr);
 	// Have to use a for loop as the data is converted to int
 	// when loaded by Android, even though it's greyscale
 	for (int j = 0; j < height; j++) {
@@ -532,7 +536,7 @@ Java_com_philj56_gbcc_GLActivity_setCameraImage(
 		JNIEnv *env,
 		jobject obj,/* this */
 		jbyteArray data) {
-	jbyte *image = env->GetByteArrayElements(data, NULL);
+	jbyte *image = env->GetByteArrayElements(data, nullptr);
 	// Have to use a for loop as the data is converted to int
 	// when loaded by Android, even though it's greyscale
 	for (int j = 0; j < GB_CAMERA_SENSOR_HEIGHT; j++) {
@@ -557,17 +561,18 @@ void gbcc_camera_platform_capture_image(struct gbcc_camera_platform *camera, uin
 	memcpy(image, camera_image, GB_CAMERA_SENSOR_SIZE);
 }
 
-extern "C" void gbcc_screenshot(struct gbcc *gbc) {
-    return;
+extern "C" void gbcc_screenshot(struct gbcc *gb) {
+    // Stubbed
 }
 
 extern "C" void gbcc_fontmap_load(struct gbcc_fontmap *font) {
     font->bitmap = fontmap.bitmap;
     font->tile_width = fontmap.tile_width;
 	font->tile_height = fontmap.tile_height;
-	return;
 }
 
 extern "C" void gbcc_fontmap_destroy(struct gbcc_fontmap *font) {
-	return;
+    // Stubbed
 }
+
+#pragma clang diagnostic pop
