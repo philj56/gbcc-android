@@ -22,7 +22,9 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.media.MediaRouter
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
@@ -397,12 +399,21 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun startGBCC() {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
-            Integer.parseInt(str).takeUnless { it == 0 }
-        } ?: 44100
-        val framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.let { str ->
-            Integer.parseInt(str).takeUnless { it == 0 }
-        } ?: 256
+
+        val sampleRate: Int
+        val framesPerBuffer: Int
+        if (!bluetoothAudio()) {
+            sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
+                Integer.parseInt(str).takeUnless { it == 0 }
+            } ?: 44100
+            framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.let { str ->
+                Integer.parseInt(str).takeUnless { it == 0 }
+            } ?: 256
+        } else {
+            sampleRate = 44100
+            framesPerBuffer = 512
+        }
+
         Log.d("GBCC", "Using $sampleRate Hz audio, $framesPerBuffer samples per buffer")
 
         loadedSuccessfully = loadRom(filename, sampleRate, framesPerBuffer, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
@@ -625,6 +636,26 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             else -> return false
         }
         return true
+    }
+
+    private fun bluetoothAudio() : Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val mr = getSystemService(Context.MEDIA_ROUTER_SERVICE) as MediaRouter
+            val deviceType = mr.getSelectedRoute(MediaRouter.ROUTE_TYPE_LIVE_AUDIO).deviceType
+            return deviceType == MediaRouter.RouteInfo.DEVICE_TYPE_BLUETOOTH
+        }
+        val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val outputs = am.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+        val bluetooth = outputs.any { it.type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP }
+        val wired = outputs.any {
+            it.type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+                    || it.type == AudioDeviceInfo.TYPE_WIRED_HEADSET
+        }
+
+        return bluetooth && !wired
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {
