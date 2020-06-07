@@ -7,13 +7,15 @@
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="auto_resume"
-        app:title="@string/settings_auto_resume" />
+        app:title="@string/settings_auto_resume"
+        app:summary="@string/settings_auto_resume_summary" />
 
     <SwitchPreference
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="auto_save"
-        app:title="@string/settings_auto_save" />
+        app:title="@string/settings_auto_save"
+        app:summary="@string/settings_auto_save_summary" />
 
     <SwitchPreference
         app:defaultValue="true"
@@ -21,7 +23,7 @@
         app:key="frame_blend"
         app:title="@string/settings_frame_blend" />
 
-    <EditTextPreference
+    <com.philj56.gbcc.TurboPreference
         app:defaultValue="0"
         app:iconSpaceReserved="false"
         app:key="turbo_speed"
@@ -46,64 +48,64 @@
         app:title="@string/settings_fps" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="@string/settings_shader_dot_matrix"
-        android:entries="@array/shader_names_array"
-        android:entryValues="@array/shader_values_array"
-        android:key="shader_dmg"
-        android:title="@string/settings_shader_dmg"
+        app:defaultValue="@string/settings_shader_dot_matrix"
+        app:entries="@array/shader_names_array"
+        app:entryValues="@array/shader_values_array"
+        app:key="shader_dmg"
+        app:title="@string/settings_shader_dmg"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="@string/settings_shader_subpixel"
-        android:entries="@array/shader_names_array"
-        android:entryValues="@array/shader_values_array"
-        android:key="shader_gbc"
-        android:title="@string/settings_shader_gbc"
+        app:defaultValue="@string/settings_shader_subpixel"
+        app:entries="@array/shader_names_array"
+        app:entryValues="@array/shader_values_array"
+        app:key="shader_gbc"
+        app:title="@string/settings_shader_gbc"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="-1"
-        android:entries="@array/orientation_names_array"
-        android:entryValues="@array/orientation_values_array"
-        android:key="orientation"
-        android:title="@string/settings_orientation"
+        app:defaultValue="-1"
+        app:entries="@array/orientation_names_array"
+        app:entryValues="@array/orientation_values_array"
+        app:key="orientation"
+        app:title="@string/settings_orientation"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="auto"
-        android:entries="@array/skin_names_array"
-        android:entryValues="@array/skin_values_array"
-        android:key="skin"
-        android:title="@string/settings_skin"
+        app:defaultValue="auto"
+        app:entries="@array/skin_names_array"
+        app:entryValues="@array/skin_values_array"
+        app:key="skin"
+        app:title="@string/settings_skin"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="Default"
-        android:entries="@array/dmg_palettes_array"
-        android:entryValues="@array/dmg_palettes_array"
-        android:key="palette"
-        android:title="@string/settings_palette"
+        app:defaultValue="Default"
+        app:entries="@array/dmg_palettes_array"
+        app:entryValues="@array/dmg_palettes_array"
+        app:key="palette"
+        app:title="@string/settings_palette"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="Teal"
-        android:entries="@array/color_names_array"
-        android:entryValues="@array/color_values_array"
-        android:key="color"
-        android:title="@string/settings_color"
+        app:defaultValue="Teal"
+        app:entries="@array/color_names_array"
+        app:entryValues="@array/color_values_array"
+        app:key="color"
+        app:title="@string/settings_color"
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.SummaryListPreference
-        android:defaultValue="auto"
-        android:entries="@array/night_mode_names_array"
-        android:entryValues="@array/night_mode_values_array"
-        android:key="night_mode"
-        android:title="@string/settings_night_mode"
+        app:defaultValue="auto"
+        app:entries="@array/night_mode_names_array"
+        app:entryValues="@array/night_mode_values_array"
+        app:key="night_mode"
+        app:title="@string/settings_night_mode"
         app:iconSpaceReserved="false" />
 
     <Preference
-        android:key="arrange"
-        android:title="@string/settings_arrange"
+        app:key="arrange"
+        app:title="@string/settings_arrange"
         app:iconSpaceReserved="false">
         <intent
             android:targetPackage="com.philj56.gbcc"
@@ -111,8 +113,8 @@
     </Preference>
 
     <Preference
-        android:key="licenses"
-        android:title="@string/settings_licenses"
+        app:key="licenses"
+        app:title="@string/settings_licenses"
         app:iconSpaceReserved="false">
         <intent
             android:targetPackage="com.philj56.gbcc"

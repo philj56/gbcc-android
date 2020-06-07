@@ -29,7 +29,9 @@
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
     <string name="settings_auto_resume">Auto-resume</string>
+    <string name="settings_auto_resume_summary">Resume games from where you left off</string>
     <string name="settings_auto_save">Auto-save</string>
+    <string name="settings_auto_save_summary">Save whenever a game writes to SRAM</string>
     <string name="settings_frame_blend">Frame-blending</string>
     <string name="settings_turbo_speed">Turbo limit</string>
     <string name="settings_vsync">Vsync</string>

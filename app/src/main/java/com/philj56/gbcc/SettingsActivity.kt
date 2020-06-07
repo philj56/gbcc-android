@@ -14,10 +14,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.util.AttributeSet
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -57,5 +59,29 @@ class SummaryListPreference(context: Context, attrs: AttributeSet) :
     ListPreference(context, attrs) {
     init {
         summaryProvider = SimpleSummaryProvider.getInstance()
+    }
+}
+
+class TurboPreference(context: Context, attrs: AttributeSet) :
+    EditTextPreference(context, attrs) {
+    init {
+        summaryProvider = TurboSummaryProvider
+    }
+}
+
+object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
+    override fun provideSummary(preference: EditTextPreference?): CharSequence {
+        if (preference == null) {
+            return "Not set"
+        }
+        val text = if (preference.text.isEmpty()) {
+            "0"
+        } else {
+            preference.text
+        }
+        return when (text.toFloat()) {
+            0F -> "0 (Unlimited)"
+            else -> "$text×"
+        }
     }
 }
