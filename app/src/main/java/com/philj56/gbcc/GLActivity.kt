@@ -301,6 +301,16 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
         setButtonIds(arrayOf(buttonStart, buttonSelect), arrayOf(BUTTON_CODE_START, BUTTON_CODE_SELECT))
 
+        placeholderTouchTarget.setOnTouchListener { v, _ ->
+            // This shouldn't be needed, but Android
+            // seems to act strangely when the root view is touched
+            // and ignores any further touches.
+            if (v != placeholderTouchTarget) {
+                return@setOnTouchListener false
+            }
+            return@setOnTouchListener true
+        }
+
         dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {
                 return@OnTouchListener false

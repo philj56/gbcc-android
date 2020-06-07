@@ -8,6 +8,21 @@
     android:layoutDirection="ltr"
     tools:context=".ArrangeActivity">
 
+    <ImageView
+        android:id="@+id/placeholderTouchTarget"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:importantForAccessibility="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/empty">
+        <!-- This shouldn't be needed, but Android
+        seems to act strangely when the root view is touched
+        and ignores any further touches. -->
+    </ImageView>
+
     <com.philj56.gbcc.ScreenPlaceholder
         android:id="@+id/screen"
         android:layout_width="wrap_content"

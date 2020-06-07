@@ -10,6 +10,7 @@
 
 package com.philj56.gbcc
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -126,6 +127,7 @@ class ArrangeActivity : AppCompatActivity() {
         setSizes()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         super.onCreate(savedInstanceState)
@@ -138,6 +140,16 @@ class ArrangeActivity : AppCompatActivity() {
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
 
         setContentView(R.layout.activity_arrange)
+
+        placeholderTouchTarget.setOnTouchListener { v, _ ->
+            // This shouldn't be needed, but Android
+            // seems to act strangely when the root view is touched
+            // and ignores any further touches.
+            if (v != placeholderTouchTarget) {
+                return@setOnTouchListener false
+            }
+            return@setOnTouchListener true
+        }
 
         updateLayout(
             when(prefs.getString("skin", "auto")) {
