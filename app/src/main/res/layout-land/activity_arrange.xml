@@ -218,81 +218,17 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/resetSizes" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/sizeMenu"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
         android:background="@android:color/transparent"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/screen"
         app:layout_constraintEnd_toEndOf="@+id/screen"
         app:layout_constraintStart_toStartOf="@+id/screen"
         app:layout_constraintTop_toTopOf="@+id/screen">
 
-        <TextView
-            android:id="@+id/sizes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/size_title"
-            android:textAlignment="center"
-            android:textColor="@android:color/primary_text_dark"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/abSeekBarLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:labelFor="@id/abSeekBar"
-            android:text="@string/a_b_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
-
-        <SeekBar
-            android:id="@+id/abSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:progress="50" />
-
-        <TextView
-            android:id="@+id/startSelectSeekBarLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:labelFor="@id/startSelectSeekBar"
-            android:text="@string/start_select_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
-
-        <SeekBar
-            android:id="@+id/startSelectSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:progress="50" />
-
-        <TextView
-            android:id="@+id/dpadSeekBarLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:labelFor="@id/dpadSeekBar"
-            android:text="@string/dpad_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
-
-        <SeekBar
-            android:id="@+id/dpadSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:progress="50" />
-
-    </LinearLayout>
+        <include layout="@layout/activity_arrange_sliders" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

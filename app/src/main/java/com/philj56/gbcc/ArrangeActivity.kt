@@ -23,21 +23,22 @@ import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import com.google.android.material.slider.Slider
 import kotlinx.android.synthetic.main.activity_arrange.*
+import kotlinx.android.synthetic.main.activity_arrange_sliders.*
 import kotlin.math.log
 import kotlin.math.min
 import kotlin.math.pow
 
 
 class ArrangeActivity : AppCompatActivity() {
-    private val seekBarListener = SeekBarListener()
+    private val sliderListener = SliderListener()
     private val scaleFactorRange : Float = 2f
 
     private lateinit var prefs : SharedPreferences
@@ -56,9 +57,9 @@ class ArrangeActivity : AppCompatActivity() {
         }
         window.setBackgroundDrawableResource(bgColor)
 
-        abSeekBar.setOnSeekBarChangeListener(seekBarListener)
-        startSelectSeekBar.setOnSeekBarChangeListener(seekBarListener)
-        dpadSeekBar.setOnSeekBarChangeListener(seekBarListener)
+        abSlider.addOnChangeListener(sliderListener)
+        startSelectSlider.addOnChangeListener(sliderListener)
+        dpadSlider.addOnChangeListener(sliderListener)
 
         if (!gbc) {
             val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
@@ -172,15 +173,15 @@ class ArrangeActivity : AppCompatActivity() {
     }
 
     private fun setSizes() {
-        abSeekBar.progress = sizeToProgress(buttonA.scaleX)
-        startSelectSeekBar.progress = sizeToProgress(buttonStart.scaleX)
-        dpadSeekBar.progress = sizeToProgress(dpad.scaleX)
+        abSlider.value = sizeToValue(buttonA.scaleX)
+        startSelectSlider.value = sizeToValue(buttonStart.scaleX)
+        dpadSlider.value = sizeToValue(dpad.scaleX)
     }
 
     fun resetSizes(@Suppress("UNUSED_PARAMETER") view: View) {
-        abSeekBar.progress = 50
-        startSelectSeekBar.progress = 50
-        dpadSeekBar.progress = 50
+        abSlider.value = 0.5F
+        startSelectSlider.value = 0.5F
+        dpadSlider.value = 0.5F
     }
 
     fun resetLayout(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -196,46 +197,40 @@ class ArrangeActivity : AppCompatActivity() {
         dpad.translationY = 0f
     }
 
-    private fun progressToSize(progress: Int) : Float {
-        val t : Float = progress / 50f - 1f
+    private fun valueToSize(value: Float) : Float {
+        val t : Float = value * 2 - 1f
         return scaleFactorRange.pow(t)
     }
 
-    private fun sizeToProgress(size: Float) : Int {
+    private fun sizeToValue(size: Float) : Float {
         val t : Float = log(size, scaleFactorRange)
-        return ((t + 1f) * 50f).toInt()
+        return (t + 1f) / 2
     }
 
-    private inner class SeekBarListener : SeekBar.OnSeekBarChangeListener {
+    private inner class SliderListener: Slider.OnChangeListener {
 
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            val scale = progressToSize(progress)
-            when (seekBar?.id) {
-                R.id.abSeekBar -> {
+        override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
+            val scale = valueToSize(value)
+            when (slider.id) {
+                R.id.abSlider -> {
                     buttonA.scaleX = scale
                     buttonA.scaleY = scale
                     buttonB.scaleX = scale
                     buttonB.scaleY = scale
                 }
 
-                R.id.startSelectSeekBar -> {
+                R.id.startSelectSlider -> {
                     buttonStart.scaleX = scale
                     buttonStart.scaleY = scale
                     buttonSelect.scaleX = scale
                     buttonSelect.scaleY = scale
                 }
 
-                R.id.dpadSeekBar -> {
+                R.id.dpadSlider -> {
                     dpad.scaleX = scale
                     dpad.scaleY = scale
                 }
             }
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
         }
     }
 
@@ -258,18 +253,15 @@ class ArrangeActivity : AppCompatActivity() {
 
 class ResizableImage : AppCompatImageView {
     private var floating: Boolean = false
-    private val vibrator: Vibrator
 
     constructor(context: Context) : super(context) {
         addMotionListener()
         addLongClickListener()
-        vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
         addMotionListener()
         addLongClickListener()
-        vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
     private fun addMotionListener() {
@@ -302,6 +294,7 @@ class ResizableImage : AppCompatImageView {
 
     private fun vibrate() {
         val milliseconds: Long = 10
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {

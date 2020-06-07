@@ -65,4 +65,10 @@
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
     </style>
+
+    <!-- Make the layout screen sliders use the accent colour-->
+    <style name="SliderTheme" parent="AppThemeDayNight.NoActionBar">
+        <item name="colorPrimary">@color/gbcBerry</item>
+        <item name="labelBehavior">gone</item>
+    </style>
 </resources>
