@@ -369,7 +369,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun selectExportDir() {
         val saveDir = filesDir.resolve(SAVE_DIR)
-        if (!saveDir.isDirectory || saveDir.list()?.isEmpty() == true) {
+        if (!saveDir.isDirectory || (saveDir.list()?.none { it.endsWith(".sav") } == true)) {
             Toast.makeText(baseContext, getString(R.string.message_no_export), Toast.LENGTH_SHORT)
                 .show()
             return
@@ -534,16 +534,15 @@ class MainActivity : AppCompatActivity() {
         } else if (requestCode == EXPORT_REQUEST_CODE) {
             val data = resultData.data ?: return
             AsyncTask.execute {
-                var count = 0
+                val saveDir = filesDir.resolve(SAVE_DIR)
+                val saves = saveDir.listFiles { path -> path.extension == "sav" }
+                    ?: return@execute
                 contentResolver.openOutputStream(data).use { outputStream ->
                     ZipOutputStream(outputStream).use { zip ->
-                        filesDir.resolve(SAVE_DIR).walk().forEach { file ->
-                            if (file.extension == "sav") {
-                                count += 1
-                                zip.putNextEntry(ZipEntry(file.name))
-                                file.inputStream().use { it.copyTo(zip) }
-                                zip.closeEntry()
-                            }
+                        saves.forEach { file ->
+                            zip.putNextEntry(ZipEntry(file.name))
+                            file.inputStream().use { it.copyTo(zip) }
+                            zip.closeEntry()
                         }
                     }
                 }
@@ -552,8 +551,8 @@ class MainActivity : AppCompatActivity() {
                         baseContext,
                         resources.getQuantityString(
                             R.plurals.message_export_complete,
-                            count,
-                            count
+                            saves.size,
+                            saves.size
                         ),
                         Toast.LENGTH_SHORT
                     ).show()
