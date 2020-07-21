@@ -5,14 +5,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-	compileSdkVersion 29
-	buildToolsVersion "29.0.3"
+	compileSdkVersion 30
+	buildToolsVersion "30.0.1"
 	defaultConfig {
 		applicationId "com.philj56.gbcc"
 		minSdkVersion 21
-		targetSdkVersion 29
-		versionCode 22
-		versionName "beta22"
+		targetSdkVersion 30
+		versionCode 23
+		versionName "beta23"
 		archivesBaseName = "gbcc"
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {

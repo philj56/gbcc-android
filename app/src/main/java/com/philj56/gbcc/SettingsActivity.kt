@@ -12,15 +12,14 @@ package com.philj56.gbcc
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +81,34 @@ object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
         return when (text.toFloat()) {
             0F -> "0 (Unlimited)"
             else -> "$text×"
+        }
+    }
+}
+
+class UnitSeekbarPreference(context: Context, attrs: AttributeSet) :
+    SeekBarPreference(context, attrs) {
+
+    var textView: TextView? = null
+    val watcher = UnitSeekbarPreferenceWatcher()
+
+    override fun onBindViewHolder(view: PreferenceViewHolder?) {
+        textView = view?.findViewById(R.id.seekbar_value) as TextView?
+        textView?.removeTextChangedListener(watcher)
+        textView?.addTextChangedListener(watcher)
+        super.onBindViewHolder(view)
+    }
+
+    inner class UnitSeekbarPreferenceWatcher : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            textView?.removeTextChangedListener(watcher)
+            s?.insert(s.length, context.resources.getString(R.string.settings_bluetooth_latency_units))
+            textView?.addTextChangedListener(watcher)
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         }
     }
 }

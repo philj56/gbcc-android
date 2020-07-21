@@ -66,6 +66,17 @@
     <string name="settings_color_kiwi">Kiwi</string>
     <string name="settings_color_teal">Teal</string>
 
+    <string name="settings_audio_low_latency">Use low-latency audio path</string>
+    <string name="settings_audio_low_latency_summary">Try disabling this if you have audio problems</string>
+
+    <string name="settings_audio_latency">Audio latency</string>
+    <string name="settings_audio_latency_summary">Increased latency reduces stuttering</string>
+    <string name="settings_audio_latency_units">\u00A0ms</string>
+
+    <string name="settings_bluetooth_latency">Bluetooth audio latency</string>
+    <string name="settings_bluetooth_latency_summary">Increased latency reduces stuttering</string>
+    <string name="settings_bluetooth_latency_units">\u00A0ms</string>
+
     <string name="settings_night_mode">Night mode</string>
     <string name="settings_night_mode_system">System</string>
     <string name="settings_night_mode_on">On</string>
@@ -73,6 +84,12 @@
 
     <string name="settings_arrange">Rearrange Layout</string>
     <string name="settings_licenses">Licenses</string>
+
+    <string name="settings_category_behaviour">Behaviour</string>
+    <string name="settings_category_graphics">Graphics</string>
+    <string name="settings_category_display">Display</string>
+    <string name="settings_category_audio">Audio</string>
+    <string name="settings_category_miscellaneous">Miscellaneous</string>
 
     <!-- Arrange Activity -->
     <string name="size_title">Button Sizes</string>

@@ -409,19 +409,29 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun startGBCC() {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         val sampleRate: Int
         val framesPerBuffer: Int
         if (!bluetoothAudio()) {
-            sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
-                Integer.parseInt(str).takeUnless { it == 0 }
-            } ?: 44100
-            framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.let { str ->
-                Integer.parseInt(str).takeUnless { it == 0 }
-            } ?: 256
+            val lowLatency = prefs.getBoolean("audio_low_latency", true)
+            if (lowLatency) {
+                sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)?.let { str ->
+                    Integer.parseInt(str).takeUnless { it == 0 }
+                } ?: 44100
+                framesPerBuffer =
+                    am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.let { str ->
+                        Integer.parseInt(str).takeUnless { it == 0 }
+                    } ?: 256
+            } else {
+                val ms = prefs.getInt("audio_latency_ms", 40)
+                sampleRate = 44100
+                framesPerBuffer = ms * 44100 / (4 * 1000)
+            }
         } else {
+            val ms = prefs.getInt("bluetooth_latency_ms", 40)
             sampleRate = 44100
-            framesPerBuffer = 512
+            framesPerBuffer = ms * 44100 / (4 * 1000)
         }
 
         Log.d("GBCC", "Using $sampleRate Hz audio, $framesPerBuffer samples per buffer")
@@ -742,7 +752,7 @@ class MyGLSurfaceView : GLSurfaceView {
         setMeasuredDimension(width, height)
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         destroyWindow()
         super.surfaceDestroyed(holder)
     }
