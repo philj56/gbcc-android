@@ -28,6 +28,14 @@
             app:key="turbo_speed"
             app:title="@string/settings_turbo_speed" />
 
+        <SeekBarPreference
+            app:defaultValue="10"
+            app:min="0"
+            android:max="100"
+            app:iconSpaceReserved="false"
+            app:key="haptic_strength"
+            app:title="@string/settings_haptic_strength" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

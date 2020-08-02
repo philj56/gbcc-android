@@ -112,6 +112,11 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
     }
 
+    private fun hapticVibrate() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val milliseconds = prefs.getInt("haptic_strength", 0).toLong()
+        vibrate(milliseconds)
+    }
 
     private fun vibrate(milliseconds: Long) {
         if (milliseconds == 0L) {
@@ -144,7 +149,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
                         press(buttons[index], true)
-                        vibrate(10)
+                        hapticVibrate()
                     }
                     MotionEvent.ACTION_UP -> {
                         press(buttons[index], false)
@@ -156,7 +161,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                             if (view2 != view) {
                                 val press = inBounds(view2, x, y)
                                 if (press && !isPressed(buttons[index2])) {
-                                    vibrate(10)
+                                    hapticVibrate()
                                 }
                                 press(buttons[index2], press)
                             }
@@ -369,7 +374,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     }
 
                     if (lastState != dpadState) {
-                        vibrate(10)
+                        hapticVibrate()
                     }
                 }
                 MotionEvent.ACTION_UP -> {
