@@ -436,7 +436,12 @@ Java_com_philj56_gbcc_GLActivity_getOptions(
 			.selection = gbc.menu.selection,
 	};
 
-	strncpy(options.shader, gbc.window.gl.shaders[gbc.window.gl.cur_shader].name, sizeof(options.shader));
+	if (gbc.window.initialised) {
+	    const char *src = gbc.window.gl.shaders[gbc.window.gl.cur_shader].name;
+	    if (src != nullptr) {
+			strncpy(options.shader, gbc.window.gl.shaders[gbc.window.gl.cur_shader].name, sizeof(options.shader));
+		}
+	}
 
 	jbyteArray ret = env->NewByteArray(sizeof(options));
 	env->SetByteArrayRegion(ret, 0, sizeof(options), reinterpret_cast<const jbyte *>(&options));
