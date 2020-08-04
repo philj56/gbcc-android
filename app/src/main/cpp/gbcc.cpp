@@ -37,14 +37,43 @@ extern "C" {
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+/* Options to be persisted across device rotation etc. */
+struct gbcc_temp_options {
+    /* Have these options been set? */
+	bool initialised;
+
+    /* struct gbcc */
+	float turbo_speed;
+	bool autosave;
+	bool frame_blending;
+	bool interlacing;
+	bool show_fps;
+
+	/* core */
+	bool sync_to_video;
+
+	/* ppu */
+	struct palette palette;
+
+	/* menu */
+	bool show;
+	int save_state;
+	int load_state;
+	enum GBCC_MENU_ENTRY selection;
+
+	/* window */
+	char shader[MAX_SHADER_LEN];
+};
+
 static pthread_t emu_thread;
 static struct gbcc gbc;
 static char *fname;
 static char *save_dir;
 static char shader[MAX_SHADER_LEN];
-static gbcc_fontmap fontmap;
+static struct gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
 static pthread_mutex_t render_mutex = PTHREAD_MUTEX_INITIALIZER; //NOLINT
+static struct gbcc_temp_options options;
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -132,6 +161,13 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	gbcc_window_initialise(&gbc);
 	gbcc_window_use_shader(&gbc, shader);
 	gbcc_menu_init(&gbc);
+	if (options.initialised) {
+		gbc.menu.show = options.show;
+		gbc.menu.save_state = options.save_state;
+		gbc.menu.load_state = options.load_state;
+		gbc.menu.selection = options.selection;
+		gbcc_window_use_shader(&gbc, options.shader);
+	}
 	gbcc_menu_update(&gbc);
 }
 
@@ -243,6 +279,15 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	update_preferences(env, prefs);
+	if (options.initialised) {
+		gbc.turbo_speed = options.turbo_speed;
+		gbc.autosave = options.autosave;
+		gbc.frame_blending = options.frame_blending;
+		gbc.interlacing = options.interlacing;
+		gbc.show_fps = options.show_fps;
+		gbc.core.sync_to_video = options.sync_to_video;
+		gbc.core.ppu.palette = options.palette;
+	}
 	if (check_autoresume(env, prefs)) {
 		gbc.load_state = 10;
 	}
@@ -271,6 +316,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	gbcc_audio_destroy(&gbc);
 	free(fname);
 	free(save_dir);
+	options = (struct gbcc_temp_options){0}; //NOLINT
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -365,6 +411,47 @@ Java_com_philj56_gbcc_GLActivity_loadState(
 		jobject obj/* this */,
 		jint state) {
 	gbc.load_state = static_cast<int8_t>(state);
+}
+
+extern "C" JNIEXPORT jbyteArray JNICALL
+Java_com_philj56_gbcc_GLActivity_getOptions(
+		JNIEnv *env,
+		jobject obj/* this */) {
+	options = {
+	        .initialised = true,
+
+			.turbo_speed = gbc.turbo_speed,
+			.autosave = gbc.autosave,
+			.frame_blending = gbc.frame_blending,
+			.interlacing = gbc.interlacing,
+			.show_fps = gbc.show_fps,
+
+			.sync_to_video = gbc.core.sync_to_video,
+
+			.palette = gbc.core.ppu.palette,
+
+			.show = gbc.menu.show,
+			.save_state = gbc.menu.save_state,
+			.load_state = gbc.menu.load_state,
+			.selection = gbc.menu.selection,
+	};
+
+	strncpy(options.shader, gbc.window.gl.shaders[gbc.window.gl.cur_shader].name, sizeof(options.shader));
+
+	jbyteArray ret = env->NewByteArray(sizeof(options));
+	env->SetByteArrayRegion(ret, 0, sizeof(options), reinterpret_cast<const jbyte *>(&options));
+	return ret;
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_setOptions(
+		JNIEnv *env,
+		jobject obj/* this */,
+		jbyteArray opts) {
+    if (opts == nullptr) {
+		return;
+    }
+	env->GetByteArrayRegion(opts, 0, sizeof(options), reinterpret_cast<jbyte *>(&options));
 }
 
 extern "C" JNIEXPORT jboolean JNICALL

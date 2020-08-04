@@ -78,6 +78,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private var cameraPermissionRefused = false
     private var dpadState = 0
     private lateinit var saveDir : String
+    private var tempOptions : ByteArray? = null
 
     external fun toggleMenu(view: View)
     private external fun chdir(dirName: String)
@@ -90,6 +91,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun toggleTurbo()
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
+    private external fun getOptions(): ByteArray
+    private external fun setOptions(options: ByteArray?)
     private external fun checkVibrationFun(): Boolean
     private external fun updateAccelerometer(x: Float, y: Float)
     private external fun updateCamera(array: ByteArray, width: Int, height: Int, rotation: Int, rowStride: Int)
@@ -301,6 +304,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
         if (savedInstanceState != null) {
             resume = resume || savedInstanceState.getBoolean("resume")
+            if (tempOptions == null) {
+                tempOptions = savedInstanceState.getByteArray("options")
+            }
         }
 
         setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
@@ -441,6 +447,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
         Log.d("GBCC", "Using $sampleRate Hz audio, $framesPerBuffer samples per buffer")
 
+        if (tempOptions != null) {
+            setOptions(tempOptions)
+        }
         loadedSuccessfully = loadRom(filename, sampleRate, framesPerBuffer, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
         if (!loadedSuccessfully) {
             Toast.makeText(this,
@@ -473,6 +482,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun stopGBCC() {
         if (loadedSuccessfully) {
+            tempOptions = getOptions()
             sensorManager.unregisterListener(this)
             handler.removeCallbacks(checkVibration)
             saveState(autoSaveState)
@@ -496,6 +506,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("resume", true)
+        outState.putByteArray("options", tempOptions)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
