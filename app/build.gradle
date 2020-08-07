@@ -53,11 +53,8 @@ android {
 	kotlinOptions {
 		jvmTarget = JavaVersion.VERSION_1_8.toString()
 	}
-	ndkVersion "21.3.6528147"
 
-	android {
-		ndkVersion "21.3.6528147"
-	}
+	ndkVersion "21.3.6528147"
 }
 
 dependencies {
