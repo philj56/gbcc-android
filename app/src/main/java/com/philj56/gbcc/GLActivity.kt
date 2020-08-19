@@ -556,7 +556,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
-        cameraProviderFuture.addListener(Runnable {
+        cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
             // I assume that 320x240 is available on every camera out there
@@ -572,7 +572,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 .setTargetResolution(targetResolution)
                 .build()
 
-            imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
+            imageAnalysis.setAnalyzer(executor, { image ->
                 // Images are always in YUV_420_888 format, with Y as plane 0
                 // with a pixel stride of 1, so we can just grab the greyscale from here
                 val yplane = image.planes[0]

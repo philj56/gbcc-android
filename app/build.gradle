@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
 	compileSdkVersion 30
-	buildToolsVersion "30.0.1"
+	buildToolsVersion "30.0.2"
 	defaultConfig {
 		applicationId "com.philj56.gbcc"
 		minSdkVersion 21
@@ -34,6 +34,10 @@ android {
 					'proguard-rules.pro'
 			minifyEnabled = true
 			shrinkResources = true
+			ndk {
+				// To be enabled once Android Studio 4.1 is out
+				//debugSymbolLevel = 'FULL'
+			}
 		}
 		debug {
 			minifyEnabled = false
