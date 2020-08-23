@@ -15,6 +15,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -355,9 +356,9 @@ class MainActivity : AppCompatActivity() {
             type = "*/*"
         }
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivityForResult(intent, IMPORT_REQUEST_CODE)
-        } else {
+        } catch (e: ActivityNotFoundException) {
             Toast.makeText(
                 baseContext,
                 getString(R.string.message_no_files_app),
@@ -380,9 +381,9 @@ class MainActivity : AppCompatActivity() {
         }
         val date = SimpleDateFormat("yyyyMMdd").format(Date())
         intent.putExtra(Intent.EXTRA_TITLE, "gbcc_saves_$date.zip")
-        if (intent.resolveActivity(packageManager) != null) {
+        try {
             startActivityForResult(intent, EXPORT_REQUEST_CODE)
-        } else {
+        } catch (e: ActivityNotFoundException) {
             Toast.makeText(
                 baseContext,
                 getString(R.string.message_no_files_app),
