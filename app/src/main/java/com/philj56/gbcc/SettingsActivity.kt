@@ -33,12 +33,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
-        val turbo = preferenceManager.findPreference<EditTextPreference>("turbo_speed")
-        turbo?.setOnBindEditTextListener { editText ->
-            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            editText.selectAll()
-        }
-
         val nightMode = preferenceManager.findPreference<SummaryListPreference>("night_mode")
         nightMode?.setOnPreferenceChangeListener { _, newValue ->
             AppCompatDelegate.setDefaultNightMode(
@@ -65,6 +59,19 @@ class TurboPreference(context: Context, attrs: AttributeSet) :
     EditTextPreference(context, attrs) {
     init {
         summaryProvider = TurboSummaryProvider
+
+        setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+            editText.selectAll()
+        }
+    }
+
+    override fun setText(text: String?) {
+        if (text?.toFloatOrNull() == null) {
+            super.setText("0")
+        } else {
+            super.setText(text)
+        }
     }
 }
 
