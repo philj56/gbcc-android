@@ -17,6 +17,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
@@ -41,6 +42,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import androidx.transition.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
@@ -640,7 +642,7 @@ class ImportOverwriteAdapter(
 class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            val builder = AlertDialog.Builder(it)
+            val builder = MaterialAlertDialogBuilder(it)
             val title = resources.getQuantityString(R.plurals.delete_confirmation, count, count)
             builder.setTitle(title)
                 .setPositiveButton(R.string.delete) { _, _ ->
@@ -655,6 +657,13 @@ class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragm
                 }
                 .create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        if (activity is MainActivity) {
+            (activity as MainActivity).cancelDelete()
+        }
+        super.onCancel(dialog)
     }
 }
 
