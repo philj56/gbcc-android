@@ -12,7 +12,9 @@ package com.philj56.gbcc
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -25,6 +27,7 @@ import android.hardware.SensorManager
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.MediaRouter
+import android.net.Uri
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.os.*
@@ -42,6 +45,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_gl.*
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
@@ -72,6 +76,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private var accelerometer : Sensor? = null
     private lateinit var vibrator : Vibrator
     private lateinit var checkVibration : Runnable
+    private lateinit var checkError : Runnable
     private lateinit var filename : String
     private var resume = false
     private var loadedSuccessfully = false
@@ -94,6 +99,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun getOptions(): ByteArray
     private external fun setOptions(options: ByteArray?)
     private external fun checkVibrationFun(): Boolean
+    private external fun checkErrorFun(): Boolean
+    private external fun flushLogs()
     private external fun updateAccelerometer(x: Float, y: Float)
     private external fun updateCamera(array: ByteArray, width: Int, height: Int, rotation: Int, rowStride: Int)
     private external fun initialiseTileset(width: Int, height: Int, data: ByteArray)
@@ -112,6 +119,39 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 vibrate(0)
             }
             handler.postDelayed(checkVibration, 10)
+        }
+
+        checkError = Runnable {
+            if (checkErrorFun()) {
+                flushLogs()
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.invalid_opcode_title)
+                    .setMessage(R.string.invalid_opcode_description)
+                    .setPositiveButton(R.string.invalid_opcode_button_send_feedback) { _, _ ->
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gbcc.emu+invalid_opcode@gmail.com"))
+                            putExtra(Intent.EXTRA_SUBJECT, "Bug report")
+                            putExtra(Intent.EXTRA_TEXT, "Crash log:\n----------\n" + filesDir.resolve("gbcc.log").readText())
+                        }
+                        try {
+                            startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(
+                                this,
+                                R.string.message_no_email_app,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        finish()
+                    }.setNegativeButton(R.string.invalid_opcode_button_quit) { _, _ ->
+                        finish()
+                    }.setCancelable(false)
+                    .create()
+                    .show()
+            } else {
+                handler.postDelayed(checkError, 100)
+            }
         }
     }
 
@@ -459,6 +499,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             finish()
             return
         }
+        handler.post(checkError)
         if (resume) {
             loadState(autoSaveState)
             resume = false
@@ -485,6 +526,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             tempOptions = getOptions()
             sensorManager.unregisterListener(this)
             handler.removeCallbacks(checkVibration)
+            handler.removeCallbacks(checkError)
             saveState(autoSaveState)
             quit()
             resume = true

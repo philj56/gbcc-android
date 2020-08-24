@@ -74,6 +74,9 @@ static struct gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
 static pthread_mutex_t render_mutex = PTHREAD_MUTEX_INITIALIZER; //NOLINT
 static struct gbcc_temp_options options;
+static FILE *logfile;
+int stdout_fd;
+int stderr_fd;
 
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
@@ -152,6 +155,24 @@ bool check_autoresume(JNIEnv *env, jobject prefs) {
 
 	env->DeleteLocalRef(prefsClass);
 	return ret;
+}
+
+void logfile_begin() {
+	// Redirect stdout & stderr to a log file, storing old fd's for later restoration
+	stdout_fd = dup(fileno(stdout));
+	stderr_fd = dup(fileno(stderr));
+	logfile = freopen("gbcc.log", "w", stdout);
+	dup2(fileno(stdout), fileno(stderr));
+}
+
+void logfile_end() {
+	// Restore stdout & stderr
+	dup2(stdout_fd, fileno(stdout));
+	dup2(stderr_fd, fileno(stderr));
+	close(stdout_fd);
+	close(stderr_fd);
+	fclose(logfile);
+	logfile = nullptr;
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -264,11 +285,14 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	memcpy(save_dir, string, name_len);
 	env->ReleaseStringUTFChars(saveDir, string);
 
+	logfile_begin();
+
 	gbcc_initialise(&gbc.core, fname);
 	if (!gbc.core.initialised) {
 		/* Something went wrong during initialisation */
 		free(fname);
 		free(saveDir);
+		logfile_end();
 		return static_cast<jboolean>(false);
 	}
 
@@ -303,6 +327,8 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	gbc.quit = true;
 	sem_post(&gbc.core.ppu.vsync_semaphore);
 	pthread_join(emu_thread, nullptr);
+
+	logfile_end();
 
 	// Don't allow the screen to be drawn to while we're freeing the core
 	const struct timespec wait_time = { .tv_sec = 0, .tv_nsec = 100000000 };
@@ -468,6 +494,22 @@ Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
 	bool ret = (rumble != last_rumble);
 	last_rumble = rumble;
 	return static_cast<jboolean>(ret);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_checkErrorFun(
+		JNIEnv *env,
+		jobject obj/* this */) {
+	return static_cast<jboolean>(gbc.core.error);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_flushLogs(
+		JNIEnv *env,
+		jobject obj/* this */) {
+    if (logfile != nullptr) {
+		fflush(logfile);
+    }
 }
 
 extern "C" JNIEXPORT void JNICALL
