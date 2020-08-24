@@ -88,7 +88,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     external fun toggleMenu(view: View)
     private external fun chdir(dirName: String)
     private external fun checkRom(file: String): Boolean
-    private external fun loadRom(file: String, sampleRate: Int, samplesPerBuffer: Int, saveDir: String, prefs: SharedPreferences): Boolean
+    private external fun loadRom(
+        file: String,
+        sampleRate: Int,
+        samplesPerBuffer: Int,
+        saveDir: String,
+        prefs: SharedPreferences
+    ): Boolean
     private external fun getErrorMessage(): String
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
@@ -102,7 +108,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun checkErrorFun(): Boolean
     private external fun flushLogs()
     private external fun updateAccelerometer(x: Float, y: Float)
-    private external fun updateCamera(array: ByteArray, width: Int, height: Int, rotation: Int, rowStride: Int)
+    private external fun updateCamera(
+        array: ByteArray,
+        width: Int,
+        height: Int,
+        rotation: Int,
+        rowStride: Int
+    )
     private external fun initialiseTileset(width: Int, height: Int, data: ByteArray)
     private external fun destroyTileset()
     private external fun setCameraImage(data: ByteArray)
@@ -167,7 +179,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             return
         }
         if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator.vibrate(
+                VibrationEffect.createOneShot(
+                    milliseconds,
+                    VibrationEffect.DEFAULT_AMPLITUDE
+                )
+            )
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(milliseconds)
@@ -320,7 +337,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             finish()
         }
         if (!checkRom(filename)) {
-            Toast.makeText(this,
+            Toast.makeText(
+                this,
                 "Error loading ROM:\n" + getErrorMessage().trim(),
                 Toast.LENGTH_SHORT
             ).show()
@@ -328,7 +346,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
 
         updateLayout(
-            when(prefs.getString("skin", "auto")) {
+            when (prefs.getString("skin", "auto")) {
                 "dmg" -> false
                 "gbc" -> true
                 else -> filename.endsWith("gbc")
@@ -350,7 +368,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
 
         setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
-        setButtonIds(arrayOf(buttonStart, buttonSelect), arrayOf(BUTTON_CODE_START, BUTTON_CODE_SELECT))
+        setButtonIds(
+            arrayOf(buttonStart, buttonSelect), arrayOf(
+                BUTTON_CODE_START,
+                BUTTON_CODE_SELECT
+            )
+        )
 
         placeholderTouchTarget.setOnTouchListener { v, _ ->
             // This shouldn't be needed, but Android
@@ -362,7 +385,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             return@setOnTouchListener true
         }
 
-        dpad.setOnTouchListener( View.OnTouchListener { view, motionEvent ->
+        dpad.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             if (view != dpad) {
                 return@OnTouchListener false
             }
@@ -490,9 +513,18 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         if (tempOptions != null) {
             setOptions(tempOptions)
         }
-        loadedSuccessfully = loadRom(filename, sampleRate, framesPerBuffer, saveDir, PreferenceManager.getDefaultSharedPreferences(this))
+        loadedSuccessfully = loadRom(
+            filename,
+            sampleRate,
+            framesPerBuffer,
+            saveDir,
+            PreferenceManager.getDefaultSharedPreferences(
+                this
+            )
+        )
         if (!loadedSuccessfully) {
-            Toast.makeText(this,
+            Toast.makeText(
+                this,
                 "Error loading ROM:\n" + getErrorMessage().trim(),
                 Toast.LENGTH_SHORT
             ).show()
@@ -565,7 +597,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (checkCameraPermission()) {
                 startCamera()
@@ -576,7 +609,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun checkCameraPermission() : Boolean {
-        val permissionStatus = ContextCompat.checkSelfPermission(baseContext, Manifest.permission.CAMERA)
+        val permissionStatus = ContextCompat.checkSelfPermission(
+            baseContext,
+            Manifest.permission.CAMERA
+        )
         return permissionStatus == PackageManager.PERMISSION_GRANTED
     }
 
@@ -603,11 +639,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
             // I assume that 320x240 is available on every camera out there
             // Though if it fails, the camera will still work
-            val targetResolution = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                Size(320, 240)
-            } else {
-                Size(240, 320)
-            }
+            val targetResolution =
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    Size(320, 240)
+                } else {
+                    Size(240, 320)
+                }
 
             val imageAnalysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -620,7 +657,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 val yplane = image.planes[0]
                 val arr = ByteArray(yplane.buffer.remaining())
                 yplane.buffer.get(arr)
-                updateCamera(arr, image.width, image.height, image.imageInfo.rotationDegrees, yplane.rowStride)
+                updateCamera(
+                    arr,
+                    image.width,
+                    image.height,
+                    image.imageInfo.rotationDegrees,
+                    yplane.rowStride
+                )
                 image.close()
             })
 
@@ -708,9 +751,15 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             KeyEvent.KEYCODE_DPAD_DOWN -> press(BUTTON_CODE_DOWN, pressed)
             KeyEvent.KEYCODE_DPAD_LEFT -> press(BUTTON_CODE_LEFT, pressed)
             KeyEvent.KEYCODE_DPAD_RIGHT -> press(BUTTON_CODE_RIGHT, pressed)
-            KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) { toggleMenu(screen) }
-            KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) { toggleTurbo() }
-            KeyEvent.KEYCODE_BUTTON_L1 -> if (pressed) { onBackPressed() }
+            KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) {
+                toggleMenu(screen)
+            }
+            KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) {
+                toggleTurbo()
+            }
+            KeyEvent.KEYCODE_BUTTON_L1 -> if (pressed) {
+                onBackPressed()
+            }
             else -> return false
         }
         return true

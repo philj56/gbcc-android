@@ -315,6 +315,7 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	if (check_autoresume(env, prefs)) {
 		gbc.load_state = 10;
 	}
+
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 	return static_cast<jboolean>(true);
 }
