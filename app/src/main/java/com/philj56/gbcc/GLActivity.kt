@@ -127,8 +127,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         checkVibration = Runnable {
             if (checkVibrationFun()) {
                 vibrate(10)
-            } else {
-                vibrate(0)
             }
             handler.postDelayed(checkVibration, 10)
         }
@@ -319,13 +317,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         super.onCreate(savedInstanceState)
         chdir(filesDir.absolutePath)
 
-        window.decorView.setOnSystemUiVisibilityChangeListener {
-            hideNavigation()
-        }
-
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
         setContentView(R.layout.activity_gl)
+        hideNavigation()
 
         val save = filesDir.resolve("saves")
         save.mkdirs()
