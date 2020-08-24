@@ -5,7 +5,8 @@
     <color name="colorPrimaryDark">@color/gbcTeal</color>
     <color name="colorOnPrimary">#DEFFFFFF</color>
     <color name="colorAccent">@color/gbcBerry</color>
-    <color name="colorPrimaryNight">@color/gbcScreenBorder</color>
+    <color name="colorPrimaryNight">#FF35A599</color>
+    <color name="colorPrimaryNightDark">@color/gbcScreenBorder</color>
 
     <!-- Colors for specific purposes -->
     <color name="fileSelected">@color/colorPrimary</color>
