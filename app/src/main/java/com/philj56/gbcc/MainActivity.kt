@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Check if the version has changed since last launch, and perform some setup if so
-        AsyncTask.execute {
+        Thread {
             val lastLaunchVersion = filesDir.resolve("lastLaunchVersion")
             if (!lastLaunchVersion.exists()
                 || !lastLaunchVersion.readText().startsWith("${BuildConfig.VERSION_CODE}")
@@ -124,7 +123,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 runOnUiThread { updateFiles() }
             }
-        }
+        }.start()
 
         // Set up the toolbars
         mainToolbar.inflateMenu(R.menu.main_menu)
@@ -296,7 +295,7 @@ class MainActivity : AppCompatActivity() {
                 mainToolbar.visibility = View.GONE
             }
             R.id.confirmMoveItem -> {
-                AsyncTask.execute {
+                Thread {
                     moveSelection.forEach { file ->
                         val newFile = File(currentDir, file.name)
                         file.renameTo(newFile)
@@ -305,7 +304,7 @@ class MainActivity : AppCompatActivity() {
                         clearSelection()
                         updateFiles()
                     }
-                }
+                }.start()
             }
         }
         return true
@@ -486,7 +485,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == IMPORT_REQUEST_CODE) {
             val clipData = resultData.clipData
             // Run the import in the background to avoid blocking the UI
-            AsyncTask.execute {
+            Thread {
                 if (clipData != null) {
                     if (clipData.itemCount >= 10) {
                         // Give the user some notification that an import is occurring
@@ -533,13 +532,13 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     importDir.delete()
                 }
-            }
+            }.start()
         } else if (requestCode == EXPORT_REQUEST_CODE) {
             val data = resultData.data ?: return
-            AsyncTask.execute {
+            Thread {
                 val saveDir = filesDir.resolve(SAVE_DIR)
                 val saves = saveDir.listFiles { path -> path.extension == "sav" }
-                    ?: return@execute
+                    ?: return@Thread
                 contentResolver.openOutputStream(data).use { outputStream ->
                     ZipOutputStream(outputStream).use { zip ->
                         saves.forEach { file ->
@@ -560,7 +559,7 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            }
+            }.start()
         }
     }
 
@@ -736,7 +735,7 @@ class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : Dialog
             val builder = AlertDialog.Builder(it)
             builder.setTitle(resources.getString(R.string.overwrite_confirmation))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
-                    AsyncTask.execute {
+                    Thread {
                         adapter.selected.forEach { file ->
                             val dest = saveDir.resolve(file.name)
                             dest.delete()
@@ -754,7 +753,7 @@ class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : Dialog
                             ).show()
                         }
                         deleteFiles()
-                    }
+                    }.start()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> deleteFiles() }
                 .setView(view)
