@@ -673,7 +673,7 @@ class CreateFolderDialogFragment : DialogFragment() {
             val textView = it.layoutInflater.inflate(R.layout.dialog_create_folder, null, false)
             val input = textView?.findViewById<EditText>(R.id.createFolderInput)
 
-            val builder = AlertDialog.Builder(it)
+            val builder = MaterialAlertDialogBuilder(it)
             builder.setTitle(R.string.create_folder)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     if (activity is MainActivity) {
@@ -732,7 +732,7 @@ class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : Dialog
             fun deleteFiles() {
                 saveDir.resolve(IMPORTED_SAVE_SUBDIR).deleteRecursively()
             }
-            val builder = AlertDialog.Builder(it)
+            val builder = MaterialAlertDialogBuilder(it)
             builder.setTitle(resources.getString(R.string.overwrite_confirmation))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     Thread {

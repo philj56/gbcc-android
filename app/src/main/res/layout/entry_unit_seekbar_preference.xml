@@ -9,7 +9,7 @@
         android:id="@+id/icon_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,8 +26,7 @@
                 android:id="@android:id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="TEXT" />
+                android:singleLine="true" />
 
             <TextView
                 android:id="@android:id/summary"
@@ -67,8 +66,7 @@
                 android:id="@+id/seekbar_units"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="ms" />
+                android:layout_weight="0" />
         </LinearLayout>
 
     </LinearLayout>
