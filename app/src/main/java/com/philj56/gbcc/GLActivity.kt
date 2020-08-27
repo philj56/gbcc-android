@@ -81,6 +81,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private var resume = false
     private var loadedSuccessfully = false
     private var cameraPermissionRefused = false
+    private var animateButtons = true
     private var dpadState = 0
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
@@ -207,26 +208,31 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
                         press(buttons[index], true)
+                        view.isPressed = true && animateButtons
                         hapticVibrate()
                     }
                     MotionEvent.ACTION_UP -> {
-                        press(buttons[index], false)
+                        views.forEachIndexed { index2, view2 ->
+                            press(buttons[index2], false)
+                            view2.isPressed = false && animateButtons
+                        }
                     }
                     MotionEvent.ACTION_MOVE -> run {
                         val x = motionEvent.rawX.toInt()
                         val y = motionEvent.rawY.toInt()
                         views.forEachIndexed { index2, view2 ->
                             if (view2 != view) {
-                                val press = inBounds(view2, x, y)
-                                if (press && !isPressed(buttons[index2])) {
+                                val pressed = inBounds(view2, x, y)
+                                if (pressed && !isPressed(buttons[index2])) {
                                     hapticVibrate()
                                 }
-                                press(buttons[index2], press)
+                                press(buttons[index2], pressed)
+                                view2.isPressed = pressed && animateButtons
                             }
                         }
                     }
                 }
-                return@OnTouchListener false
+                return@OnTouchListener true
             })
         }
     }
@@ -263,11 +269,11 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 )
             }
 
-            buttonA.setImageResource(R.drawable.ic_button_ab_dmg)
-            buttonB.setImageResource(R.drawable.ic_button_ab_dmg)
+            buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+            buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
 
-            buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg)
-            buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg)
+            buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+            buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
 
             buttonStart.rotation = -45f
             buttonSelect.rotation = -45f
@@ -362,6 +368,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
         }
 
+        animateButtons = prefs.getBoolean("animate_buttons", true)
         setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
         setButtonIds(
             arrayOf(buttonStart, buttonSelect), arrayOf(
@@ -439,6 +446,21 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
                     if (lastState != dpadState) {
                         hapticVibrate()
+                        if (animateButtons) {
+                            dpad.setImageResource(
+                                when (dpadState) {
+                                    1 -> R.drawable.ic_button_dpad_pressed_up
+                                    2 -> R.drawable.ic_button_dpad_pressed_down
+                                    4 -> R.drawable.ic_button_dpad_pressed_left
+                                    5 -> R.drawable.ic_button_dpad_pressed_up_left
+                                    6 -> R.drawable.ic_button_dpad_pressed_down_left
+                                    8 -> R.drawable.ic_button_dpad_pressed_right
+                                    9 -> R.drawable.ic_button_dpad_pressed_up_right
+                                    10 -> R.drawable.ic_button_dpad_pressed_down_right
+                                    else -> R.drawable.ic_button_dpad
+                                }
+                            )
+                        }
                     }
                 }
                 MotionEvent.ACTION_UP -> {
@@ -447,6 +469,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     press(BUTTON_CODE_DOWN, false)
                     press(BUTTON_CODE_LEFT, false)
                     press(BUTTON_CODE_RIGHT, false)
+                    if (animateButtons) {
+                        dpad.setImageResource(R.drawable.ic_button_dpad)
+                    }
                 }
             }
 

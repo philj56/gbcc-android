@@ -93,6 +93,12 @@
         app:title="@string/settings_category_display">
 
         <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="animate_buttons"
+            app:title="@string/settings_animate_buttons" />
+
+        <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="show_fps"
