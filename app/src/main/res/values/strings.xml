@@ -65,6 +65,10 @@
 
     <string name="settings_palette">DMG Palette</string>
 
+    <string name="settings_dmg_color">DMG Colour</string>
+    <string name="settings_dmg_color_light">Light</string>
+    <string name="settings_dmg_color_dark">Dark</string>
+
     <string name="settings_color">GBC Colour</string>
     <string name="settings_color_berry">Berry</string>
     <string name="settings_color_dandelion">Dandelion</string>

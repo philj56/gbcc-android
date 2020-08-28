@@ -113,6 +113,14 @@
             app:iconSpaceReserved="false" />
 
         <com.philj56.gbcc.SummaryListPreference
+            app:defaultValue="Light"
+            app:entries="@array/dmg_color_names_array"
+            app:entryValues="@array/dmg_color_values_array"
+            app:key="dmg_color"
+            app:title="@string/settings_dmg_color"
+            app:iconSpaceReserved="false" />
+
+        <com.philj56.gbcc.SummaryListPreference
             app:defaultValue="Teal"
             app:entries="@array/color_names_array"
             app:entryValues="@array/color_values_array"

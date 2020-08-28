@@ -152,7 +152,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_weight="0" />
 
-    <ImageView
+    <include
         android:id="@+id/dpad"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -162,12 +162,12 @@
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/dpad_description"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_button_dpad"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/button_dpad" />
 
     <ImageView
         android:id="@+id/topRightCorner"

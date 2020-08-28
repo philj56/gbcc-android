@@ -19,6 +19,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -47,6 +48,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_gl.*
+import kotlinx.android.synthetic.main.button_dpad.*
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
@@ -249,12 +251,41 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 "Teal" -> R.color.gbcTeal
                 else -> R.color.gbcTeal
             }
-            false -> R.color.dmgBackground
+            false -> when (prefs.getString("dmg_color", "Light")) {
+                "Light" -> R.color.dmgLightBackground
+                "Dark" -> R.color.dmgDarkBackground
+                else -> R.color.dmgLightBackground
+            }
         }
         window.setBackgroundDrawableResource(bgColor)
 
         if (!gbc) {
-            val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
+            val screenBorderColor: Int
+            val theme = prefs.getString("dmg_color", "Light")
+            if (theme == "Dark") {
+                screenBorderColor = ContextCompat.getColor(this, R.color.dmgDarkScreenBorder)
+                dpadBackground.setColorFilter(
+                    ContextCompat.getColor(this, R.color.dmgDarkDpad),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+
+                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+
+                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+            } else {
+                screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
+                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+
+                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+            }
+
+            buttonStart.rotation = -45f
+            buttonSelect.rotation = -45f
+
             val borders = arrayOf(
                 screenBorderTop,
                 screenBorderBottom,
@@ -269,26 +300,15 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 )
             }
 
-            buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
-            buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
-
-            buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
-            buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
-
-            buttonStart.rotation = -45f
-            buttonSelect.rotation = -45f
-
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                val bottomLeft = findViewById<ImageView>(R.id.bottomLeftCorner)
-                val bottomRight = findViewById<ImageView>(R.id.bottomRightCorner)
                 val px = (resources.displayMetrics.density + 0.5f).toInt()
 
-                bottomLeft.layoutParams.apply {
+                bottomLeftCorner.layoutParams.apply {
                     width = 16 * px
                     height = width
                 }
 
-                bottomRight.layoutParams.apply {
+                bottomRightCorner.layoutParams.apply {
                     width = 64 * px
                     height = width
                 }
@@ -447,17 +467,17 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     if (lastState != dpadState) {
                         hapticVibrate()
                         if (animateButtons) {
-                            dpad.setImageResource(
+                            dpadHighlight.setImageResource(
                                 when (dpadState) {
-                                    1 -> R.drawable.ic_button_dpad_pressed_up
-                                    2 -> R.drawable.ic_button_dpad_pressed_down
-                                    4 -> R.drawable.ic_button_dpad_pressed_left
-                                    5 -> R.drawable.ic_button_dpad_pressed_up_left
-                                    6 -> R.drawable.ic_button_dpad_pressed_down_left
-                                    8 -> R.drawable.ic_button_dpad_pressed_right
-                                    9 -> R.drawable.ic_button_dpad_pressed_up_right
-                                    10 -> R.drawable.ic_button_dpad_pressed_down_right
-                                    else -> R.drawable.ic_button_dpad
+                                    1 -> R.drawable.ic_button_dpad_highlight_pressed_up
+                                    2 -> R.drawable.ic_button_dpad_highlight_pressed_down
+                                    4 -> R.drawable.ic_button_dpad_highlight_pressed_left
+                                    5 -> R.drawable.ic_button_dpad_highlight_pressed_up_left
+                                    6 -> R.drawable.ic_button_dpad_highlight_pressed_down_left
+                                    8 -> R.drawable.ic_button_dpad_highlight_pressed_right
+                                    9 -> R.drawable.ic_button_dpad_highlight_pressed_up_right
+                                    10 -> R.drawable.ic_button_dpad_highlight_pressed_down_right
+                                    else -> R.drawable.ic_button_dpad_highlight
                                 }
                             )
                         }
@@ -470,7 +490,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     press(BUTTON_CODE_LEFT, false)
                     press(BUTTON_CODE_RIGHT, false)
                     if (animateButtons) {
-                        dpad.setImageResource(R.drawable.ic_button_dpad)
+                        dpadHighlight.setImageResource(R.drawable.ic_button_dpad_highlight)
                     }
                 }
             }

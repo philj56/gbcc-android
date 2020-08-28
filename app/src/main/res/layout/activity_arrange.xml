@@ -142,7 +142,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.philj56.gbcc.ResizableImage
+    <include
         android:id="@+id/dpad"
         android:layout_width="156dip"
         android:layout_height="156dip"
@@ -150,12 +150,12 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/dpad_description"
-        android:src="@drawable/ic_button_dpad"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/screen"
-        app:layout_constraintVertical_bias="0.33" />
+        app:layout_constraintVertical_bias="0.33"
+        layout="@layout/button_dpad_resizable" />
 
     <ImageView
         android:id="@+id/topRightCorner"

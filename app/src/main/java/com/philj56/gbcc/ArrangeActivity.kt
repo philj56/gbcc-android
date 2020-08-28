@@ -24,6 +24,7 @@ import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
@@ -31,8 +32,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
-import kotlinx.android.synthetic.main.activity_arrange.*
+import kotlinx.android.synthetic.main.activity_arrange.bottomLeftCorner
+import kotlinx.android.synthetic.main.activity_arrange.bottomRightCorner
+import kotlinx.android.synthetic.main.activity_arrange.buttonA
+import kotlinx.android.synthetic.main.activity_arrange.buttonB
+import kotlinx.android.synthetic.main.activity_arrange.buttonSelect
+import kotlinx.android.synthetic.main.activity_arrange.buttonStart
+import kotlinx.android.synthetic.main.activity_arrange.dpad
+import kotlinx.android.synthetic.main.activity_arrange.placeholderTouchTarget
+import kotlinx.android.synthetic.main.activity_arrange.screenBorderBottom
+import kotlinx.android.synthetic.main.activity_arrange.screenBorderLeft
+import kotlinx.android.synthetic.main.activity_arrange.screenBorderRight
+import kotlinx.android.synthetic.main.activity_arrange.screenBorderTop
 import kotlinx.android.synthetic.main.activity_arrange_sliders.*
+import kotlinx.android.synthetic.main.button_dpad.*
 import kotlin.math.log
 import kotlin.math.min
 import kotlin.math.pow
@@ -54,7 +67,11 @@ class ArrangeActivity : AppCompatActivity() {
                 "Teal" -> R.color.gbcTeal
                 else -> R.color.gbcTeal
             }
-            false -> R.color.dmgBackground
+            false -> when (prefs.getString("dmg_color", "Light")) {
+                "Light" -> R.color.dmgLightBackground
+                "Dark" -> R.color.dmgDarkBackground
+                else -> R.color.dmgLightBackground
+            }
         }
         window.setBackgroundDrawableResource(bgColor)
 
@@ -63,7 +80,32 @@ class ArrangeActivity : AppCompatActivity() {
         dpadSlider.addOnChangeListener(sliderListener)
 
         if (!gbc) {
-            val screenBorderColor = ContextCompat.getColor(this, R.color.dmgScreenBorder)
+            val screenBorderColor: Int
+            val theme = prefs.getString("dmg_color", "Light")
+            if (theme == "Dark") {
+                screenBorderColor = ContextCompat.getColor(this, R.color.dmgDarkScreenBorder)
+                dpadBackground.setColorFilter(
+                    ContextCompat.getColor(this, R.color.dmgDarkDpad),
+                    android.graphics.PorterDuff.Mode.SRC_IN
+                )
+
+                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+
+                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+            } else {
+                screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
+                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+
+                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+            }
+
+            buttonStart.rotation = -45f
+            buttonSelect.rotation = -45f
+
             val borders = arrayOf(
                 screenBorderTop,
                 screenBorderBottom,
@@ -77,15 +119,6 @@ class ArrangeActivity : AppCompatActivity() {
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
             }
-
-            buttonA.setImageResource(R.drawable.ic_button_ab_dmg)
-            buttonB.setImageResource(R.drawable.ic_button_ab_dmg)
-
-            buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg)
-            buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg)
-
-            buttonStart.rotation = -45f
-            buttonSelect.rotation = -45f
 
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val px = (resources.displayMetrics.density + 0.5f).toInt()
@@ -264,6 +297,59 @@ class ArrangeActivity : AppCompatActivity() {
 }
 
 class ResizableImage : AppCompatImageView {
+    private var floating: Boolean = false
+
+    constructor(context: Context) : super(context) {
+        addMotionListener()
+        addLongClickListener()
+    }
+
+    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
+        addMotionListener()
+        addLongClickListener()
+    }
+
+    private fun addMotionListener() {
+        setOnTouchListener(OnTouchListener { view, motionEvent ->
+
+            if (!floating) {
+                return@OnTouchListener view.performClick()
+            }
+
+            when (motionEvent.actionMasked) {
+                MotionEvent.ACTION_UP -> {
+                    floating = false
+                }
+            }
+
+            view.x = motionEvent.rawX - view.width / 2
+            view.y = motionEvent.rawY - view.height / 2
+
+            return@OnTouchListener true
+        })
+    }
+
+    private fun addLongClickListener() {
+        setOnLongClickListener(OnLongClickListener {
+            floating = true
+            vibrate()
+            return@OnLongClickListener false
+        })
+    }
+
+    private fun vibrate() {
+        val milliseconds: Long = 10
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(milliseconds)
+        }
+    }
+}
+
+class ResizableLayout : FrameLayout {
     private var floating: Boolean = false
 
     constructor(context: Context) : super(context) {
