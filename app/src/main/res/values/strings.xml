@@ -77,6 +77,8 @@
     <string name="settings_color_kiwi">Kiwi</string>
     <string name="settings_color_teal">Teal</string>
 
+    <string name="settings_audio_volume">Volume</string>
+
     <string name="settings_audio_low_latency">Use low-latency audio path</string>
     <string name="settings_audio_low_latency_summary">Try disabling this if you have audio problems</string>
 

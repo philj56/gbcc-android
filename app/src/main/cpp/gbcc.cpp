@@ -101,6 +101,11 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	gbc.show_fps = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
 
+	id = env->GetMethodID(prefsClass, "getInt", "(Ljava/lang/String;I)I");
+	arg = env->NewStringUTF("audio_volume");
+	gbc.audio.volume = env->CallIntMethod(prefs, id, arg, 100) / 100.0f;
+	env->DeleteLocalRef(arg);
+
 	id = env->GetMethodID(prefsClass, "getString", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
 	arg = env->NewStringUTF("turbo_speed");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);

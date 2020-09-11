@@ -185,6 +185,15 @@
             app:summary="@string/settings_bluetooth_latency_summary"
             app:iconSpaceReserved="false" />
 
+        <SeekBarPreference
+            app:min="0"
+            android:max="100"
+            app:defaultValue="100"
+            app:showSeekBarValue="false"
+            app:key="audio_volume"
+            app:title="@string/settings_audio_volume"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
