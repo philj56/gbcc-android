@@ -24,6 +24,7 @@ import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -32,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
+import kotlinx.android.synthetic.main.activity_arrange.*
 import kotlinx.android.synthetic.main.activity_arrange.bottomLeftCorner
 import kotlinx.android.synthetic.main.activity_arrange.bottomRightCorner
 import kotlinx.android.synthetic.main.activity_arrange.buttonA
@@ -45,6 +47,7 @@ import kotlinx.android.synthetic.main.activity_arrange.screenBorderLeft
 import kotlinx.android.synthetic.main.activity_arrange.screenBorderRight
 import kotlinx.android.synthetic.main.activity_arrange.screenBorderTop
 import kotlinx.android.synthetic.main.activity_arrange_sliders.*
+import kotlinx.android.synthetic.main.activity_gl.*
 import kotlinx.android.synthetic.main.button_dpad.*
 import kotlin.math.log
 import kotlin.math.min
@@ -94,6 +97,9 @@ class ArrangeActivity : AppCompatActivity() {
 
                 buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+
+                turboToggle.visibility = View.INVISIBLE
+                turboToggleDark.visibility = View.VISIBLE
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
                 buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
@@ -145,6 +151,8 @@ class ArrangeActivity : AppCompatActivity() {
         buttonSelect.scaleY = buttonSelect.scaleX
         dpad.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
         dpad.scaleY = dpad.scaleX
+        turboToggleLayout.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
+        turboToggleLayout.scaleY = turboToggleLayout.scaleX
 
         buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
         buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
@@ -156,23 +164,27 @@ class ArrangeActivity : AppCompatActivity() {
         buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
         dpad.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
         dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
+        turboToggleLayout.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        turboToggleLayout.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+
+        if (!prefs.getBoolean("show_turbo", false)) {
+            turboToggle.visibility = View.GONE
+            turboToggleDark.visibility = View.GONE
+        }
 
         setSizes()
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
         super.onCreate(savedInstanceState)
-
-        window.decorView.setOnSystemUiVisibilityChangeListener {
-            hideNavigation()
-        }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
 
         setContentView(R.layout.activity_arrange)
+        hideNavigation()
 
         placeholderTouchTarget.setOnTouchListener { v, _ ->
             // This shouldn't be needed, but Android
@@ -202,6 +214,7 @@ class ArrangeActivity : AppCompatActivity() {
             putFloat(getString(R.string.start_scale_key), buttonStart.scaleX)
             putFloat(getString(R.string.select_scale_key), buttonSelect.scaleX)
             putFloat(getString(R.string.dpad_scale_key), dpad.scaleX)
+            putFloat(getString(R.string.turbo_scale_key), turboToggleLayout.scaleX)
 
             putFloat(getString(R.string.a_offset_x_key), buttonA.translationX)
             putFloat(getString(R.string.a_offset_y_key), buttonA.translationY)
@@ -213,6 +226,8 @@ class ArrangeActivity : AppCompatActivity() {
             putFloat(getString(R.string.select_offset_y_key), buttonSelect.translationY)
             putFloat(getString(R.string.dpad_offset_x_key), dpad.translationX)
             putFloat(getString(R.string.dpad_offset_y_key), dpad.translationY)
+            putFloat(getString(R.string.turbo_offset_x_key), turboToggleLayout.translationX)
+            putFloat(getString(R.string.turbo_offset_y_key), turboToggleLayout.translationY)
             apply()
         }
     }
@@ -227,6 +242,8 @@ class ArrangeActivity : AppCompatActivity() {
         abSlider.value = 0.5F
         startSelectSlider.value = 0.5F
         dpadSlider.value = 0.5F
+        turboToggleLayout.scaleX = 1f
+        turboToggleLayout.scaleY = 1f
     }
 
     fun resetLayout(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -240,6 +257,8 @@ class ArrangeActivity : AppCompatActivity() {
         buttonSelect.translationY = 0f
         dpad.translationX = 0f
         dpad.translationY = 0f
+        turboToggleLayout.translationX = 0f
+        turboToggleLayout.translationY = 0f
     }
 
     private fun valueToSize(value: Float) : Float {
@@ -287,12 +306,19 @@ class ArrangeActivity : AppCompatActivity() {
     }
 
     private fun hideNavigation() {
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        @Suppress("Deprecation")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(
+                WindowInsets.Type.statusBars()
+                    or WindowInsets.Type.navigationBars())
+        } else {
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
     }
 }
 

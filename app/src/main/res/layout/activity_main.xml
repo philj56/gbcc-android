@@ -8,37 +8,31 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/mainToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="?attr/actionBarTheme"
-        app:popupTheme="@style/AppThemeDayNight"
         app:title="@string/app_name" />
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/fileToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/fileToolbar"
-        android:theme="?attr/actionBarTheme"
         android:visibility="gone"
-        app:popupTheme="@style/AppThemeDayNight"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:title="@string/select_items" />
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/moveToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/fileToolbar"
-        android:theme="?attr/actionBarTheme"
         android:visibility="gone"
-        app:popupTheme="@style/AppThemeDayNight"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:title="@string/select_destination" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/directoryTree"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:theme="@style/SliderTheme">
+    android:padding="8dp">
 
         <TextView
             android:id="@+id/sizes"
@@ -32,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:value="0.5"
+            app:labelBehavior="gone"
             app:haloRadius="20dp" />
 
         <TextView
@@ -49,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:value="0.5"
+            app:labelBehavior="gone"
             app:haloRadius="20dp" />
 
         <TextView
@@ -66,6 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:value="0.5"
+            app:labelBehavior="gone"
             app:haloRadius="20dp" />
 
 </LinearLayout>

@@ -11,6 +11,8 @@
     <string name="select_offset_y_key">buttonSelectOffsetYLandscape</string>
     <string name="dpad_offset_x_key">dpadOffsetXLandscape</string>
     <string name="dpad_offset_y_key">dpadOffsetYLandscape</string>
+    <string name="turbo_offset_x_key">buttonTurboOffsetXLandscape</string>
+    <string name="turbo_offset_y_key">buttonTurboOffsetYLandscape</string>
 
     <!-- Button scales -->
     <string name="a_scale_key">buttonAScaleLandscape</string>
@@ -18,4 +20,5 @@
     <string name="start_scale_key">buttonStartScaleLandscape</string>
     <string name="select_scale_key">buttonSelectScaleLandscape</string>
     <string name="dpad_scale_key">dpadScaleLandscape</string>
+    <string name="turbo_scale_key">buttonTurboScaleLandscape</string>
 </resources>

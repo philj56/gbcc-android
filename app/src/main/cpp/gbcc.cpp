@@ -349,8 +349,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleMenu(
 		JNIEnv *env,
-		jobject obj/* this */,
-		jobject view) {
+		jobject obj/* this */) {
 	gbcc_input_process_key(&gbc, GBCC_KEY_MENU, true);
 }
 

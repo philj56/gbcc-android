@@ -157,6 +157,16 @@
         app:layout_constraintVertical_bias="0.33"
         layout="@layout/button_dpad_resizable" />
 
+    <include
+        android:id="@+id/turboToggleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/dpad"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/screenBorderBottom"
+        layout="@layout/switch_turbo_resizable"/>
+
     <ImageView
         android:id="@+id/topRightCorner"
         android:layout_width="16dp"
@@ -232,7 +242,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@android:color/transparent"
-        android:theme="@style/SliderTheme"
         app:layout_constraintBottom_toBottomOf="@+id/screen"
         app:layout_constraintEnd_toEndOf="@+id/screen"
         app:layout_constraintStart_toStartOf="@+id/screen"

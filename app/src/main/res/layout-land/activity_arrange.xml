@@ -165,6 +165,16 @@
         app:layout_constraintTop_toTopOf="parent"
         layout="@layout/button_dpad_resizable" />
 
+    <include
+        android:id="@+id/turboToggleLayout"
+        layout="@layout/switch_turbo_resizable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/screenBorderRight" />
+
     <ImageView
         android:id="@+id/topRightCorner"
         android:importantForAccessibility="no"

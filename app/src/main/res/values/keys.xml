@@ -11,6 +11,8 @@
     <string name="select_offset_y_key">buttonSelectOffsetY</string>
     <string name="dpad_offset_x_key">dpadOffsetX</string>
     <string name="dpad_offset_y_key">dpadOffsetY</string>
+    <string name="turbo_offset_x_key">buttonTurboOffsetX</string>
+    <string name="turbo_offset_y_key">buttonTurboOffsetY</string>
 
     <!-- Button scales -->
     <string name="a_scale_key">buttonAScale</string>
@@ -18,4 +20,5 @@
     <string name="start_scale_key">buttonStartScale</string>
     <string name="select_scale_key">buttonSelectScale</string>
     <string name="dpad_scale_key">dpadScale</string>
+    <string name="turbo_scale_key">buttonTurboScale</string>
 </resources>

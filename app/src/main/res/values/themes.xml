@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GBCC" parent="Base.Theme.GBCC" />
+
+    <style name="Theme.GBCC.NoActionBar" parent="Theme.GBCC">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.GBCC.Fullscreen" parent="Theme.GBCC.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.GBCC" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <!--item name="colorSecondaryVariant">@color/colorAccent</item-->
+
+        <item name="android:colorBackground">@color/white_50</item>
+        <item name="colorSurface">@color/white_50</item>
+        <!--item name="colorError">@color/colorAccent</item-->
+
+        <item name="colorOnPrimary">@color/white_50</item>
+        <item name="colorOnSecondary">@color/black_900</item>
+        <item name="colorOnBackground">@color/black_900</item>
+        <item name="colorOnSurface">@color/black_900</item>
+        <!--item name="colorOnError">#FFFFFF</item-->
+
+        <!-- Component styles -->
+        <!--item name="actionMenuTextColor">#000000</item-->
+        <item name="toolbarStyle">@style/Widget.GBCC.Toolbar</item>
+        <item name="actionBarTheme">@style/ThemeOverlay.GBCC.Toolbar</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.GBCC.Preference</item>
+        <item name="sliderStyle">@style/Widget.GBCC.Slider</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <!-- Colour the toolbar correctly -->
+    <style name="Widget.GBCC.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Toolbar</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.Toolbar" parent="">
+        <item name="colorControlNormal">#E0FFFFFF</item>
+    </style>
+
+    <style name="Widget.GBCC.Slider" parent="Widget.MaterialComponents.Slider">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Slider</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.Slider" parent="">
+        <item name="colorPrimary">@color/gbcBerry</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.Preference" parent="PreferenceThemeOverlay">
+        <item name="preferenceFragmentListStyle">@style/Widget.GBCC.PreferenceFragmentList</item>
+    </style>
+</resources>

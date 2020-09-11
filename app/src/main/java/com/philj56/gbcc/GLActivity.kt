@@ -19,7 +19,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -36,7 +35,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.util.Size
 import android.view.*
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -88,7 +86,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
 
-    external fun toggleMenu(view: View)
+
+    fun toggleTurboListener(view: View) {toggleTurbo()}
+    fun toggleMenuListener(view: View) {toggleMenu()}
     private external fun chdir(dirName: String)
     private external fun checkRom(file: String): Boolean
     private external fun loadRom(
@@ -103,6 +103,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun press(button: Int, pressed: Boolean)
     private external fun isPressed(button: Int) : Boolean
     private external fun toggleTurbo()
+    private external fun toggleMenu()
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
     private external fun getOptions(): ByteArray
@@ -274,6 +275,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
                 buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+
+                turboToggle.visibility = View.INVISIBLE
+                turboToggleDark.visibility = View.VISIBLE
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
                 buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
@@ -282,6 +286,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
                 buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
             }
+
 
             buttonStart.rotation = -45f
             buttonSelect.rotation = -45f
@@ -325,6 +330,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         buttonSelect.scaleY = buttonSelect.scaleX
         dpad.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
         dpad.scaleY = dpad.scaleX
+        turboToggle.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
+        turboToggle.scaleY = turboToggle.scaleX
+        turboToggleDark.scaleX = turboToggle.scaleX
+        turboToggleDark.scaleY = turboToggle.scaleX
 
         buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
         buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
@@ -336,6 +345,15 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
         dpad.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
         dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
+        turboToggle.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        turboToggle.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+        turboToggleDark.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        turboToggleDark.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+
+        if (!prefs.getBoolean("show_turbo", false)) {
+            turboToggle.visibility = View.GONE
+            turboToggleDark.visibility = View.GONE
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -413,7 +431,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
             if (dpadState == 0) {
                 if (gestureDetector.onTouchEvent(motionEvent)) {
-                    toggleTurbo()
+                    if (!prefs.getBoolean("show_turbo", false)) {
+                        toggleTurbo()
+                    }
                     return@OnTouchListener true
                 }
             }
@@ -509,7 +529,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private fun hideNavigation() {
         @Suppress("Deprecation")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
+            window.insetsController?.hide(WindowInsets.Type.statusBars()
+                    or WindowInsets.Type.navigationBars())
         } else {
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -804,7 +825,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             KeyEvent.KEYCODE_DPAD_LEFT -> press(BUTTON_CODE_LEFT, pressed)
             KeyEvent.KEYCODE_DPAD_RIGHT -> press(BUTTON_CODE_RIGHT, pressed)
             KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) {
-                toggleMenu(screen)
+                toggleMenu()
             }
             KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) {
                 toggleTurbo()

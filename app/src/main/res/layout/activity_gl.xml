@@ -34,7 +34,7 @@
         android:layout_marginEnd="24dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/screen_description"
-        android:onClick="toggleMenu"
+        android:onClick="toggleMenuListener"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -148,6 +148,7 @@
 
     <include
         android:id="@+id/dpad"
+        layout="@layout/button_dpad"
         android:layout_width="156dip"
         android:layout_height="156dip"
         android:layout_marginStart="16dp"
@@ -158,8 +159,34 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/screen"
-        app:layout_constraintVertical_bias="0.33"
-        layout="@layout/button_dpad" />
+        app:layout_constraintVertical_bias="0.33" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/turboToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/TurboToggleTheme"
+        android:onClick="toggleTurboListener"
+        android:saveEnabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/dpad"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/screenBorderBottom"
+        app:switchMinWidth="64dp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/turboToggleDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="toggleTurboListener"
+        android:theme="@style/TurboToggleThemeDark"
+        android:saveEnabled="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/turboToggle"
+        app:layout_constraintEnd_toEndOf="@+id/turboToggle"
+        app:layout_constraintStart_toStartOf="@+id/turboToggle"
+        app:layout_constraintTop_toTopOf="@+id/turboToggle"
+        app:switchMinWidth="64dp"/>
 
     <ImageView
         android:id="@+id/topRightCorner"

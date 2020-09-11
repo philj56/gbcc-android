@@ -5,7 +5,7 @@
     android:viewportHeight="4">
   <path
       android:pathData="M2,2m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"
-      android:fillColor="#202020"
+      android:fillColor="@color/gbcButton"
       android:fillAlpha="1"/>
   <path
       android:pathData="m2,0a2,2 0,0 0,-2 2,2 2,0 0,0 0.01758,0.24414A2,2 0,0 1,2 0.5,2 2,0 0,1 3.98242,2.25586 2,2 0,0 0,4 2a2,2 0,0 0,-2 -2z"
