@@ -362,7 +362,7 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleTurbo(
 		JNIEnv *env,
 		jobject obj/* this */) {
-	gbcc_input_process_key(&gbc, GBCC_KEY_TURBO, true);
+	gbc.core.keys.turbo = !gbc.core.keys.turbo;
 }
 
 extern "C" JNIEXPORT void JNICALL
