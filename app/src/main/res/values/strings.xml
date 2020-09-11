@@ -15,6 +15,11 @@
         <item quantity="one">Are you sure you wish to delete this item?</item>
         <item quantity="other">Are you sure you wish to delete these %d items?</item>
     </plurals>
+    <string name="delete_save">Delete saves</string>
+    <plurals name="delete_save_confirmation">
+        <item quantity="one">Are you sure you wish to delete your saves for this game?</item>
+        <item quantity="other">Are you sure you wish to delete your saves for these %d games?</item>
+    </plurals>
     <string name="move">Move</string>
     <string name="overwrite_confirmation">Select save files to overwrite:</string>
 

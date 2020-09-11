@@ -287,6 +287,11 @@ class MainActivity : AppCompatActivity() {
                 val dialog = ConfirmDeleteDialogFragment(adapter.selected.count())
                 dialog.show(supportFragmentManager, "")
             }
+            R.id.deleteSaveItem -> {
+                selectionMode = SelectionMode.DELETE
+                val dialog = ConfirmSaveDeleteDialogFragment(adapter.selected.count())
+                dialog.show(supportFragmentManager, "")
+            }
             R.id.moveItem -> {
                 selectionMode = SelectionMode.MOVE
                 moveSelection.addAll(0, files.filter { it in adapter.selected })
@@ -349,6 +354,18 @@ class MainActivity : AppCompatActivity() {
 
     fun cancelDelete() {
         selectionMode = SelectionMode.SELECT
+    }
+
+    fun performSaveDelete() {
+        val saveDir = filesDir.resolve(SAVE_DIR)
+        adapter.selected.forEach { file ->
+            saveDir.listFiles { _, name ->
+                name.startsWith(file.nameWithoutExtension)
+            }?.forEach { save ->
+                save.delete()
+            }
+        }
+        clearSelection()
     }
 
     private fun performFileSearch() {
@@ -647,6 +664,34 @@ class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragm
                 .setPositiveButton(R.string.delete) { _, _ ->
                     if (activity is MainActivity) {
                         (activity as MainActivity).performDelete()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    if (activity is MainActivity) {
+                        (activity as MainActivity).cancelDelete()
+                    }
+                }
+                .create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        if (activity is MainActivity) {
+            (activity as MainActivity).cancelDelete()
+        }
+        super.onCancel(dialog)
+    }
+}
+
+class ConfirmSaveDeleteDialogFragment(private val count: Int) : AppCompatDialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val builder = MaterialAlertDialogBuilder(it)
+            val title = resources.getQuantityString(R.plurals.delete_save_confirmation, count, count)
+            builder.setTitle(title)
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    if (activity is MainActivity) {
+                        (activity as MainActivity).performSaveDelete()
                     }
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ ->
