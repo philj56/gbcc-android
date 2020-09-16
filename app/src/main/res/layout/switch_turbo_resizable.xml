@@ -28,11 +28,4 @@
         android:visibility="gone"
         app:switchMinWidth="64dp" />
 
-    <ImageView
-        android:id="@+id/placeholderTouchTarget"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:importantForAccessibility="no"
-        app:srcCompat="@drawable/empty" />
-
 </com.philj56.gbcc.ResizableLayout>

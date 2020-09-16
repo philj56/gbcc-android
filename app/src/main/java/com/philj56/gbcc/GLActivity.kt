@@ -68,26 +68,78 @@ private const val BUTTON_CODE_DOWN = 5
 private const val BUTTON_CODE_LEFT = 6
 private const val BUTTON_CODE_RIGHT = 7
 
+private val KEYCODE_TO_STRING_MAP = mapOf(
+        KeyEvent.KEYCODE_BUTTON_A to "button_map_a",
+        KeyEvent.KEYCODE_BUTTON_B to "button_map_b",
+        KeyEvent.KEYCODE_BUTTON_X to "button_map_x",
+        KeyEvent.KEYCODE_BUTTON_Y to "button_map_y",
+        KeyEvent.KEYCODE_DPAD_UP to "button_map_up",
+        KeyEvent.KEYCODE_DPAD_DOWN to "button_map_down",
+        KeyEvent.KEYCODE_DPAD_LEFT to "button_map_left",
+        KeyEvent.KEYCODE_DPAD_RIGHT to "button_map_right",
+        KeyEvent.KEYCODE_BUTTON_START to "button_map_start",
+        KeyEvent.KEYCODE_BUTTON_SELECT to "button_map_select",
+        KeyEvent.KEYCODE_BUTTON_L1 to "button_map_l1",
+        KeyEvent.KEYCODE_BUTTON_L2 to "button_map_l2",
+        KeyEvent.KEYCODE_BUTTON_R1 to "button_map_r1",
+        KeyEvent.KEYCODE_BUTTON_R2 to "button_map_r2",
+        KeyEvent.KEYCODE_BUTTON_THUMBL to "button_map_thumbl",
+        KeyEvent.KEYCODE_BUTTON_THUMBR to "button_map_thumbr",
+)
+
+private val ACTION_TO_KEY_MAP = mapOf(
+    "a" to 0,
+    "b" to 1,
+    "start" to 2,
+    "select" to 3,
+    "up" to 4,
+    "down" to 5,
+    "left" to 6,
+    "right" to 7,
+    "turbo" to 8,
+    "pause" to 9,
+    "printer" to 10,
+    "fps" to 11,
+    "frame_blending" to 12,
+    "vsync" to 13,
+    "link_cable" to 14,
+    "autosave" to 15,
+    "menu" to 16,
+    "interlace" to 17,
+    "shader" to 18,
+    "back" to -1,
+    "unmapped" to -1
+)
+
 class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
+    private lateinit var prefs: SharedPreferences
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var gestureDetector : GestureDetector
     private lateinit var sensorManager : SensorManager
     private var accelerometer : Sensor? = null
     private lateinit var vibrator : Vibrator
-    private lateinit var checkVibration : Runnable
-    private lateinit var checkError : Runnable
+    private lateinit var checkEmulatorState : Runnable
     private lateinit var filename : String
     private var resume = false
     private var loadedSuccessfully = false
     private var cameraPermissionRefused = false
     private var animateButtons = true
     private var dpadState = 0
+    private var lastHatUp = false
+    private var lastHatDown = false
+    private var lastHatLeft = false
+    private var lastHatRight = false
+    private var lastLeftTrigger = false
+    private var lastRightTrigger = false
+    private var disableAccelerometer = false
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
 
 
-    fun toggleTurboListener(view: View) {toggleTurbo()}
+    @Suppress("UNUSED_PARAMETER")
+    fun toggleTurboListener(view: View) { toggleTurboWrapper() }
+    @Suppress("UNUSED_PARAMETER")
     fun toggleMenuListener(view: View) {toggleMenu()}
     private external fun chdir(dirName: String)
     private external fun checkRom(file: String): Boolean
@@ -102,7 +154,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun quit()
     private external fun press(button: Int, pressed: Boolean)
     private external fun isPressed(button: Int) : Boolean
-    private external fun toggleTurbo()
+    private external fun toggleTurbo(): Boolean
     private external fun toggleMenu()
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
@@ -110,6 +162,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private external fun setOptions(options: ByteArray?)
     private external fun checkVibrationFun(): Boolean
     private external fun checkErrorFun(): Boolean
+    private external fun checkTurboFun(): Boolean
     private external fun flushLogs()
     private external fun updateAccelerometer(x: Float, y: Float)
     private external fun updateCamera(
@@ -128,14 +181,17 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
 
     init {
-        checkVibration = Runnable {
+        checkEmulatorState = Runnable {
             if (checkVibrationFun()) {
                 vibrate(10)
             }
-            handler.postDelayed(checkVibration, 10)
-        }
-
-        checkError = Runnable {
+            val turbo = checkTurboFun()
+            if (turboToggle.isChecked != turbo) {
+                turboToggle.isChecked = turbo
+            }
+            if (turboToggleDark.isChecked != turbo) {
+                turboToggleDark.isChecked = turbo
+            }
             if (checkErrorFun()) {
                 flushLogs()
                 MaterialAlertDialogBuilder(this)
@@ -144,9 +200,15 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     .setPositiveButton(R.string.invalid_opcode_button_send_feedback) { _, _ ->
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("gbcc.emu+invalid_opcode@gmail.com"))
+                            putExtra(
+                                Intent.EXTRA_EMAIL,
+                                arrayOf("gbcc.emu+invalid_opcode@gmail.com")
+                            )
                             putExtra(Intent.EXTRA_SUBJECT, "Bug report")
-                            putExtra(Intent.EXTRA_TEXT, "Crash log:\n----------\n" + filesDir.resolve("gbcc.log").readText())
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Crash log:\n----------\n" + filesDir.resolve("gbcc.log").readText()
+                            )
                         }
                         try {
                             startActivity(intent)
@@ -164,13 +226,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     .create()
                     .show()
             } else {
-                handler.postDelayed(checkError, 100)
+                handler.postDelayed(checkEmulatorState, 10)
             }
         }
     }
 
     private fun hapticVibrate() {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         val milliseconds = prefs.getInt("haptic_strength", 0).toLong()
         vibrate(milliseconds)
     }
@@ -241,8 +302,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun updateLayout(gbc: Boolean) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-
         val bgColor = when (gbc) {
             true -> when (prefs.getString("color", "Teal")) {
                 "Berry" -> R.color.gbcBerry
@@ -361,7 +420,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         super.onCreate(savedInstanceState)
         chdir(filesDir.absolutePath)
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
         setContentView(R.layout.activity_gl)
         hideNavigation()
@@ -432,63 +491,42 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             if (dpadState == 0) {
                 if (gestureDetector.onTouchEvent(motionEvent)) {
                     if (!prefs.getBoolean("show_turbo", false)) {
-                        toggleTurbo()
+                        toggleTurboWrapper()
                     }
                     return@OnTouchListener true
                 }
             }
-            val up = Rect(0, 0, dpad.width, dpad.height / 3)
-            val down = Rect(0, 2 * dpad.height / 3, dpad.width, dpad.height)
-            val left = Rect(0, 0, dpad.width / 3, dpad.height)
-            val right = Rect(2 * dpad.width / 3, 0, dpad.width, dpad.height)
-            val lastState = dpadState
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    val up = Rect(0, 0, dpad.width, dpad.height / 3)
+                    val down = Rect(0, 2 * dpad.height / 3, dpad.width, dpad.height)
+                    val left = Rect(0, 0, dpad.width / 3, dpad.height)
+                    val right = Rect(2 * dpad.width / 3, 0, dpad.width, dpad.height)
+
                     val x = motionEvent.x.toInt()
                     val y = motionEvent.y.toInt()
-                    dpadState = 0
+
+                    var state = 0
                     if (up.contains(x, y)) {
-                        dpadState += 1
+                        state += 1
                     }
                     if (down.contains(x, y)) {
-                        dpadState += 2
+                        state += 2
                     }
                     if (left.contains(x, y)) {
-                        dpadState += 4
+                        state += 4
                     }
                     if (right.contains(x, y)) {
-                        dpadState += 8
+                        state += 8
                     }
 
-                    val toggledOn = (lastState and dpadState) xor dpadState
-                    val toggledOff = (lastState or dpadState) xor dpadState
+                    val changed = updateDpad(state)
 
-                    if (toggledOn and 1 > 0) {
-                        press(BUTTON_CODE_UP, true)
-                    } else if (toggledOff and 1 > 0) {
-                        press(BUTTON_CODE_UP, false)
-                    }
-                    if (toggledOn and 2 > 0) {
-                        press(BUTTON_CODE_DOWN, true)
-                    } else if (toggledOff and 2 > 0) {
-                        press(BUTTON_CODE_DOWN, false)
-                    }
-                    if (toggledOn and 4 > 0) {
-                        press(BUTTON_CODE_LEFT, true)
-                    } else if (toggledOff and 4 > 0) {
-                        press(BUTTON_CODE_LEFT, false)
-                    }
-                    if (toggledOn and 8 > 0) {
-                        press(BUTTON_CODE_RIGHT, true)
-                    } else if (toggledOff and 8 > 0) {
-                        press(BUTTON_CODE_RIGHT, false)
-                    }
-
-                    if (lastState != dpadState) {
+                    if (changed) {
                         hapticVibrate()
                         if (animateButtons) {
                             dpadHighlight.setImageResource(
-                                when (dpadState) {
+                                when (state) {
                                     1 -> R.drawable.ic_button_dpad_highlight_pressed_up
                                     2 -> R.drawable.ic_button_dpad_highlight_pressed_down
                                     4 -> R.drawable.ic_button_dpad_highlight_pressed_left
@@ -504,11 +542,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     }
                 }
                 MotionEvent.ACTION_UP -> {
-                    dpadState = 0
-                    press(BUTTON_CODE_UP, false)
-                    press(BUTTON_CODE_DOWN, false)
-                    press(BUTTON_CODE_LEFT, false)
-                    press(BUTTON_CODE_RIGHT, false)
+                    updateDpad(0)
                     if (animateButtons) {
                         dpadHighlight.setImageResource(R.drawable.ic_button_dpad_highlight)
                     }
@@ -549,7 +583,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun startGBCC() {
         val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         val sampleRate: Int
         val framesPerBuffer: Int
@@ -597,13 +630,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             finish()
             return
         }
-        handler.post(checkError)
+        handler.post(checkEmulatorState)
         if (resume) {
             loadState(autoSaveState)
+            turboToggle.isChecked = false
+            turboToggleDark.isChecked = false
             resume = false
-        }
-        if (hasRumble()) {
-            handler.post(checkVibration)
         }
         if (hasAccelerometer()) {
             sensorManager.registerListener(this, accelerometer, 10000)
@@ -623,8 +655,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         if (loadedSuccessfully) {
             tempOptions = getOptions()
             sensorManager.unregisterListener(this)
-            handler.removeCallbacks(checkVibration)
-            handler.removeCallbacks(checkError)
+            handler.removeCallbacks(checkEmulatorState)
             saveState(autoSaveState)
             quit()
             resume = true
@@ -651,6 +682,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            if (disableAccelerometer) {
+                return
+            }
             @Suppress("Deprecation")
             val rotation =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -752,8 +786,13 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
             || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
             if (event.repeatCount == 0) {
-                if (gamepadPress(keyCode, true)) {
-                    return true
+                val pressed = when(keyCode) {
+                    KeyEvent.KEYCODE_BUTTON_L2 -> { val r = !lastLeftTrigger; lastLeftTrigger = true; r }
+                    KeyEvent.KEYCODE_BUTTON_R2 -> { val r = !lastRightTrigger; lastRightTrigger = true; r }
+                    else -> true
+                }
+                if (pressed && gamepadPress(keyCode, true)) {
+                        return true
                 }
             }
         }
@@ -764,7 +803,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
             || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
             if (event.repeatCount == 0) {
-                if (gamepadPress(keyCode, false)) {
+                val pressed = when(keyCode) {
+                    KeyEvent.KEYCODE_BUTTON_L2 -> { val r = lastLeftTrigger; lastLeftTrigger = false; r }
+                    KeyEvent.KEYCODE_BUTTON_R2 -> { val r = lastRightTrigger; lastRightTrigger = false; r }
+                    else -> true
+                }
+                if (pressed && gamepadPress(keyCode, false)) {
                     return true
                 }
             }
@@ -782,60 +826,154 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
             return 0f
         }
-        if (event.source and InputDevice.SOURCE_DPAD != InputDevice.SOURCE_DPAD) {
-            val x = event.getAxisValue(MotionEvent.AXIS_HAT_X)
-            val y = event.getAxisValue(MotionEvent.AXIS_HAT_Y)
-            press(BUTTON_CODE_UP, y.compareTo(-1.0f) == 0)
-            press(BUTTON_CODE_DOWN, y.compareTo(1.0f) == 0)
-            press(BUTTON_CODE_LEFT, x.compareTo(-1.0f) == 0)
-            press(BUTTON_CODE_RIGHT, x.compareTo(1.0f) == 0)
-        }
         if (event.source and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
             && event.action == MotionEvent.ACTION_MOVE) {
-            val x = getCenteredAxis(event, MotionEvent.AXIS_X)
-            val y = getCenteredAxis(event, MotionEvent.AXIS_Y)
-            if (x == 0.0f || y == 0.0f) {
-                if (x != 0.0f) {
-                    press(BUTTON_CODE_RIGHT, x > 0)
-                    press(BUTTON_CODE_LEFT, x < 0)
+            if (event.source and InputDevice.SOURCE_DPAD != InputDevice.SOURCE_DPAD) {
+                val x = event.getAxisValue(MotionEvent.AXIS_HAT_X)
+                val y = event.getAxisValue(MotionEvent.AXIS_HAT_Y)
+
+                var hatUp = false
+                var hatDown = false
+                var hatLeft = false
+                var hatRight = false
+                if (y == -1.0f) {
+                    hatUp = true
+                } else if (y == 1.0f) {
+                    hatDown = true
                 }
-                if (y != 0.0f) {
-                    press(BUTTON_CODE_UP, y < 0)
-                    press(BUTTON_CODE_DOWN, y > 0)
+                if (x == -1.0f) {
+                    hatLeft = true
+                } else if (x == 1.0f) {
+                    hatRight = true
                 }
-            } else {
-                val sector = atan2(y, x) * 8 / PI.toFloat()  // Divide circle into sixteenths
-                press(BUTTON_CODE_UP, -1 > sector && sector > -7)
-                press(BUTTON_CODE_RIGHT, 3 > sector && sector > -3)
-                press(BUTTON_CODE_DOWN, 7 > sector && sector > 1)
-                press(BUTTON_CODE_LEFT, -5 > sector || sector > 5)
+
+                if (hatUp && !lastHatUp) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_UP, true)
+                } else if (!hatUp && lastHatUp) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_UP, false)
+                }
+                if (hatDown && !lastHatDown) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_DOWN, true)
+                } else if (!hatDown && lastHatDown) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_DOWN, false)
+                }
+                if (hatLeft && !lastHatLeft) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_LEFT, true)
+                } else if (!hatLeft && lastHatLeft) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_LEFT, false)
+                }
+                if (hatRight && !lastHatRight) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_RIGHT, true)
+                } else if (!hatRight && lastHatRight) {
+                    gamepadPress(KeyEvent.KEYCODE_DPAD_RIGHT, false)
+                }
+
+                lastHatUp = hatUp
+                lastHatDown = hatDown
+                lastHatLeft = hatLeft
+                lastHatRight = hatRight
             }
+            var state = 0
+            fun dpadSector(x: Float, y: Float) {
+                if (x == 0.0f || y == 0.0f) {
+                    if (y < 0) {
+                        state = state or 1
+                    } else if (y > 0) {
+                        state = state or 2
+                    }
+                    if (x < 0) {
+                        state = state or 4
+                    } else if (x > 0) {
+                        state = state or 8
+                    }
+                } else {
+                    val sector = atan2(y, x) * 8 / PI.toFloat()  // Divide circle into sixteenths
+                    if (-1 > sector && sector > -7) {
+                        state = state or 1
+                    } else if (7 > sector && sector > 1) {
+                        state = state or 2
+                    }
+                    if (-5 > sector || sector > 5) {
+                        state = state or 4
+                    } else if (3 > sector && sector > -3) {
+                        state = state or 8
+                    }
+                }
+            }
+
+            fun tiltValue(x: Float, y: Float) {
+                val g = 9.81f
+                updateAccelerometer(-g * x, g * y)
+                disableAccelerometer = true
+            }
+
+            val lx = getCenteredAxis(event, MotionEvent.AXIS_X)
+            val ly = getCenteredAxis(event, MotionEvent.AXIS_Y)
+            val rx = getCenteredAxis(event, MotionEvent.AXIS_Z)
+            val ry = getCenteredAxis(event, MotionEvent.AXIS_RZ)
+
+            when (prefs.getString("button_map_analogue_left", "dpad")) {
+                "dpad" -> dpadSector(lx, ly)
+                "tilt" -> tiltValue(event.getAxisValue(MotionEvent.AXIS_X), event.getAxisValue(MotionEvent.AXIS_Y))
+            }
+            when (prefs.getString("button_map_analogue_right", "dpad")) {
+                "dpad" -> dpadSector(rx, ry)
+                "tilt" -> tiltValue(event.getAxisValue(MotionEvent.AXIS_Z), event.getAxisValue(MotionEvent.AXIS_RZ))
+            }
+            updateDpad(state)
+
+            val lt = event.getAxisValue(MotionEvent.AXIS_LTRIGGER) > 0f
+            val rt = event.getAxisValue(MotionEvent.AXIS_RTRIGGER) > 0f
+            gamepadPress(KeyEvent.KEYCODE_BUTTON_L2, lt && !lastLeftTrigger)
+            gamepadPress(KeyEvent.KEYCODE_BUTTON_R2, rt && !lastRightTrigger)
+            lastLeftTrigger = lt
+            lastRightTrigger = rt
         }
         return super.onGenericMotionEvent(event)
     }
 
     private fun gamepadPress(keyCode: Int, pressed: Boolean): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BUTTON_A -> press(BUTTON_CODE_B, pressed)
-            KeyEvent.KEYCODE_BUTTON_B -> press(BUTTON_CODE_A, pressed)
-            KeyEvent.KEYCODE_BUTTON_START -> press(BUTTON_CODE_START, pressed)
-            KeyEvent.KEYCODE_BUTTON_SELECT -> press(BUTTON_CODE_SELECT, pressed)
-            KeyEvent.KEYCODE_DPAD_UP -> press(BUTTON_CODE_UP, pressed)
-            KeyEvent.KEYCODE_DPAD_DOWN -> press(BUTTON_CODE_DOWN, pressed)
-            KeyEvent.KEYCODE_DPAD_LEFT -> press(BUTTON_CODE_LEFT, pressed)
-            KeyEvent.KEYCODE_DPAD_RIGHT -> press(BUTTON_CODE_RIGHT, pressed)
-            KeyEvent.KEYCODE_BUTTON_Y -> if (pressed) {
-                toggleMenu()
+        if (KEYCODE_TO_STRING_MAP.containsKey(keyCode)){
+            val action = prefs.getString(KEYCODE_TO_STRING_MAP[keyCode], null) ?: "unmapped"
+            val button = ACTION_TO_KEY_MAP[action] ?: -1
+            when (action) {
+                "back" -> onBackPressed()
+                "turbo" -> if (pressed) toggleTurboWrapper()
+                else -> press(button, pressed)
             }
-            KeyEvent.KEYCODE_BUTTON_THUMBL -> if (pressed) {
-                toggleTurbo()
-            }
-            KeyEvent.KEYCODE_BUTTON_L1 -> if (pressed) {
-                onBackPressed()
-            }
-            else -> return false
+            return true
         }
-        return true
+        return false
+    }
+
+    private fun updateDpad(state: Int) : Boolean {
+        val lastState = dpadState
+        dpadState = state
+        val toggledOn = (lastState and dpadState) xor dpadState
+        val toggledOff = (lastState or dpadState) xor dpadState
+
+        if (toggledOn and 1 > 0) {
+            press(BUTTON_CODE_UP, true)
+        } else if (toggledOff and 1 > 0) {
+            press(BUTTON_CODE_UP, false)
+        }
+        if (toggledOn and 2 > 0) {
+            press(BUTTON_CODE_DOWN, true)
+        } else if (toggledOff and 2 > 0) {
+            press(BUTTON_CODE_DOWN, false)
+        }
+        if (toggledOn and 4 > 0) {
+            press(BUTTON_CODE_LEFT, true)
+        } else if (toggledOff and 4 > 0) {
+            press(BUTTON_CODE_LEFT, false)
+        }
+        if (toggledOn and 8 > 0) {
+            press(BUTTON_CODE_RIGHT, true)
+        } else if (toggledOff and 8 > 0) {
+            press(BUTTON_CODE_RIGHT, false)
+        }
+
+        return (toggledOn or toggledOff) > 0
     }
 
     private fun bluetoothAudio() : Boolean {
@@ -856,6 +994,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
 
         return bluetooth && !wired
+    }
+
+    private fun toggleTurboWrapper() {
+        val turbo = toggleTurbo()
+        turboToggle.isChecked = turbo
+        turboToggleDark.isChecked = turbo
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {

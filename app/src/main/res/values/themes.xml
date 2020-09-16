@@ -34,6 +34,7 @@
         <item name="actionBarTheme">@style/ThemeOverlay.GBCC.Toolbar</item>
         <item name="preferenceTheme">@style/ThemeOverlay.GBCC.Preference</item>
         <item name="sliderStyle">@style/Widget.GBCC.Slider</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:textDirection">locale</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>

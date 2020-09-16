@@ -104,6 +104,7 @@
     <string name="settings_licenses">Licenses</string>
 
     <string name="settings_haptic_strength">Haptic feedback strength</string>
+    <string name="settings_remap">Remap gamepad</string>
 
     <string name="settings_category_behaviour">Behaviour</string>
     <string name="settings_category_graphics">Graphics</string>
@@ -118,6 +119,34 @@
     <string name="dpad_size">Dpad</string>
     <string name="reset_sizes">Reset Sizes</string>
     <string name="reset_layout">Reset Layout</string>
+
+    <!-- Remap Activity -->
+    <string name="controller_description">Controller Layout</string>
+    <string name="key_description_a">A</string>
+    <string name="key_description_b">B</string>
+    <string name="key_description_start">Start</string>
+    <string name="key_description_select">Select</string>
+    <string name="key_description_up">Up</string>
+    <string name="key_description_down">Down</string>
+    <string name="key_description_left">Left</string>
+    <string name="key_description_right">Right</string>
+    <string name="key_description_turbo">Turbo</string>
+    <string name="key_description_pause">Pause</string>
+    <string name="key_description_printer">Printer</string>
+    <string name="key_description_fps">Show FPS</string>
+    <string name="key_description_frame_blending">Frameblend</string>
+    <string name="key_description_vsync">Vsync</string>
+    <string name="key_description_link_cable">Link Cable</string>
+    <string name="key_description_autosave">Autosave</string>
+    <string name="key_description_menu">Menu</string>
+    <string name="key_description_interlace">Interlace</string>
+    <string name="key_description_shader">Shader</string>
+    <string name="key_description_back">Back</string>
+    <string name="key_description_unmapped">Unmapped</string>
+    <string name="stick_description_dpad">Dpad</string>
+    <string name="stick_description_tilt">Tilt</string>
+    <string name="stick_description_unmapped">Unmapped</string>
+    <string name="select_mapping">Select mapping</string>
 
     <!-- License Activity -->
     <string name="license_title">Licenses</string>

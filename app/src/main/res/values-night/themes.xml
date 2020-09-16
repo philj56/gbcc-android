@@ -13,10 +13,37 @@
 
         <!-- Component styles -->
         <item name="android:statusBarColor">@color/black_900</item>
+        <item name="materialButtonStyle">@style/Widget.GBCC.Button</item>
+        <item name="borderlessButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GBCC.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.GBCC.MaterialAlertDialog</item>
     </style>
 
     <style name="ThemeOverlay.GBCC.Toolbar" parent="">
         <item name="colorPrimary">@color/colorPrimaryNightDark</item>
         <item name="colorOnPrimary">@color/white_50</item>
+    </style>
+
+    <style name="Widget.GBCC.Button" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.Button" parent="">
+        <item name="colorPrimary">@color/colorPrimaryNightDark</item>
+        <item name="colorOnPrimary">@color/white_50</item>
+    </style>
+
+    <style name="Widget.GBCC.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.Button.TextButton" parent="">
+        <item name="colorPrimary">@color/colorPrimaryNight</item>
+        <item name="colorOnPrimary">@color/black_900</item>
+    </style>
+
+    <style name="ThemeOverlay.GBCC.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
     </style>
 </resources>

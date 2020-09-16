@@ -20,6 +20,9 @@
 	<uses-feature
 		android:name="android.hardware.sensor.accelerometer"
 		android:required="false" />
+	<uses-feature
+		android:name="android.hardware.screen.landscape"
+		android:required="true" />
 
 	<uses-permission
 		android:name="android.permission.VIBRATE" />
@@ -48,6 +51,11 @@
 
 		<activity android:name=".ArrangeActivity"
 			android:parentActivityName=".SettingsActivity"
+			android:theme="@style/Theme.GBCC.Fullscreen"/>
+
+		<activity android:name=".RemapActivity"
+			android:parentActivityName=".SettingsActivity"
+			android:screenOrientation="userLandscape"
 			android:theme="@style/Theme.GBCC.Fullscreen"/>
 
         <activity android:name=".LicenseListActivity"

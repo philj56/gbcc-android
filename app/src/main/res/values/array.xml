@@ -115,4 +115,65 @@
         <item>gbcc</item>
         <item>apache-2.0</item>
     </string-array>
+
+
+    <string-array name="button_map_names_array">
+        <item>@string/key_description_a</item>
+        <item>@string/key_description_b</item>
+        <item>@string/key_description_start</item>
+        <item>@string/key_description_select</item>
+        <item>@string/key_description_up</item>
+        <item>@string/key_description_down</item>
+        <item>@string/key_description_left</item>
+        <item>@string/key_description_right</item>
+        <item>@string/key_description_turbo</item>
+        <item>@string/key_description_pause</item>
+        <item>@string/key_description_printer</item>
+        <item>@string/key_description_fps</item>
+        <item>@string/key_description_frame_blending</item>
+        <item>@string/key_description_vsync</item>
+        <item>@string/key_description_link_cable</item>
+        <item>@string/key_description_autosave</item>
+        <item>@string/key_description_menu</item>
+        <item>@string/key_description_interlace</item>
+        <item>@string/key_description_shader</item>
+        <item>@string/key_description_back</item>
+        <item>@string/key_description_unmapped</item>
+    </string-array>
+
+    <string-array name="button_map_values_array">
+        <item>a</item>
+        <item>b</item>
+        <item>start</item>
+        <item>select</item>
+        <item>up</item>
+        <item>down</item>
+        <item>left</item>
+        <item>right</item>
+        <item>turbo</item>
+        <item>pause</item>
+        <item>printer</item>
+        <item>fps</item>
+        <item>frame_blending</item>
+        <item>vsync</item>
+        <item>link_cable</item>
+        <item>autosave</item>
+        <item>menu</item>
+        <item>interlace</item>
+        <item>shader</item>
+        <item>back</item>
+        <item>unmapped</item>
+    </string-array>
+
+    <string-array name="button_map_analogue_names_array">
+        <item>@string/stick_description_dpad</item>
+        <item>@string/stick_description_tilt</item>
+        <item>@string/stick_description_unmapped</item>
+    </string-array>
+
+    <string-array name="button_map_analogue_values_array">
+        <item>dpad</item>
+        <item>tilt</item>
+        <item>unmapped</item>
+    </string-array>
 </resources>

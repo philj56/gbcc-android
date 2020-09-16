@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/ic_controller_button_face_fill"
+        android:id="@+id/buttonRemapABackground"
+        android:gravity="top|left"
+        android:top="64dp"
+        android:left="202dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_face_fill"
+        android:id="@+id/buttonRemapBBackground"
+        android:gravity="top|left"
+        android:top="42dp"
+        android:left="224dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_face_fill"
+        android:id="@+id/buttonRemapXBackground"
+        android:gravity="top|left"
+        android:top="42dp"
+        android:left="180dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_face_fill"
+        android:id="@+id/buttonRemapYBackground"
+        android:gravity="top|left"
+        android:top="20dp"
+        android:left="202dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_dpad_up_fill"
+        android:id="@+id/buttonRemapDpadUpBackground"
+        android:gravity="top|left"
+        android:top="18dp"
+        android:left="45dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_dpad_down_fill"
+        android:id="@+id/buttonRemapDpadDownBackground"
+        android:gravity="top|left"
+        android:top="60dp"
+        android:left="45dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_dpad_left_fill"
+        android:id="@+id/buttonRemapDpadLeftBackground"
+        android:gravity="top|left"
+        android:top="39dp"
+        android:left="24dp" />
+    <item
+        android:drawable="@drawable/ic_controller_button_dpad_right_fill"
+        android:id="@+id/buttonRemapDpadRightBackground"
+        android:gravity="top|left"
+        android:top="39dp"
+        android:left="66dp" />
+    <item
+        android:drawable="@drawable/ic_controller_startselect_fill"
+        android:id="@+id/buttonRemapStartBackground"
+        android:gravity="top|left"
+        android:top="19dp"
+        android:left="135.5dp" />
+    <item
+        android:drawable="@drawable/ic_controller_startselect_fill"
+        android:id="@+id/buttonRemapSelectBackground"
+        android:gravity="top|left"
+        android:top="19dp"
+        android:left="99.5dp" />
+    <item
+        android:drawable="@drawable/ic_controller_shoulder_fill"
+        android:id="@+id/buttonRemapLeftShoulderBackground"
+        android:gravity="top|left"
+        android:top="5dp"
+        android:left="39.5dp" />
+    <item
+        android:drawable="@drawable/ic_controller_trigger_fill"
+        android:id="@+id/buttonRemapLeftTriggerBackground"
+        android:gravity="top|left"
+        android:top="0dp"
+        android:left="41.3dp" />
+    <item
+        android:drawable="@drawable/ic_controller_shoulder_fill"
+        android:id="@+id/buttonRemapRightShoulderBackground"
+        android:gravity="top|left"
+        android:top="5dp"
+        android:left="193.2dp" />
+    <item
+        android:drawable="@drawable/ic_controller_trigger_fill"
+        android:id="@+id/buttonRemapRightTriggerBackground"
+        android:gravity="top|left"
+        android:top="0dp"
+        android:left="195.3dp" />
+    <item
+        android:drawable="@drawable/ic_controller_stick_fill"
+        android:id="@+id/buttonRemapLeftStickBackground"
+        android:gravity="top|left"
+        android:top="75dp"
+        android:left="81dp" />
+    <item
+        android:drawable="@drawable/ic_controller_stick_ring_fill"
+        android:id="@+id/buttonRemapLeftStickMoveBackground"
+        android:gravity="top|left"
+        android:top="67dp"
+        android:left="73dp" />
+    <item
+        android:drawable="@drawable/ic_controller_stick_fill"
+        android:id="@+id/buttonRemapRightStickBackground"
+        android:gravity="top|left"
+        android:top="75dp"
+        android:left="155dp" />
+    <item
+        android:drawable="@drawable/ic_controller_stick_ring_fill"
+        android:id="@+id/buttonRemapRightStickMoveBackground"
+        android:gravity="top|left"
+        android:top="67dp"
+        android:left="147dp" />
+    <item
+        android:drawable="@drawable/ic_controller"
+        android:id="@+id/controllerOutline"
+        android:gravity="top|left" />
+</layer-list>

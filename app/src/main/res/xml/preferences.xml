@@ -28,6 +28,15 @@
             app:key="turbo_speed"
             app:title="@string/settings_turbo_speed" />
 
+        <Preference
+            app:key="remap"
+            app:title="@string/settings_remap"
+            app:iconSpaceReserved="false">
+            <intent
+                android:targetPackage="com.philj56.gbcc"
+                android:targetClass="com.philj56.gbcc.RemapActivity" />
+        </Preference>
+
         <SeekBarPreference
             app:defaultValue="10"
             app:min="0"
@@ -217,5 +226,66 @@
                 android:targetPackage="com.philj56.gbcc"
                 android:targetClass="com.philj56.gbcc.LicenseListActivity" />
         </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:key="hidden_category"
+        app:isPreferenceVisible="false">
+
+        <ListPreference
+            app:key="button_map_a"
+            app:defaultValue="b" />
+        <ListPreference
+            app:key="button_map_b"
+            app:defaultValue="a" />
+        <ListPreference
+            app:key="button_map_x"
+            app:defaultValue="unmapped" />
+        <ListPreference
+            app:key="button_map_y"
+            app:defaultValue="menu" />
+        <ListPreference
+            app:key="button_map_up"
+            app:defaultValue="up" />
+        <ListPreference
+            app:key="button_map_down"
+            app:defaultValue="down" />
+        <ListPreference
+            app:key="button_map_left"
+            app:defaultValue="left" />
+        <ListPreference
+            app:key="button_map_right"
+            app:defaultValue="right" />
+        <ListPreference
+            app:key="button_map_start"
+            app:defaultValue="start" />
+        <ListPreference
+            app:key="button_map_select"
+            app:defaultValue="select" />
+        <ListPreference
+            app:key="button_map_l1"
+            app:defaultValue="back" />
+        <ListPreference
+            app:key="button_map_l2"
+            app:defaultValue="unmapped" />
+        <ListPreference
+            app:key="button_map_r1"
+            app:defaultValue="unmapped" />
+        <ListPreference
+            app:key="button_map_r2"
+            app:defaultValue="unmapped" />
+        <ListPreference
+            app:key="button_map_thumbl"
+            app:defaultValue="turbo" />
+        <ListPreference
+            app:key="button_map_thumbr"
+            app:defaultValue="unmapped" />
+        <ListPreference
+            app:key="button_map_analogue_left"
+            app:defaultValue="dpad" />
+        <ListPreference
+            app:key="button_map_analogue_right"
+            app:defaultValue="tilt" />
     </PreferenceCategory>
 </PreferenceScreen>

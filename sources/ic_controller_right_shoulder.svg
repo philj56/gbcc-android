@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="ic_controller_right_shoulder.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="12.960339"
+     inkscape:cx="8.0121795"
+     inkscape:cy="15.199676"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:measure-start="0,0"
+     inkscape:measure-end="0,0"
+     inkscape:window-width="1440"
+     inkscape:window-height="848"
+     inkscape:window-x="0"
+     inkscape:window-y="52"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:document-rotation="0"
+     fit-margin-top="3"
+     fit-margin-left="2"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid20"
+       color="#3f3fff"
+       opacity="0.0627451"
+       empcolor="#3f3fff"
+       empopacity="0.1254902"
+       empspacing="4"
+       originx="0"
+       originy="0" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path1814"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-opacity:1"
+       d="M 30.44384,24.00212 H 1.5561604 V 10.810876 c 9.7411746,-3.7006024 19.1897956,-3.8224612 28.8876796,0 z"
+       sodipodi:nodetypes="ccccc" />
+    <g
+       style="font-size:42.6667px;line-height:1.25;font-family:'Latin Modern Roman';-inkscape-font-specification:'Latin Modern Roman, ';letter-spacing:0px;word-spacing:0px"
+       id="text834"
+       aria-label="RB">
+      <path
+         id="path836"
+         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:condensed;font-size:14.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Semi-Bold Condensed'"
+         d="m 11.306659,10.76448 q 1.804004,0 2.669339,0.762668 0.865336,0.748002 0.865336,2.258672 0,1.041336 -0.440001,1.73067 -0.440001,0.689335 -1.232003,1.085336 l 2.405339,4.634678 H 13.609331 L 11.61466,17.041827 h -0.997336 v 4.194677 H 8.8573201 V 10.76448 Z m -0.044,1.51067 h -0.645335 v 3.344007 h 0.718668 q 1.716004,0 1.716004,-1.745337 0,-0.850669 -0.440001,-1.217336 -0.440001,-0.381334 -1.349336,-0.381334 z" />
+      <path
+         id="path838"
+         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:condensed;font-size:14.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Semi-Bold Condensed'"
+         d="m 16.762665,10.76448 h 2.75734 q 1.68667,0 2.537339,0.616001 0.865335,0.616001 0.865335,1.965338 0,0.938669 -0.410667,1.55467 -0.396001,0.616001 -1.129336,0.777335 v 0.07333 q 0.850668,0.205333 1.305336,0.792001 0.454668,0.586668 0.454668,1.672004 0,1.393337 -0.850669,2.214672 -0.836002,0.806669 -2.332005,0.806669 h -3.197341 z m 1.760004,4.312009 h 1.070669 q 0.821335,0 1.173336,-0.381334 0.352001,-0.381334 0.352001,-1.129336 0,-1.334669 -1.584004,-1.334669 h -1.012002 z m 0,1.42267 v 3.256008 h 1.261336 q 0.806669,0 1.173336,-0.425334 0.366668,-0.440001 0.366668,-1.24667 0,-0.748002 -0.396001,-1.158669 -0.396001,-0.425335 -1.24667,-0.425335 z" />
+    </g>
+  </g>
+</svg>

@@ -358,11 +358,12 @@ Java_com_philj56_gbcc_GLActivity_toggleMenu(
 	gbcc_input_process_key(&gbc, GBCC_KEY_MENU, true);
 }
 
-extern "C" JNIEXPORT void JNICALL
+extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleTurbo(
 		JNIEnv *env,
 		jobject obj/* this */) {
 	gbc.core.keys.turbo = !gbc.core.keys.turbo;
+	return gbc.core.keys.turbo;
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -395,6 +396,39 @@ Java_com_philj56_gbcc_GLActivity_press(
 			break;
 		case 7:
 			gbcc_input_process_key(&gbc, GBCC_KEY_RIGHT, pressed);
+			break;
+		case 8:
+			gbcc_input_process_key(&gbc, GBCC_KEY_TURBO, pressed);
+			break;
+		case 9:
+			gbcc_input_process_key(&gbc, GBCC_KEY_PAUSE, pressed);
+			break;
+		case 10:
+			gbcc_input_process_key(&gbc, GBCC_KEY_PRINTER, pressed);
+			break;
+		case 11:
+			gbcc_input_process_key(&gbc, GBCC_KEY_FPS, pressed);
+			break;
+		case 12:
+			gbcc_input_process_key(&gbc, GBCC_KEY_FRAME_BLENDING, pressed);
+			break;
+		case 13:
+			gbcc_input_process_key(&gbc, GBCC_KEY_VSYNC, pressed);
+			break;
+		case 14:
+			gbcc_input_process_key(&gbc, GBCC_KEY_LINK_CABLE, pressed);
+			break;
+		case 15:
+			gbcc_input_process_key(&gbc, GBCC_KEY_AUTOSAVE, pressed);
+			break;
+		case 16:
+			gbcc_input_process_key(&gbc, GBCC_KEY_MENU, pressed);
+			break;
+		case 17:
+			gbcc_input_process_key(&gbc, GBCC_KEY_INTERLACE, pressed);
+			break;
+		case 18:
+			gbcc_input_process_key(&gbc, GBCC_KEY_SHADER, pressed);
 			break;
 		default:
 			break;
@@ -499,6 +533,13 @@ Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
 	bool ret = (rumble != last_rumble);
 	last_rumble = rumble;
 	return static_cast<jboolean>(ret);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_checkTurboFun(
+		JNIEnv *env,
+		jobject obj/* this */) {
+	return static_cast<jboolean>(gbc.core.keys.turbo);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
