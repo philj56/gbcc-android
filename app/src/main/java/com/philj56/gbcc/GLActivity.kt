@@ -1019,11 +1019,14 @@ class MyGLSurfaceView : GLSurfaceView {
     private var renderer: MyGLRenderer? = null
 
     constructor(context: Context) : super(context) {
-        setMeasuredDimension(160, 144)
-        layoutParams = ViewGroup.LayoutParams(160, 144)
+        setup()
     }
 
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
+        setup()
+    }
+
+    private fun setup() {
         setMeasuredDimension(160, 144)
         layoutParams = ViewGroup.LayoutParams(160, 144)
     }

@@ -22,11 +22,11 @@
 
 extern "C" {
 #pragma GCC visibility push(hidden)
-	#include <gbcc.h>
-	#include <camera.h>
-	#include <core.h>
-	#include <save.h>
-	#include <window.h>
+#include <gbcc.h>
+#include <camera.h>
+#include <core.h>
+#include <save.h>
+#include <window.h>
 #pragma GCC visibility pop
 }
 
@@ -39,10 +39,10 @@ extern "C" {
 
 /* Options to be persisted across device rotation etc. */
 struct gbcc_temp_options {
-    /* Have these options been set? */
+	/* Have these options been set? */
 	bool initialised;
 
-    /* struct gbcc */
+	/* struct gbcc */
 	float turbo_speed;
 	bool autosave;
 	bool frame_blending;
@@ -56,6 +56,7 @@ struct gbcc_temp_options {
 	struct palette palette;
 
 	/* menu */
+	bool menu_initialised;
 	bool show;
 	int save_state;
 	int load_state;
@@ -188,10 +189,12 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 	gbcc_window_use_shader(&gbc, shader);
 	gbcc_menu_init(&gbc);
 	if (options.initialised) {
-		gbc.menu.show = options.show;
-		gbc.menu.save_state = options.save_state;
-		gbc.menu.load_state = options.load_state;
-		gbc.menu.selection = options.selection;
+		if (options.menu_initialised) {
+			gbc.menu.show = options.show;
+			gbc.menu.save_state = options.save_state;
+			gbc.menu.load_state = options.load_state;
+			gbc.menu.selection = options.selection;
+		}
 		gbcc_window_use_shader(&gbc, options.shader);
 	}
 	gbcc_menu_update(&gbc);
@@ -202,8 +205,10 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
 		JNIEnv *env,
 		jobject obj) {
-	if (gbc.window.initialised) {
+	if (gbc.menu.initialised) {
 		gbcc_menu_destroy(&gbc);
+	}
+	if (gbc.window.initialised) {
 		// Have to destroy the window manually, as the OpenGL context is likely to be gone by now
 		gbc.window.initialised = false;
 	}
@@ -483,27 +488,29 @@ Java_com_philj56_gbcc_GLActivity_getOptions(
 		JNIEnv *env,
 		jobject obj/* this */) {
 	options = {
-	        .initialised = true,
+		.initialised = true,
 
-			.turbo_speed = gbc.turbo_speed,
-			.autosave = gbc.autosave,
-			.frame_blending = gbc.frame_blending,
-			.interlacing = gbc.interlacing,
-			.show_fps = gbc.show_fps,
+		.turbo_speed = gbc.turbo_speed,
+		.autosave = gbc.autosave,
+		.frame_blending = gbc.frame_blending,
+		.interlacing = gbc.interlacing,
+		.show_fps = gbc.show_fps,
 
-			.sync_to_video = gbc.core.sync_to_video,
+		.sync_to_video = gbc.core.sync_to_video,
 
-			.palette = gbc.core.ppu.palette,
+		.palette = gbc.core.ppu.palette,
 
-			.show = gbc.menu.show,
-			.save_state = gbc.menu.save_state,
-			.load_state = gbc.menu.load_state,
-			.selection = gbc.menu.selection,
+		.menu_initialised = gbc.menu.initialised,
+		.show = gbc.menu.show,
+		.save_state = gbc.menu.save_state,
+		.load_state = gbc.menu.load_state,
+		.selection = gbc.menu.selection,
 	};
 
+
 	if (gbc.window.initialised) {
-	    const char *src = gbc.window.gl.shaders[gbc.window.gl.cur_shader].name;
-	    if (src != nullptr) {
+		const char *src = gbc.window.gl.shaders[gbc.window.gl.cur_shader].name;
+		if (src != nullptr) {
 			strncpy(options.shader, gbc.window.gl.shaders[gbc.window.gl.cur_shader].name, sizeof(options.shader));
 		}
 	}
@@ -518,9 +525,9 @@ Java_com_philj56_gbcc_GLActivity_setOptions(
 		JNIEnv *env,
 		jobject obj/* this */,
 		jbyteArray opts) {
-    if (opts == nullptr) {
+	if (opts == nullptr) {
 		return;
-    }
+	}
 	env->GetByteArrayRegion(opts, 0, sizeof(options), reinterpret_cast<jbyte *>(&options));
 }
 
@@ -553,9 +560,9 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_flushLogs(
 		JNIEnv *env,
 		jobject obj/* this */) {
-    if (logfile != nullptr) {
+	if (logfile != nullptr) {
 		fflush(logfile);
-    }
+	}
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -742,17 +749,17 @@ void gbcc_camera_platform_capture_image(struct gbcc_camera_platform *camera, uin
 }
 
 extern "C" void gbcc_screenshot(struct gbcc *gb) {
-    // Stubbed
+	// Stubbed
 }
 
 extern "C" void gbcc_fontmap_load(struct gbcc_fontmap *font) {
-    font->bitmap = fontmap.bitmap;
-    font->tile_width = fontmap.tile_width;
+	font->bitmap = fontmap.bitmap;
+	font->tile_width = fontmap.tile_width;
 	font->tile_height = fontmap.tile_height;
 }
 
 extern "C" void gbcc_fontmap_destroy(struct gbcc_fontmap *font) {
-    // Stubbed
+	// Stubbed
 }
 
 #pragma clang diagnostic pop
