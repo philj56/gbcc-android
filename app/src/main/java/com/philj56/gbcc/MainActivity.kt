@@ -44,6 +44,7 @@ import androidx.transition.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -256,7 +257,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateFiles() {
         val curPath = currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
-        directoryTree.text = String.format(getString(R.string.directory_tree), curPath)
+        directoryTree.text = getString(R.string.directory_tree, curPath)
         val unsorted = currentDir.listFiles { file ->
             file.name.matches(Regex(".*\\.gbc?")) or file.isDirectory
         }
@@ -328,7 +329,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             Toast.makeText(
                 baseContext,
-                getString(R.string.message_failed_create_folder).format(name),
+                getString(R.string.message_failed_create_folder, name),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -442,12 +443,23 @@ class MainActivity : AppCompatActivity() {
             Log.d("Imported", file.name)
         }
 
-        val iStream = contentResolver.openInputStream(uri)
+        val iStream = try {
+            contentResolver.openInputStream(uri)
+        } catch (e: FileNotFoundException) {
+            runOnUiThread {
+                Toast.makeText(
+                    baseContext,
+                    getString(R.string.message_failed_import_reason, uri, e.message),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            return
+        }
         if (iStream == null) {
             runOnUiThread {
                 Toast.makeText(
                     baseContext,
-                    getString(R.string.message_failed_import).format(uri),
+                    getString(R.string.message_failed_import, uri),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -470,12 +482,27 @@ class MainActivity : AppCompatActivity() {
                         or contentResolver.getType(uri).equals("application/x-zip-compressed")
                         or name.endsWith("zip") -> {
                     ZipInputStream(iStream).use { zip ->
-                        var entry = zip.nextEntry
-                        while (entry != null) {
-                            if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
-                                doCopy(zip, entry.name)
+                        try {
+                            var entry = zip.nextEntry
+                            while (entry != null) {
+                                if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
+                                    doCopy(zip, entry.name)
+                                }
+                                entry = zip.nextEntry
                             }
-                            entry = zip.nextEntry
+                        } catch (e: IllegalArgumentException) {
+                            runOnUiThread {
+                                MaterialAlertDialogBuilder(this)
+                                    .setTitle(
+                                        resources.getString(
+                                            R.string.error_zip_title,
+                                            e.message
+                                        )
+                                    )
+                                    .setMessage(R.string.error_zip_body)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()
+                            }
                         }
                     }
                 }
@@ -483,7 +510,7 @@ class MainActivity : AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(
                             baseContext,
-                            getString(R.string.message_failed_import).format(name),
+                            getString(R.string.message_failed_import, name),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

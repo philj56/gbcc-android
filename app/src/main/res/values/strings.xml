@@ -22,6 +22,8 @@
     </plurals>
     <string name="move">Move</string>
     <string name="overwrite_confirmation">Select save files to overwrite:</string>
+    <string name="error_zip_title">Error parsing zip file: <xliff:g>%1$s</xliff:g></string>
+    <string name="error_zip_body">This could be caused by trying to import a zip file with an encoding other than UTF-8. If possible, recreate the zip with UTF-8 encoding.</string>
 
     <!-- GLActivity -->
     <string name="screen_description">Screen</string>
@@ -163,6 +165,7 @@
         <item quantity="other">Imported %d items</item>
     </plurals>
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
+    <string name="message_failed_import_reason">Failed to import <xliff:g>%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
     <string name="message_no_export">No saves to export</string>
     <plurals name="message_export_complete">
         <item quantity="one">Exported %d item</item>
