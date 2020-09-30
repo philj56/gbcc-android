@@ -38,8 +38,8 @@
     <string name="select_button_description">Select</string>
 
     <string name="invalid_opcode_title">Invalid Opcode</string>
-    <string name="invalid_opcode_description">GBCC has encountered an error, and will now stop. This could either be due to an error in the ROM you were trying to run, or a bug in GBCC. To see a more detailed report or report this issue, press \"Send feedback\"."</string>
-    <string name="invalid_opcode_button_send_feedback">Send feedback</string>
+    <string name="invalid_opcode_description">GBCC has encountered an error, and will now stop. This could either be due to an error in the ROM you were trying to run, or a bug in GBCC. To see a more detailed report or report this issue, press \"Send feedback\".</string>
+    <string name="button_send_feedback">Send feedback</string>
     <string name="invalid_opcode_button_quit">Quit</string>
 
     <!-- RomConfigActivity -->
@@ -183,7 +183,8 @@
         <item quantity="other">Imported %d items</item>
     </plurals>
     <string name="message_failed_import">Failed to import <xliff:g>%1$s</xliff:g></string>
-    <string name="message_failed_import_reason">Failed to import <xliff:g>%1$s</xliff:g>: <xliff:g>%2$s</xliff:g></string>
+    <string name="message_failed_import_reason">Failed to import file: <xliff:g>%1$s</xliff:g></string>
+    <string name="message_failed_import_no_file">I\'m not sure exactly why this happens. If this error is unexpected, please report this issue by pressing \"Send feedback\" and describing how you tried to import a file.</string>
     <string name="message_no_export">No saves to export</string>
     <plurals name="message_export_complete">
         <item quantity="one">Exported %d item</item>

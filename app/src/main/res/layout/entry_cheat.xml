@@ -17,7 +17,6 @@
             android:paddingTop="8dp"
             android:paddingEnd="16dp"
             android:singleLine="true"
-            android:text="Infinite Lives"
             android:textAppearance="?android:attr/textAppearanceListItem" />
 
         <TextView
@@ -28,7 +27,6 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="8dp"
-            android:text="FA041CDE"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 

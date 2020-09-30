@@ -200,7 +200,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.invalid_opcode_title)
                     .setMessage(R.string.invalid_opcode_description)
-                    .setPositiveButton(R.string.invalid_opcode_button_send_feedback) { _, _ ->
+                    .setPositiveButton(R.string.button_send_feedback) { _, _ ->
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = Uri.parse("mailto:")
                             putExtra(

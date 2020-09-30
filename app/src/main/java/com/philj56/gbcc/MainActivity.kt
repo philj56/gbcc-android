@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity() {
         updateFiles()
     }
 
-    fun beginSelection() {
+    private fun beginSelection() {
         TransitionManager.beginDelayedTransition(mainLayout, toolbarTransition)
         fileToolbar.visibility = View.VISIBLE
         mainToolbar.visibility = View.GONE
@@ -315,7 +315,7 @@ class MainActivity : AppCompatActivity() {
                 selectionMode = SelectionMode.DELETE
                 val count = adapter.selected.count()
                 MaterialAlertDialogBuilder(this)
-                    .setTitle(resources.getQuantityString(R.plurals.delete_confirmation, count, count))
+                    .setMessage(resources.getQuantityString(R.plurals.delete_confirmation, count, count))
                     .setPositiveButton(R.string.delete) { _, _ -> performDelete() }
                     .setNegativeButton(android.R.string.cancel) { _, _ -> clearSelection() }
                     .setOnCancelListener { clearSelection() }
@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity() {
         selectionMode = SelectionMode.DELETE
         val count = adapter.selected.count()
         MaterialAlertDialogBuilder(this)
-            .setTitle(resources.getQuantityString(R.plurals.delete_save_confirmation, count, count))
+            .setMessage(resources.getQuantityString(R.plurals.delete_save_confirmation, count, count))
             .setPositiveButton(R.string.delete) { _, _ -> performSaveDelete() }
             .setNegativeButton(android.R.string.cancel) { _, _ -> clearSelection() }
             .setOnCancelListener { clearSelection() }
@@ -482,11 +482,34 @@ class MainActivity : AppCompatActivity() {
             contentResolver.openInputStream(uri)
         } catch (e: FileNotFoundException) {
             runOnUiThread {
-                Toast.makeText(
-                    baseContext,
-                    getString(R.string.message_failed_import_reason, uri, e.message),
-                    Toast.LENGTH_SHORT
-                ).show()
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(getString(R.string.message_failed_import_reason, e.message))
+                    .setMessage(R.string.message_failed_import_no_file)
+                    .setPositiveButton(R.string.button_send_feedback) { _, _ ->
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(
+                                Intent.EXTRA_EMAIL,
+                                arrayOf("gbcc.emu+\"file_not_found\"@gmail.com")
+                            )
+                            putExtra(Intent.EXTRA_SUBJECT, "File not found")
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Traceback:\n----------\n" + e.stackTraceToString()
+                            )
+                        }
+                        try {
+                            startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            Toast.makeText(
+                                this,
+                                R.string.message_no_email_app,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }.setNegativeButton(android.R.string.cancel) { _, _ -> }
+                    .setCancelable(false)
+                    .show()
             }
             return
         }
@@ -498,61 +521,61 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        } else {
-            val name = getFileName(uri)
-            when {
-                name == null -> {
-                    runOnUiThread {
-                        Toast.makeText(
-                            baseContext,
-                            getString(R.string.message_failed_name),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            return
+        }
+        val name = getFileName(uri)
+        when {
+            name == null -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        baseContext,
+                        getString(R.string.message_failed_name),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                name.matches(Regex(".*\\.(gbc?|sav|s[0-9])")) -> {
-                    doCopy(iStream, name)
-                }
-                contentResolver.getType(uri).equals("application/zip")
-                        or contentResolver.getType(uri).equals("application/x-zip-compressed")
-                        or name.endsWith("zip") -> {
-                    ZipInputStream(iStream).use { zip ->
-                        try {
-                            var entry = zip.nextEntry
-                            while (entry != null) {
-                                if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
-                                    doCopy(zip, entry.name)
-                                }
-                                entry = zip.nextEntry
+            }
+            name.matches(Regex(".*\\.(gbc?|sav|s[0-9])")) -> {
+                doCopy(iStream, name)
+            }
+            contentResolver.getType(uri).equals("application/zip")
+                    or contentResolver.getType(uri).equals("application/x-zip-compressed")
+                    or name.endsWith("zip") -> {
+                ZipInputStream(iStream).use { zip ->
+                    try {
+                        var entry = zip.nextEntry
+                        while (entry != null) {
+                            if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
+                                doCopy(zip, entry.name)
                             }
-                        } catch (e: IllegalArgumentException) {
-                            runOnUiThread {
-                                MaterialAlertDialogBuilder(this)
-                                    .setTitle(
-                                        resources.getString(
-                                            R.string.error_zip_title,
-                                            e.message
-                                        )
+                            entry = zip.nextEntry
+                        }
+                    } catch (e: IllegalArgumentException) {
+                        runOnUiThread {
+                            MaterialAlertDialogBuilder(this)
+                                .setTitle(
+                                    resources.getString(
+                                        R.string.error_zip_title,
+                                        e.message
                                     )
-                                    .setMessage(R.string.error_zip_body)
-                                    .setPositiveButton(android.R.string.ok, null)
-                                    .show()
-                            }
+                                )
+                                .setMessage(R.string.error_zip_body)
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
                         }
                     }
                 }
-                else -> {
-                    runOnUiThread {
-                        Toast.makeText(
-                            baseContext,
-                            getString(R.string.message_failed_import, name),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            }
+            else -> {
+                runOnUiThread {
+                    Toast.makeText(
+                        baseContext,
+                        getString(R.string.message_failed_import, name),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-            iStream.close()
         }
+        iStream.close()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
