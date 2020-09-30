@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="0dp">
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="autoresume"
+        app:title="@string/settings_auto_resume" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="autosave"
+        app:title="@string/settings_auto_save" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="frame-blending"
+        app:title="@string/settings_frame_blend" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="interlacing"
+        app:title="@string/settings_interlacing" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="vsync"
+        app:title="@string/settings_vsync" />
+
+    <com.philj56.gbcc.TurboPreference
+        app:defaultValue="0"
+        app:iconSpaceReserved="false"
+        app:key="turbo"
+        app:title="@string/settings_turbo_speed" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="Default"
+        app:entries="@array/dmg_palettes_array"
+        app:entryValues="@array/dmg_palettes_array"
+        app:key="palette"
+        app:title="@string/rom_config_palette"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="@string/settings_shader_subpixel"
+        app:entries="@array/shader_names_array"
+        app:entryValues="@array/shader_values_array"
+        app:key="shader"
+        app:title="@string/rom_config_shader"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        app:key="delete"
+        app:title="@string/rom_config_delete"
+        app:iconSpaceReserved="false" />
+</PreferenceScreen>

@@ -24,6 +24,7 @@ extern "C" {
 #pragma GCC visibility push(hidden)
 #include <gbcc.h>
 #include <camera.h>
+#include <config.h>
 #include <core.h>
 #include <save.h>
 #include <window.h>
@@ -69,7 +70,6 @@ struct gbcc_temp_options {
 static pthread_t emu_thread;
 static struct gbcc gbc;
 static char *fname;
-static char *save_dir;
 static char shader[MAX_SHADER_LEN];
 static struct gbcc_fontmap fontmap;
 static uint8_t camera_image[GB_CAMERA_SENSOR_SIZE];
@@ -86,6 +86,9 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	jclass prefsClass = env->GetObjectClass(prefs);
 
 	id = env->GetMethodID(prefsClass, "getBoolean", "(Ljava/lang/String;Z)Z");
+	arg = env->NewStringUTF("auto_resume");
+	gbc.autoresume = env->CallBooleanMethod(prefs, id, arg, false);
+	env->DeleteLocalRef(arg);
 	arg = env->NewStringUTF("auto_save");
 	gbc.autosave = env->CallBooleanMethod(prefs, id, arg, false);
 	env->DeleteLocalRef(arg);
@@ -280,6 +283,8 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		jint sampleRate,
 		jint samplesPerBuffer,
 		jstring saveDir,
+		jstring configFile,
+		jstring cheatFile,
 		jobject prefs) {
 
 	const char *string = env->GetStringUTFChars(file, nullptr);
@@ -288,12 +293,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	fname = (char *)malloc(name_len);
 	memcpy(fname, string, name_len);
 	env->ReleaseStringUTFChars(file, string);
-
-	string = env->GetStringUTFChars(saveDir, nullptr);
-	name_len = strlen(string) + 1;
-	save_dir = (char *)malloc(name_len);
-	memcpy(save_dir, string, name_len);
-	env->ReleaseStringUTFChars(saveDir, string);
 
 	logfile_begin();
 
@@ -308,11 +307,31 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 
 	gbc.quit = false;
 	gbc.has_focus = true;
-	gbc.save_directory = save_dir;
+
+	string = env->GetStringUTFChars(saveDir, nullptr);
+	strncpy(gbc.save_directory, string, sizeof(gbc.save_directory));
+	env->ReleaseStringUTFChars(saveDir, string);
+
 	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	update_preferences(env, prefs);
+	if (check_autoresume(env, prefs)) {
+		gbc.load_state = 10;
+	}
+	if (configFile != nullptr) {
+		const char *tmp = env->GetStringUTFChars(configFile, nullptr);
+		gbcc_load_config(&gbc, tmp);
+		env->ReleaseStringUTFChars(configFile, tmp);
+		if (!gbc.autoresume) {
+			gbc.load_state = 0;
+		}
+	}
+	if (cheatFile != nullptr) {
+		const char *tmp = env->GetStringUTFChars(cheatFile, nullptr);
+		gbcc_load_config(&gbc, tmp);
+		env->ReleaseStringUTFChars(cheatFile, tmp);
+	}
 	if (options.initialised) {
 		gbc.turbo_speed = options.turbo_speed;
 		gbc.autosave = options.autosave;
@@ -321,9 +340,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		gbc.show_fps = options.show_fps;
 		gbc.core.sync_to_video = options.sync_to_video;
 		gbc.core.ppu.palette = options.palette;
-	}
-	if (check_autoresume(env, prefs)) {
-		gbc.load_state = 10;
 	}
 
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
@@ -352,7 +368,6 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	}
 	gbcc_audio_destroy(&gbc);
 	free(fname);
-	free(save_dir);
 	options = (struct gbcc_temp_options){0}; //NOLINT
 }
 

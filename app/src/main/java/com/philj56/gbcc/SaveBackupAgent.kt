@@ -58,6 +58,14 @@ class SaveBackupAgent : BackupAgent() {
                 fullBackupFile(it, data)
             }
         }
+
+        // Backup per-game configs & cheats
+        val config = filesDir.resolve("config")
+        if (config.exists()) {
+            config.listFiles()?.forEach {
+                fullBackupFile(it, data)
+            }
+        }
     }
 
     override fun onRestoreFile(

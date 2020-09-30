@@ -8,18 +8,22 @@
     <string name="create_folder">Create Folder</string>
     <string name="create_folder_hint">Folder name</string>
     <string name="export_saves">Export Saves</string>
-    <string name="select_items">Select Items</string>
+    <string name="select_items">Select multiple</string>
     <string name="select_destination">Select Destination</string>
     <string name="delete">Delete</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Are you sure you wish to delete this item?</item>
         <item quantity="other">Are you sure you wish to delete these %d items?</item>
     </plurals>
-    <string name="delete_save">Delete saves</string>
+    <string name="select_action">Select action</string>
+    <string name="delete_save">Delete save</string>
     <plurals name="delete_save_confirmation">
         <item quantity="one">Are you sure you wish to delete your saves for this game?</item>
         <item quantity="other">Are you sure you wish to delete your saves for these %d games?</item>
     </plurals>
+    <string name="delete_config_confirmation">Are you sure you wish to delete your config for this game?</string>
+    <string name="edit_config">Edit game config</string>
+    <string name="edit_cheats">Edit cheats</string>
     <string name="move">Move</string>
     <string name="overwrite_confirmation">Select save files to overwrite:</string>
     <string name="error_zip_title">Error parsing zip file: <xliff:g>%1$s</xliff:g></string>
@@ -37,6 +41,20 @@
     <string name="invalid_opcode_description">GBCC has encountered an error, and will now stop. This could either be due to an error in the ROM you were trying to run, or a bug in GBCC. To see a more detailed report or report this issue, press \"Send feedback\"."</string>
     <string name="invalid_opcode_button_send_feedback">Send feedback</string>
     <string name="invalid_opcode_button_quit">Quit</string>
+
+    <!-- RomConfigActivity -->
+    <string name="rom_config_title">Rom Config</string>
+    <string name="rom_config_palette">Palette</string>
+    <string name="rom_config_shader">Shader</string>
+    <string name="rom_config_delete">Delete config</string>
+
+    <!-- CheatActivity -->
+    <string name="cheat_title">Cheats</string>
+    <string name="cheat_add_description">Add cheat</string>
+    <string name="cheat_edit_description">Edit cheat</string>
+    <string name="cheat_delete_description">Delete cheat</string>
+    <string name="cheat_description_hint">Description</string>
+    <string name="cheat_code_hint">Code (8 or 9 characters)</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>

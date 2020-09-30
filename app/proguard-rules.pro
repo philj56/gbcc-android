@@ -2,6 +2,10 @@
 	*;
 }
 
+-keep class com.philj56.gbcc.RomConfigFragment {
+	*;
+}
+
 #-dontobfuscate
 
 # For readable stack traces

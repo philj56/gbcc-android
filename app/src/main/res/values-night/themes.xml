@@ -24,17 +24,9 @@
         <item name="colorOnPrimary">@color/white_50</item>
     </style>
 
-    <style name="Widget.GBCC.Button" parent="Widget.MaterialComponents.Button">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button</item>
-    </style>
-
     <style name="ThemeOverlay.GBCC.Button" parent="">
         <item name="colorPrimary">@color/colorPrimaryNightDark</item>
         <item name="colorOnPrimary">@color/white_50</item>
-    </style>
-
-    <style name="Widget.GBCC.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
     </style>
 
     <style name="ThemeOverlay.GBCC.Button.TextButton" parent="">
@@ -43,7 +35,8 @@
     </style>
 
     <style name="ThemeOverlay.GBCC.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="buttonBarPositiveButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
     </style>
 </resources>

@@ -178,6 +178,7 @@
         android:theme="@style/TurboToggleTheme"
         android:onClick="toggleTurboListener"
         android:saveEnabled="false"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:switchMinWidth="64dp" />
@@ -190,6 +191,7 @@
         android:onClick="toggleTurboListener"
         android:saveEnabled="false"
         android:visibility="gone"
+        android:background="@null"
         app:layout_constraintBottom_toBottomOf="@+id/turboToggle"
         app:layout_constraintEnd_toEndOf="@+id/turboToggle"
         app:layout_constraintStart_toStartOf="@+id/turboToggle"

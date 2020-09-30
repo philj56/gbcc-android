@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="32dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="32dp"
+    android:paddingBottom="8dp">
+
+    <EditText
+        android:id="@+id/cheatDescriptionInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/cheat_description_hint"
+        android:inputType="textCapSentences"
+        android:minHeight="@dimen/minimum_touch_target_size" />
+
+    <EditText
+        android:id="@+id/cheatCodeInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/cheat_code_hint"
+        android:inputType="textNoSuggestions|textVisiblePassword"
+        android:digits="ABCDEFabcdef0123456789"
+        android:minHeight="@dimen/minimum_touch_target_size" />
+
+</LinearLayout>

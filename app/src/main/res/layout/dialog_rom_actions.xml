@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <Button
+        android:id="@+id/buttonSelectItems"
+        style="@style/Widget.GBCC.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:onClick="beginSelection"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/select_items"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        app:icon="@drawable/ic_select_multiple_white_24dp"
+        app:iconPadding="32dp" />
+
+    <Button
+        android:id="@+id/buttonDeleteSave"
+        style="@style/Widget.GBCC.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/delete_save"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        app:icon="@drawable/ic_save_remove_white_24dp"
+        app:iconPadding="32dp" />
+
+    <Button
+        android:id="@+id/buttonEditCheats"
+        style="@style/Widget.GBCC.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/edit_cheats"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        app:icon="@drawable/ic_code_tags_white_24dp"
+        app:iconPadding="32dp" />
+
+    <Button
+        android:id="@+id/buttonEditConfig"
+        style="@style/Widget.GBCC.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/edit_config"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        app:icon="@drawable/ic_settings_white_24dp"
+        app:iconPadding="32dp" />
+
+</LinearLayout>

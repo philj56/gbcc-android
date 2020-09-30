@@ -47,6 +47,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_gl.*
 import kotlinx.android.synthetic.main.button_dpad.*
+import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
@@ -148,6 +149,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         sampleRate: Int,
         samplesPerBuffer: Int,
         saveDir: String,
+        configFile: String?,
+        cheatFile: String?,
         prefs: SharedPreferences
     ): Boolean
     private external fun getErrorMessage(): String
@@ -609,6 +612,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
         Log.d("GBCC", "Using $sampleRate Hz audio, $framesPerBuffer samples per buffer")
 
+        val configFile = filesDir.resolve("config/" + File(filename).nameWithoutExtension + ".cfg").let {
+            if (it.exists()) it else null
+        }
+        val cheatFile = filesDir.resolve("config/" + File(filename).nameWithoutExtension + ".cheats").let {
+            if (it.exists()) it else null
+        }
         if (tempOptions != null) {
             setOptions(tempOptions)
         }
@@ -617,6 +626,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             sampleRate,
             framesPerBuffer,
             saveDir,
+            configFile?.absolutePath,
+            cheatFile?.absolutePath,
             PreferenceManager.getDefaultSharedPreferences(
                 this
             )

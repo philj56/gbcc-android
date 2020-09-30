@@ -45,6 +45,14 @@
 			android:parentActivityName="MainActivity"
 			android:theme="@style/Theme.GBCC.Fullscreen"/>
 
+		<activity android:name=".CheatActivity"
+			android:parentActivityName="MainActivity"
+			android:label="@string/cheat_title"/>
+
+		<activity android:name=".RomConfigActivity"
+			android:parentActivityName="MainActivity"
+			android:label="@string/rom_config_title"/>
+
 		<activity android:name=".SettingsActivity"
 			android:parentActivityName="MainActivity"
             android:label="@string/settings_title"/>

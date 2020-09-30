@@ -17,7 +17,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -32,7 +31,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.animation.addListener
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
@@ -210,11 +208,35 @@ class MainActivity : AppCompatActivity() {
                 item.isActivated = true
                 item.invalidateDrawable(item.background)
 
-                TransitionManager.beginDelayedTransition(mainLayout, toolbarTransition)
+                val dialog = MaterialAlertDialogBuilder(this)
+                    .setView(R.layout.dialog_rom_actions)
+                    .setOnCancelListener { clearSelection() }
+                    .show()
 
-                fileToolbar.visibility = View.VISIBLE
-                mainToolbar.visibility = View.GONE
+                dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
+                    beginSelection()
+                    dialog.dismiss()
+                }
+                dialog.findViewById<Button>(R.id.buttonDeleteSave)?.setOnClickListener {
+                    showSaveDeleteDialog()
+                    dialog.dismiss()
+                }
+                dialog.findViewById<Button>(R.id.buttonEditCheats)?.setOnClickListener {
+                    val intent = Intent(this, CheatActivity::class.java).apply {
+                        putExtra("file", file.name)
+                    }
+                    startActivity(intent)
+                    dialog.dismiss()
+                }
+                dialog.findViewById<Button>(R.id.buttonEditConfig)?.setOnClickListener {
+                    val intent = Intent(this, RomConfigActivity::class.java).apply {
+                        putExtra("file", file.name)
+                    }
+                    startActivity(intent)
+                    dialog.dismiss()
+                }
             }
+
             return@setOnItemLongClickListener true
         }
     }
@@ -239,7 +261,13 @@ class MainActivity : AppCompatActivity() {
         updateFiles()
     }
 
-    private fun clearSelection() {
+    fun beginSelection() {
+        TransitionManager.beginDelayedTransition(mainLayout, toolbarTransition)
+        fileToolbar.visibility = View.VISIBLE
+        mainToolbar.visibility = View.GONE
+    }
+
+    fun clearSelection() {
         selectionMode = SelectionMode.NORMAL
         if (adapter.selected.isNotEmpty()) {
             adapter.selected.clear()
@@ -285,13 +313,13 @@ class MainActivity : AppCompatActivity() {
             R.id.exportItem -> selectExportDir()
             R.id.deleteItem -> {
                 selectionMode = SelectionMode.DELETE
-                val dialog = ConfirmDeleteDialogFragment(adapter.selected.count())
-                dialog.show(supportFragmentManager, "")
-            }
-            R.id.deleteSaveItem -> {
-                selectionMode = SelectionMode.DELETE
-                val dialog = ConfirmSaveDeleteDialogFragment(adapter.selected.count())
-                dialog.show(supportFragmentManager, "")
+                val count = adapter.selected.count()
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(resources.getQuantityString(R.plurals.delete_confirmation, count, count))
+                    .setPositiveButton(R.string.delete) { _, _ -> performDelete() }
+                    .setNegativeButton(android.R.string.cancel) { _, _ -> clearSelection() }
+                    .setOnCancelListener { clearSelection() }
+                    .show()
             }
             R.id.moveItem -> {
                 selectionMode = SelectionMode.MOVE
@@ -335,7 +363,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun performDelete() {
+    private fun performDelete() {
         fileList.forEachIndexed { index, view ->
             if (files[fileList.firstVisiblePosition + index] in adapter.selected) {
                 fileTransition.addTarget(view)
@@ -353,11 +381,18 @@ class MainActivity : AppCompatActivity() {
         fileList.invalidate()
     }
 
-    fun cancelDelete() {
-        selectionMode = SelectionMode.SELECT
+    private fun showSaveDeleteDialog() {
+        selectionMode = SelectionMode.DELETE
+        val count = adapter.selected.count()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(resources.getQuantityString(R.plurals.delete_save_confirmation, count, count))
+            .setPositiveButton(R.string.delete) { _, _ -> performSaveDelete() }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> clearSelection() }
+            .setOnCancelListener { clearSelection() }
+            .show()
     }
 
-    fun performSaveDelete() {
+    private fun performSaveDelete() {
         val saveDir = filesDir.resolve(SAVE_DIR)
         adapter.selected.forEach { file ->
             saveDir.listFiles { _, name ->
@@ -679,62 +714,6 @@ class ImportOverwriteAdapter(
 
         textView.text = file.nameWithoutExtension
         return view
-    }
-}
-
-class ConfirmDeleteDialogFragment(private val count: Int) : AppCompatDialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = MaterialAlertDialogBuilder(it)
-            val title = resources.getQuantityString(R.plurals.delete_confirmation, count, count)
-            builder.setTitle(title)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    if (activity is MainActivity) {
-                        (activity as MainActivity).performDelete()
-                    }
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                    if (activity is MainActivity) {
-                        (activity as MainActivity).cancelDelete()
-                    }
-                }
-                .create()
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
-    override fun onCancel(dialog: DialogInterface) {
-        if (activity is MainActivity) {
-            (activity as MainActivity).cancelDelete()
-        }
-        super.onCancel(dialog)
-    }
-}
-
-class ConfirmSaveDeleteDialogFragment(private val count: Int) : AppCompatDialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = MaterialAlertDialogBuilder(it)
-            val title = resources.getQuantityString(R.plurals.delete_save_confirmation, count, count)
-            builder.setTitle(title)
-                .setPositiveButton(R.string.delete) { _, _ ->
-                    if (activity is MainActivity) {
-                        (activity as MainActivity).performSaveDelete()
-                    }
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                    if (activity is MainActivity) {
-                        (activity as MainActivity).cancelDelete()
-                    }
-                }
-                .create()
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
-    override fun onCancel(dialog: DialogInterface) {
-        if (activity is MainActivity) {
-            (activity as MainActivity).cancelDelete()
-        }
-        super.onCancel(dialog)
     }
 }
 

@@ -21,4 +21,16 @@
         <item name="colorControlHighlight">@color/dmgDarkButton</item>
         <item name="colorControlActivated">@color/dmgDarkButton</item>
     </style>
+
+    <style name="Widget.GBCC.Button" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button</item>
+    </style>
+
+    <style name="Widget.GBCC.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
+    </style>
+
+    <style name="Widget.GBCC.Button.TextButton.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
+    </style>
 </resources>
