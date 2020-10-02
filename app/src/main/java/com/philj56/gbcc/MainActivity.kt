@@ -480,7 +480,20 @@ class MainActivity : AppCompatActivity() {
 
         val iStream = try {
             contentResolver.openInputStream(uri)
-        } catch (e: FileNotFoundException) {
+        } catch (e: Exception) {
+            val tag: String
+            val subject: String
+            when (e) {
+                is FileNotFoundException -> {
+                    tag = "file_not_found"
+                    subject = "File not found"
+                }
+                is SecurityException -> {
+                    tag = "security_exception"
+                    subject = "Security exception"
+                }
+                else -> throw e
+            }
             runOnUiThread {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.message_failed_import_reason, e.message))
@@ -490,9 +503,9 @@ class MainActivity : AppCompatActivity() {
                             data = Uri.parse("mailto:")
                             putExtra(
                                 Intent.EXTRA_EMAIL,
-                                arrayOf("gbcc.emu+\"file_not_found\"@gmail.com")
+                                arrayOf("gbcc.emu+\"$tag\"@gmail.com")
                             )
-                            putExtra(Intent.EXTRA_SUBJECT, "File not found")
+                            putExtra(Intent.EXTRA_SUBJECT, subject)
                             putExtra(
                                 Intent.EXTRA_TEXT,
                                 "Traceback:\n----------\n" + e.stackTraceToString()
