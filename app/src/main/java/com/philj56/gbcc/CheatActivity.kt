@@ -28,6 +28,8 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_cheat_list.*
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 data class Cheat(var description: String, var code: String, var active: Boolean)
 
@@ -144,10 +146,17 @@ class CheatAdapter(
         val (description, code, active) = objects[position]
 
         textDescription.text = description
-        textCode.text = code
+        textCode.text = formatCode(code)
         switchActive.isChecked = active
 
         return view
+    }
+
+    private fun formatCode(code: String): String {
+        if (code.length == 9) {
+            return code.substring(0, 3) + "-" + code.substring(3, 6) + "-" + code.substring(6, 9)
+        }
+        return code
     }
 }
 
@@ -179,7 +188,10 @@ class CheatDialogFragment(private val index: Int) : DialogFragment() {
             .setTitle(title)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 activity.addCheat(
-                    Cheat(descriptionInput.text.toString().trim(), codeInput.text.toString(), true),
+                    Cheat(
+                        descriptionInput.text.toString().trim(),
+                        codeInput.text.toString().toUpperCase(Locale.getDefault()),
+                        true),
                     index
                 )
             }

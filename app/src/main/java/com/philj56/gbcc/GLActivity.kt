@@ -643,7 +643,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
         handler.post(checkEmulatorState)
         if (resume) {
-            loadState(autoSaveState)
             turboToggle.isChecked = false
             turboToggleDark.isChecked = false
             resume = false

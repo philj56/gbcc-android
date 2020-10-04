@@ -316,18 +316,18 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	update_preferences(env, prefs);
-	if (check_autoresume(env, prefs)) {
-		gbc.load_state = 10;
-	}
 	if (configFile != nullptr) {
 		const char *tmp = env->GetStringUTFChars(configFile, nullptr);
 		gbcc_load_config(&gbc, tmp);
 		env->ReleaseStringUTFChars(configFile, tmp);
-		if (!gbc.autoresume) {
-			gbc.load_state = 0;
-		}
+	}
+	if (gbc.autoresume) {
+		gbc.load_state = 10;
+		gbcc_load_state(&gbc);
 	}
 	if (cheatFile != nullptr) {
+		gbc.core.cheats.num_genie_cheats = 0;
+		gbc.core.cheats.num_shark_cheats = 0;
 		const char *tmp = env->GetStringUTFChars(cheatFile, nullptr);
 		gbcc_load_config(&gbc, tmp);
 		env->ReleaseStringUTFChars(cheatFile, tmp);
