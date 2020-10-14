@@ -16,7 +16,7 @@
         android:insetBottom="0dp"
         android:paddingStart="32dp"
         android:paddingEnd="32dp"
-        android:text="@string/select_items"
+        android:text="@string/manage_files"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"

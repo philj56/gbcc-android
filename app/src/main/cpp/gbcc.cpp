@@ -151,21 +151,6 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	env->DeleteLocalRef(prefsClass);
 }
 
-bool check_autoresume(JNIEnv *env, jobject prefs) {
-	bool ret;
-	jstring arg;
-	jmethodID id;
-	jclass prefsClass = env->GetObjectClass(prefs);
-
-	id = env->GetMethodID(prefsClass, "getBoolean", "(Ljava/lang/String;Z)Z");
-	arg = env->NewStringUTF("auto_resume");
-	ret = env->CallBooleanMethod(prefs, id, arg, false);
-	env->DeleteLocalRef(arg);
-
-	env->DeleteLocalRef(prefsClass);
-	return ret;
-}
-
 void logfile_begin() {
 	// Redirect stdout & stderr to a log file, storing old fd's for later restoration
 	stdout_fd = dup(fileno(stdout));
