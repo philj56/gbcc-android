@@ -408,8 +408,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         }
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         try {
             startActivityForResult(intent, IMPORT_REQUEST_CODE)
         } catch (e: ActivityNotFoundException) {
@@ -475,7 +476,6 @@ class MainActivity : AppCompatActivity() {
             file.outputStream().use { output ->
                 input.copyTo(output)
             }
-            Log.d("Imported", file.name)
         }
 
         val iStream = try {
