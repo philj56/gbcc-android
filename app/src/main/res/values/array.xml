@@ -108,12 +108,14 @@
         <item>AndroidX</item>
         <item>GBCC</item>
         <item>Material Components for Android</item>
+        <item>Material Design Icons</item>
     </string-array>
 
     <string-array name="license_values_array">
         <item>apache-2.0</item>
         <item>gbcc</item>
         <item>apache-2.0</item>
+        <item>material-design-icons</item>
     </string-array>
 
 
