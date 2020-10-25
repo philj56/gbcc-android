@@ -17,6 +17,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -208,32 +209,10 @@ class MainActivity : AppCompatActivity() {
                 item.isActivated = true
                 item.invalidateDrawable(item.background)
 
-                val dialog = MaterialAlertDialogBuilder(this)
-                    .setView(R.layout.dialog_rom_actions)
-                    .setOnCancelListener { clearSelection() }
-                    .show()
-
-                dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
-                    beginSelection()
-                    dialog.dismiss()
-                }
-                dialog.findViewById<Button>(R.id.buttonDeleteSave)?.setOnClickListener {
-                    showSaveDeleteDialog()
-                    dialog.dismiss()
-                }
-                dialog.findViewById<Button>(R.id.buttonEditCheats)?.setOnClickListener {
-                    val intent = Intent(this, CheatActivity::class.java).apply {
-                        putExtra("file", file.name)
-                    }
-                    startActivity(intent)
-                    dialog.dismiss()
-                }
-                dialog.findViewById<Button>(R.id.buttonEditConfig)?.setOnClickListener {
-                    val intent = Intent(this, RomConfigActivity::class.java).apply {
-                        putExtra("file", file.name)
-                    }
-                    startActivity(intent)
-                    dialog.dismiss()
+                if (file.isDirectory) {
+                    showDirectoryActionsDialog(file)
+                } else {
+                    showRomActionsDialog(file)
                 }
             }
 
@@ -307,7 +286,11 @@ class MainActivity : AppCompatActivity() {
             R.id.importItem -> performFileSearch()
             R.id.settingsItem -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.folderItem -> {
-                val dialog = CreateFolderDialogFragment()
+                val dialog = EditTextDialogFragment(R.string.create_folder, "") { name ->
+                    createFolder(
+                        name
+                    )
+                }
                 dialog.show(supportFragmentManager, "")
             }
             R.id.exportItem -> selectExportDir()
@@ -351,7 +334,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun createFolder(name: String) {
+    private fun createFolder(name: String) {
         if (currentDir.resolve(name).mkdirs()) {
             updateFiles()
         } else {
@@ -379,6 +362,90 @@ class MainActivity : AppCompatActivity() {
         }
         TransitionManager.go(scene, deleteTransitionSet)
         fileList.invalidate()
+    }
+
+    private fun showDirectoryActionsDialog(file: File) {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(R.layout.dialog_directory_actions)
+            .setOnCancelListener { clearSelection() }
+            .show()
+
+        dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
+            beginSelection()
+            dialog.dismiss()
+        }
+        dialog.findViewById<Button>(R.id.buttonRenameDirectory)?.setOnClickListener {
+            showRenameDialog(file)
+            dialog.dismiss()
+        }
+    }
+
+    private fun showRomActionsDialog(file: File) {
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(R.layout.dialog_rom_actions)
+            .setOnCancelListener { clearSelection() }
+            .show()
+
+        dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
+            beginSelection()
+            dialog.dismiss()
+        }
+        dialog.findViewById<Button>(R.id.buttonRenameRom)?.setOnClickListener {
+            showRenameDialog(file)
+            dialog.dismiss()
+        }
+        dialog.findViewById<Button>(R.id.buttonDeleteSave)?.setOnClickListener {
+            showSaveDeleteDialog()
+            dialog.dismiss()
+        }
+        dialog.findViewById<Button>(R.id.buttonEditCheats)?.setOnClickListener {
+            val intent = Intent(this, CheatActivity::class.java).apply {
+                putExtra("file", file.name)
+            }
+            startActivity(intent)
+            dialog.dismiss()
+        }
+        dialog.findViewById<Button>(R.id.buttonEditConfig)?.setOnClickListener {
+            val intent = Intent(this, RomConfigActivity::class.java).apply {
+                putExtra("file", file.name)
+            }
+            startActivity(intent)
+            dialog.dismiss()
+        }
+    }
+
+    private fun showRenameDialog(file: File) {
+        selectionMode = SelectionMode.NORMAL
+        val dialog = EditTextDialogFragment(R.string.rename_rom, file.nameWithoutExtension) { name ->
+            if (file.isDirectory) {
+                file.renameTo(File("${file.parent}/$name"))
+                updateFiles()
+                return@EditTextDialogFragment
+            }
+            val romBase = file.absolutePath.removeSuffix(file.extension)
+            val configFile = filesDir.resolve("config/${file.nameWithoutExtension}.cfg")
+            val cheatFile = filesDir.resolve("config/${file.nameWithoutExtension}.cheats")
+            val savFile = File("$romBase.sav")
+            if (configFile.exists()) {
+                configFile.renameTo(filesDir.resolve("config/$name.cfg"))
+            }
+            if (cheatFile.exists()) {
+                cheatFile.renameTo(filesDir.resolve("config/$name.cheats"))
+            }
+            if (savFile.exists()) {
+                savFile.renameTo(filesDir.resolve("saves/$name.sav"))
+            }
+            for (n in 0..10) {
+                val state = filesDir.resolve("saves/${file.nameWithoutExtension}.s$n")
+                if (state.exists()) {
+                    state.renameTo(filesDir.resolve("saves/$name.s$n"))
+                }
+            }
+            file.renameTo(File("${file.parent}/$name.${file.extension}"))
+            updateFiles()
+        }
+        dialog.setOnDismissListener { clearSelection() }
+        dialog.show(supportFragmentManager, "")
     }
 
     private fun showSaveDeleteDialog() {
@@ -753,19 +820,20 @@ class ImportOverwriteAdapter(
     }
 }
 
-class CreateFolderDialogFragment : DialogFragment() {
+class EditTextDialogFragment(private val title: Int, private val initialText: String, private val onConfirm: (String) -> Unit) : DialogFragment() {
+    private var onDismissListener: (() -> Unit)? = null
+
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val textView = it.layoutInflater.inflate(R.layout.dialog_create_folder, null, false)
             val input = textView?.findViewById<EditText>(R.id.createFolderInput)
+            input?.setText(initialText)
 
             val builder = MaterialAlertDialogBuilder(it)
-            builder.setTitle(R.string.create_folder)
+            builder.setTitle(title)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
-                    if (activity is MainActivity) {
-                        (activity as MainActivity).createFolder(input?.text.toString())
-                    }
+                    onConfirm(input?.text.toString())
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .setView(textView)
@@ -792,6 +860,15 @@ class CreateFolderDialogFragment : DialogFragment() {
 
             return dialog
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        onDismissListener?.invoke()
+        super.onDismiss(dialog)
+    }
+
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
     }
 }
 

@@ -9,6 +9,8 @@
     <string name="create_folder_hint">Folder name</string>
     <string name="export_saves">Export Saves</string>
     <string name="manage_files">Manage files</string>
+    <string name="rename_directory">Rename directory</string>
+    <string name="rename_rom">Rename ROM</string>
     <string name="select_items">Select multiple</string>
     <string name="select_destination">Select Destination</string>
     <string name="delete">Delete</string>
