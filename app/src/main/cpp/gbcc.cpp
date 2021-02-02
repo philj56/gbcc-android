@@ -330,7 +330,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	pthread_create(&emu_thread, nullptr, gbcc_emulation_loop, &gbc);
 	return static_cast<jboolean>(true);
 }
-
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_quit(
 		JNIEnv *env,

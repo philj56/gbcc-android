@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(FLAGS "-O3 -gfull -flto -fno-omit-frame-pointer")
+set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
+
+#set(FLAGS "-O3 -gfull -flto=full -fno-omit-frame-pointer -fprofile-instr-use=${GBCC_DIR}/default.profdata")
+set(FLAGS "-O3 -gfull -flto=full -fno-omit-frame-pointer")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${FLAGS}")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${FLAGS}")
 
-set(GBCC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../libs/gbcc)
 include_directories(${GBCC_DIR}/src)
 
 add_definitions(

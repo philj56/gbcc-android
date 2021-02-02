@@ -81,4 +81,12 @@
 			</intent-filter>
 		</activity>
 	</application>
+
+	<!-- Needed to use file managers with custom content providers e.g. Solid Explorer -->
+	<queries>
+        <intent>
+			<action android:name="android.intent.action.GET_CONTENT" />
+			<data android:mimeType="*/*" />
+		</intent>
+	</queries>
 </manifest>
