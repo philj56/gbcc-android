@@ -785,9 +785,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 image.close()
             })
 
-            val cameraSelector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build()
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
         }, ContextCompat.getMainExecutor(this))
