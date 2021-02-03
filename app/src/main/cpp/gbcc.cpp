@@ -79,6 +79,23 @@ static FILE *logfile;
 int stdout_fd;
 int stderr_fd;
 
+/*
+ * Seems that the JNI doesn't guarantee strings from GetStringUTFChars are null-terminated,
+ * so we've got to allocate our own buffers and null-terminate them
+ */
+__attribute__((malloc))
+char * get_utf_string(JNIEnv *env, jstring string) {
+	size_t name_len = env->GetStringUTFLength(string);
+	char *buffer = (char *)malloc(name_len + 1);
+
+	const char *cstring = env->GetStringUTFChars(string, nullptr);
+	memcpy(buffer, cstring, name_len);
+	buffer[name_len] = '\0';
+	env->ReleaseStringUTFChars(string, cstring);
+
+	return buffer;
+}
+
 void update_preferences(JNIEnv *env, jobject prefs) {
 	jstring ret;
 	jstring arg;
@@ -114,18 +131,18 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 	arg = env->NewStringUTF("turbo_speed");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 	if (ret != nullptr) {
-		const char *tmp = env->GetStringUTFChars(ret, nullptr);
+	    char *tmp = get_utf_string(env, ret);
 		gbc.turbo_speed = static_cast<float>(strtod(tmp, nullptr));
-		env->ReleaseStringUTFChars(ret, tmp);
+		free(tmp);
 	}
 	env->DeleteLocalRef(arg);
 
 	arg = env->NewStringUTF("palette");
 	ret = (jstring)env->CallObjectMethod(prefs, id, arg, NULL);
 	if (ret != nullptr) {
-		const char *tmp = env->GetStringUTFChars(ret, nullptr);
+		char *tmp = get_utf_string(env, ret);
 		gbc.core.ppu.palette = gbcc_get_palette(tmp);
-		env->ReleaseStringUTFChars(ret, tmp);
+		free(tmp);
 	}
 	env->DeleteLocalRef(arg);
 
@@ -143,9 +160,9 @@ void update_preferences(JNIEnv *env, jobject prefs) {
 			strncpy(shader, "Dot Matrix", MAX_SHADER_LEN);
 		}
 	} else {
-		const char *name = env->GetStringUTFChars(ret, nullptr);
+		char *name = get_utf_string(env, ret);
 		strncpy(shader, name, MAX_SHADER_LEN);
-		env->ReleaseStringUTFChars(ret, name);
+		free(name);
 	}
 	env->DeleteLocalRef(arg);
 	env->DeleteLocalRef(prefsClass);
@@ -233,9 +250,9 @@ Java_com_philj56_gbcc_GLActivity_chdir(
 		JNIEnv *env,
 		jobject obj,/* this */
 		jstring dirName) {
-	const char *path = env->GetStringUTFChars(dirName, nullptr);
+	char *path = get_utf_string(env, dirName);
 	chdir(path);
-	env->ReleaseStringUTFChars(dirName, path);
+	free(path);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
@@ -243,13 +260,14 @@ Java_com_philj56_gbcc_GLActivity_checkRom(
 		JNIEnv *env,
 		jobject obj,/* this */
 		jstring file) {
-	const char *string = env->GetStringUTFChars(file, nullptr);
-	gbcc_initialise(&gbc.core, string);
-	env->ReleaseStringUTFChars(file, string);
+	char *filename = get_utf_string(env, file);
+	gbcc_initialise(&gbc.core, filename);
+
 	bool ret = gbc.core.initialised;
-	if (gbc.core.initialised) {
+	if (ret) {
 		gbcc_free(&gbc.core);
 	}
+	free(filename);
 	return static_cast<jboolean>(ret);
 }
 
@@ -272,12 +290,8 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		jstring cheatFile,
 		jobject prefs) {
 
-	const char *string = env->GetStringUTFChars(file, nullptr);
-
-	size_t name_len = strlen(string) + 1;
-	fname = (char *)malloc(name_len);
-	memcpy(fname, string, name_len);
-	env->ReleaseStringUTFChars(file, string);
+	size_t name_len = env->GetStringUTFLength(file);
+	fname = get_utf_string(env, file);
 
 	logfile_begin();
 
@@ -293,18 +307,18 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	gbc.quit = false;
 	gbc.has_focus = true;
 
-	string = env->GetStringUTFChars(saveDir, nullptr);
-	strncpy(gbc.save_directory, string, sizeof(gbc.save_directory));
-	env->ReleaseStringUTFChars(saveDir, string);
+	char *save_dir = get_utf_string(env, saveDir);
+	strncpy(gbc.save_directory, save_dir, sizeof(gbc.save_directory));
+	free(save_dir);
 
 	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 
 	__android_log_print(ANDROID_LOG_INFO, "GBCC", "%s", fname);
 	update_preferences(env, prefs);
 	if (configFile != nullptr) {
-		const char *tmp = env->GetStringUTFChars(configFile, nullptr);
+		char *tmp = get_utf_string(env, configFile);
 		gbcc_load_config(&gbc, tmp);
-		env->ReleaseStringUTFChars(configFile, tmp);
+		free(tmp);
 	}
 	if (gbc.autoresume) {
 		gbc.load_state = 10;
@@ -313,9 +327,9 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	if (cheatFile != nullptr) {
 		gbc.core.cheats.num_genie_cheats = 0;
 		gbc.core.cheats.num_shark_cheats = 0;
-		const char *tmp = env->GetStringUTFChars(cheatFile, nullptr);
+		char *tmp = get_utf_string(env, cheatFile);
 		gbcc_load_config(&gbc, tmp);
-		env->ReleaseStringUTFChars(cheatFile, tmp);
+		free(tmp);
 	}
 	if (options.initialised) {
 		gbc.turbo_speed = options.turbo_speed;
@@ -342,7 +356,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	logfile_end();
 
 	// Don't allow the screen to be drawn to while we're freeing the core
-	const struct timespec wait_time = { .tv_sec = 0, .tv_nsec = 100000000 };
+	const struct timespec wait_time = { .tv_sec = 1, .tv_nsec = 0 };
 	if (pthread_mutex_timedlock(&render_mutex, &wait_time) == 0) {
 		gbcc_free(&gbc.core);
 		pthread_mutex_unlock(&render_mutex);
@@ -352,6 +366,7 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	}
 	gbcc_audio_destroy(&gbc);
 	free(fname);
+	fname = nullptr;
 	options = (struct gbcc_temp_options){0}; //NOLINT
 }
 
