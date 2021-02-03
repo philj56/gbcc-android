@@ -422,10 +422,9 @@ class MainActivity : AppCompatActivity() {
                 updateFiles()
                 return@EditTextDialogFragment
             }
-            val romBase = file.absolutePath.removeSuffix(file.extension)
             val configFile = filesDir.resolve("config/${file.nameWithoutExtension}.cfg")
             val cheatFile = filesDir.resolve("config/${file.nameWithoutExtension}.cheats")
-            val savFile = File("$romBase.sav")
+            val savFile = filesDir.resolve("saves/${file.nameWithoutExtension}.sav")
             if (configFile.exists()) {
                 configFile.renameTo(filesDir.resolve("config/$name.cfg"))
             }
