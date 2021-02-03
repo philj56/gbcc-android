@@ -34,7 +34,6 @@
         android:layout_marginEnd="24dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/screen_description"
-        android:onClick="toggleMenuListener"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -166,7 +165,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:theme="@style/TurboToggleTheme"
-        android:onClick="toggleTurboListener"
         android:saveEnabled="false"
         android:background="@null"
         app:layout_constraintBottom_toTopOf="@+id/dpad"
@@ -179,7 +177,6 @@
         android:id="@+id/turboToggleDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="toggleTurboListener"
         android:theme="@style/TurboToggleThemeDark"
         android:saveEnabled="false"
         android:visibility="gone"

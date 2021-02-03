@@ -138,10 +138,6 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private lateinit var binding: ActivityGlBinding
 
-    @Suppress("UNUSED_PARAMETER")
-    fun toggleTurboListener(view: View) { toggleTurboWrapper() }
-    @Suppress("UNUSED_PARAMETER")
-    fun toggleMenuListener(view: View) {toggleMenu()}
     private external fun chdir(dirName: String)
     private external fun checkRom(file: String): Boolean
     private external fun loadRom(
@@ -321,6 +317,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
         }
         window.setBackgroundDrawableResource(bgColor)
+
+        binding.screen.setOnClickListener { toggleMenu() }
+        binding.turboToggle.setOnClickListener { toggleTurbo() }
+        binding.turboToggleDark.setOnClickListener { toggleTurbo() }
 
         if (!gbc) {
             val screenBorderColor: Int

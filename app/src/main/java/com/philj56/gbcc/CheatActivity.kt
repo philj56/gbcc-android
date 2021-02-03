@@ -56,6 +56,8 @@ class CheatActivity : AppCompatActivity() {
             configFile.createNewFile()
         }
 
+        binding.floatingActionButton.setOnClickListener { showCheatDialog() }
+
         adapter = CheatAdapter(this, R.layout.entry_cheat, R.id.cheatDescription, cheats)
         binding.cheatList.adapter = adapter
 
@@ -82,8 +84,7 @@ class CheatActivity : AppCompatActivity() {
         finish()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun showCheatDialog(view: View?) {
+    fun showCheatDialog() {
         val dialog = CheatDialogFragment(-1)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "")
