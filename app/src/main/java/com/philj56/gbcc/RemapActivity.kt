@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
 import android.widget.Button
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,7 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.radiobutton.MaterialRadioButton
-import kotlinx.android.synthetic.main.activity_remap_controller.*
+import com.philj56.gbcc.databinding.ActivityRemapControllerBinding
 import kotlin.math.abs
 
 class RemapActivity : AppCompatActivity() {
@@ -27,16 +26,18 @@ class RemapActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
     private lateinit var layers: LayerDrawable
     private lateinit var buttonInfoArray: Array<ButtonInfo>
+    private lateinit var binding: ActivityRemapControllerBinding
 
     private fun Boolean.toAlpha() = if (this) 255 else 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_remap_controller)
+        binding = ActivityRemapControllerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
-        layers = controllerLayers.drawable as LayerDrawable
+        layers = binding.controllerLayers.drawable as LayerDrawable
 
         // Set controller outline to follow night mode theme
         val typedValue = TypedValue()
@@ -44,24 +45,24 @@ class RemapActivity : AppCompatActivity() {
         layers.findDrawableByLayerId(R.id.controllerOutline).setTint(typedValue.data)
 
         buttonInfoArray = arrayOf(
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_A, "button_map_a", buttonRemapA, layers.findDrawableByLayerId(R.id.buttonRemapABackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_B, "button_map_b", buttonRemapB, layers.findDrawableByLayerId(R.id.buttonRemapBBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_X, "button_map_x", buttonRemapX, layers.findDrawableByLayerId(R.id.buttonRemapXBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_Y, "button_map_y", buttonRemapY, layers.findDrawableByLayerId(R.id.buttonRemapYBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_DPAD_UP, "button_map_up", buttonRemapDpadUp, layers.findDrawableByLayerId(R.id.buttonRemapDpadUpBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_DPAD_DOWN, "button_map_down", buttonRemapDpadDown, layers.findDrawableByLayerId(R.id.buttonRemapDpadDownBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_DPAD_LEFT, "button_map_left", buttonRemapDpadLeft, layers.findDrawableByLayerId(R.id.buttonRemapDpadLeftBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_DPAD_RIGHT, "button_map_right", buttonRemapDpadRight, layers.findDrawableByLayerId(R.id.buttonRemapDpadRightBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_START, "button_map_start", buttonRemapStart, layers.findDrawableByLayerId(R.id.buttonRemapStartBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_SELECT, "button_map_select", buttonRemapSelect, layers.findDrawableByLayerId(R.id.buttonRemapSelectBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_L1, "button_map_l1", buttonRemapLeftShoulder, layers.findDrawableByLayerId(R.id.buttonRemapLeftShoulderBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_L2, "button_map_l2", buttonRemapLeftTrigger, layers.findDrawableByLayerId(R.id.buttonRemapLeftTriggerBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_R1, "button_map_r1", buttonRemapRightShoulder, layers.findDrawableByLayerId(R.id.buttonRemapRightShoulderBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_R2, "button_map_r2", buttonRemapRightTrigger, layers.findDrawableByLayerId(R.id.buttonRemapRightTriggerBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_THUMBL, "button_map_thumbl", buttonRemapLeftStick, layers.findDrawableByLayerId(R.id.buttonRemapLeftStickBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_BUTTON_THUMBR, "button_map_thumbr", buttonRemapRightStick, layers.findDrawableByLayerId(R.id.buttonRemapRightStickBackground), false),
-            ButtonInfo(KeyEvent.KEYCODE_SHIFT_LEFT, "button_map_analogue_left", buttonRemapLeftStickMove, layers.findDrawableByLayerId(R.id.buttonRemapLeftStickMoveBackground), true),
-            ButtonInfo(KeyEvent.KEYCODE_SHIFT_RIGHT, "button_map_analogue_right", buttonRemapRightStickMove, layers.findDrawableByLayerId(R.id.buttonRemapRightStickMoveBackground), true),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_A, "button_map_a", binding.buttonRemapA, layers.findDrawableByLayerId(R.id.buttonRemapABackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_B, "button_map_b", binding.buttonRemapB, layers.findDrawableByLayerId(R.id.buttonRemapBBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_X, "button_map_x", binding.buttonRemapX, layers.findDrawableByLayerId(R.id.buttonRemapXBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_Y, "button_map_y", binding.buttonRemapY, layers.findDrawableByLayerId(R.id.buttonRemapYBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_DPAD_UP, "button_map_up", binding.buttonRemapDpadUp, layers.findDrawableByLayerId(R.id.buttonRemapDpadUpBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_DPAD_DOWN, "button_map_down", binding.buttonRemapDpadDown, layers.findDrawableByLayerId(R.id.buttonRemapDpadDownBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_DPAD_LEFT, "button_map_left", binding.buttonRemapDpadLeft, layers.findDrawableByLayerId(R.id.buttonRemapDpadLeftBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_DPAD_RIGHT, "button_map_right", binding.buttonRemapDpadRight, layers.findDrawableByLayerId(R.id.buttonRemapDpadRightBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_START, "button_map_start", binding.buttonRemapStart, layers.findDrawableByLayerId(R.id.buttonRemapStartBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_SELECT, "button_map_select", binding.buttonRemapSelect, layers.findDrawableByLayerId(R.id.buttonRemapSelectBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_L1, "button_map_l1", binding.buttonRemapLeftShoulder, layers.findDrawableByLayerId(R.id.buttonRemapLeftShoulderBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_L2, "button_map_l2", binding.buttonRemapLeftTrigger, layers.findDrawableByLayerId(R.id.buttonRemapLeftTriggerBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_R1, "button_map_r1", binding.buttonRemapRightShoulder, layers.findDrawableByLayerId(R.id.buttonRemapRightShoulderBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_R2, "button_map_r2", binding.buttonRemapRightTrigger, layers.findDrawableByLayerId(R.id.buttonRemapRightTriggerBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_THUMBL, "button_map_thumbl", binding.buttonRemapLeftStick, layers.findDrawableByLayerId(R.id.buttonRemapLeftStickBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_BUTTON_THUMBR, "button_map_thumbr", binding.buttonRemapRightStick, layers.findDrawableByLayerId(R.id.buttonRemapRightStickBackground), false),
+            ButtonInfo(KeyEvent.KEYCODE_SHIFT_LEFT, "button_map_analogue_left", binding.buttonRemapLeftStickMove, layers.findDrawableByLayerId(R.id.buttonRemapLeftStickMoveBackground), true),
+            ButtonInfo(KeyEvent.KEYCODE_SHIFT_RIGHT, "button_map_analogue_right", binding.buttonRemapRightStickMove, layers.findDrawableByLayerId(R.id.buttonRemapRightStickMoveBackground), true),
         )
 
         val buttonNames = resources.getStringArray(R.array.button_map_names_array)

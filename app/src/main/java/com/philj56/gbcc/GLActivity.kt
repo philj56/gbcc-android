@@ -45,8 +45,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.activity_gl.*
-import kotlinx.android.synthetic.main.button_dpad.*
+import com.philj56.gbcc.databinding.ActivityGlBinding
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
@@ -137,6 +136,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
 
+    private lateinit var binding: ActivityGlBinding
 
     @Suppress("UNUSED_PARAMETER")
     fun toggleTurboListener(view: View) { toggleTurboWrapper() }
@@ -189,11 +189,11 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 vibrate(10)
             }
             val turbo = checkTurboFun()
-            if (turboToggle.isChecked != turbo) {
-                turboToggle.isChecked = turbo
+            if (binding.turboToggle.isChecked != turbo) {
+                binding.turboToggle.isChecked = turbo
             }
-            if (turboToggleDark.isChecked != turbo) {
-                turboToggleDark.isChecked = turbo
+            if (binding.turboToggleDark.isChecked != turbo) {
+                binding.turboToggleDark.isChecked = turbo
             }
             if (checkErrorFun()) {
                 flushLogs()
@@ -327,37 +327,37 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             val theme = prefs.getString("dmg_color", "Light")
             if (theme == "Dark") {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgDarkScreenBorder)
-                dpadBackground.setColorFilter(
+                binding.dpad.dpadBackground.setColorFilter(
                     ContextCompat.getColor(this, R.color.dmgDarkDpad),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
 
-                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
-                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                binding.buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
 
-                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
-                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                turboToggle.visibility = View.INVISIBLE
-                turboToggleDark.visibility = View.VISIBLE
+                binding.turboToggle.visibility = View.INVISIBLE
+                binding.turboToggleDark.visibility = View.VISIBLE
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
-                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
-                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                binding.buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
 
-                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
-                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
             }
 
 
-            buttonStart.rotation = -45f
-            buttonSelect.rotation = -45f
+            binding.buttonStart.rotation = -45f
+            binding.buttonSelect.rotation = -45f
 
             val borders = arrayOf(
-                screenBorderTop,
-                screenBorderBottom,
-                screenBorderLeft,
-                screenBorderRight
+                binding.screenBorderTop,
+                binding.screenBorderBottom,
+                binding.screenBorderLeft,
+                binding.screenBorderRight
             )
 
             borders.forEach {
@@ -370,51 +370,51 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val px = (resources.displayMetrics.density + 0.5f).toInt()
 
-                bottomLeftCorner.layoutParams.apply {
+                binding.bottomLeftCorner.layoutParams.apply {
                     width = 16 * px
                     height = width
                 }
 
-                bottomRightCorner.layoutParams.apply {
+                binding.bottomRightCorner.layoutParams.apply {
                     width = 64 * px
                     height = width
                 }
             }
         }
 
-        buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
-        buttonA.scaleY = buttonA.scaleX
-        buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
-        buttonB.scaleY = buttonB.scaleX
-        buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
-        buttonStart.scaleY = buttonStart.scaleX
-        buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
-        buttonSelect.scaleY = buttonSelect.scaleX
-        dpad.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
-        dpad.scaleY = dpad.scaleX
-        turboToggle.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
-        turboToggle.scaleY = turboToggle.scaleX
-        turboToggleDark.scaleX = turboToggle.scaleX
-        turboToggleDark.scaleY = turboToggle.scaleX
+        binding.buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
+        binding.buttonA.scaleY = binding.buttonA.scaleX
+        binding.buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
+        binding.buttonB.scaleY = binding.buttonB.scaleX
+        binding.buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
+        binding.buttonStart.scaleY = binding.buttonStart.scaleX
+        binding.buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
+        binding.buttonSelect.scaleY = binding.buttonSelect.scaleX
+        binding.dpad.root.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
+        binding.dpad.root.scaleY = binding.dpad.root.scaleX
+        binding.turboToggle.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
+        binding.turboToggle.scaleY = binding.turboToggle.scaleX
+        binding.turboToggleDark.scaleX = binding.turboToggle.scaleX
+        binding.turboToggleDark.scaleY = binding.turboToggle.scaleX
 
-        buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
-        buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
-        buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
-        buttonB.translationY = prefs.getFloat(getString(R.string.b_offset_y_key), 0f)
-        buttonStart.translationX = prefs.getFloat(getString(R.string.start_offset_x_key), 0f)
-        buttonStart.translationY = prefs.getFloat(getString(R.string.start_offset_y_key), 0f)
-        buttonSelect.translationX = prefs.getFloat(getString(R.string.select_offset_x_key), 0f)
-        buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
-        dpad.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
-        dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
-        turboToggle.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
-        turboToggle.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
-        turboToggleDark.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
-        turboToggleDark.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+        binding.buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
+        binding.buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
+        binding.buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
+        binding.buttonB.translationY = prefs.getFloat(getString(R.string.b_offset_y_key), 0f)
+        binding.buttonStart.translationX = prefs.getFloat(getString(R.string.start_offset_x_key), 0f)
+        binding.buttonStart.translationY = prefs.getFloat(getString(R.string.start_offset_y_key), 0f)
+        binding.buttonSelect.translationX = prefs.getFloat(getString(R.string.select_offset_x_key), 0f)
+        binding.buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
+        binding.dpad.root.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
+        binding.dpad.root.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
+        binding.turboToggle.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        binding.turboToggle.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+        binding.turboToggleDark.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        binding.turboToggleDark.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
 
         if (!prefs.getBoolean("show_turbo", false)) {
-            turboToggle.visibility = View.GONE
-            turboToggleDark.visibility = View.GONE
+            binding.turboToggle.visibility = View.GONE
+            binding.turboToggleDark.visibility = View.GONE
         }
     }
 
@@ -425,7 +425,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
-        setContentView(R.layout.activity_gl)
+        binding = ActivityGlBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         hideNavigation()
 
         val save = filesDir.resolve("saves")
@@ -469,26 +470,26 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         }
 
         animateButtons = prefs.getBoolean("animate_buttons", true)
-        setButtonIds(arrayOf(buttonA, buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
+        setButtonIds(arrayOf(binding.buttonA, binding.buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
         setButtonIds(
-            arrayOf(buttonStart, buttonSelect), arrayOf(
+            arrayOf(binding.buttonStart, binding.buttonSelect), arrayOf(
                 BUTTON_CODE_START,
                 BUTTON_CODE_SELECT
             )
         )
 
-        placeholderTouchTarget.setOnTouchListener { v, _ ->
+        binding.placeholderTouchTarget.setOnTouchListener { v, _ ->
             // This shouldn't be needed, but Android
             // seems to act strangely when the root view is touched
             // and ignores any further touches.
-            if (v != placeholderTouchTarget) {
+            if (v != binding.placeholderTouchTarget) {
                 return@setOnTouchListener false
             }
             return@setOnTouchListener true
         }
 
-        dpad.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-            if (view != dpad) {
+        binding.dpad.root.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            if (view != binding.dpad.root) {
                 return@OnTouchListener false
             }
             if (dpadState == 0) {
@@ -501,10 +502,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                    val up = Rect(0, 0, dpad.width, dpad.height / 3)
-                    val down = Rect(0, 2 * dpad.height / 3, dpad.width, dpad.height)
-                    val left = Rect(0, 0, dpad.width / 3, dpad.height)
-                    val right = Rect(2 * dpad.width / 3, 0, dpad.width, dpad.height)
+                    val up = Rect(0, 0, binding.dpad.root.width, binding.dpad.root.height / 3)
+                    val down = Rect(0, 2 * binding.dpad.root.height / 3, binding.dpad.root.width, binding.dpad.root.height)
+                    val left = Rect(0, 0, binding.dpad.root.width / 3, binding.dpad.root.height)
+                    val right = Rect(2 * binding.dpad.root.width / 3, 0, binding.dpad.root.width, binding.dpad.root.height)
 
                     val x = motionEvent.x.toInt()
                     val y = motionEvent.y.toInt()
@@ -528,7 +529,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     if (changed) {
                         hapticVibrate()
                         if (animateButtons) {
-                            dpadHighlight.setImageResource(
+                            binding.dpad.dpadHighlight.setImageResource(
                                 when (state) {
                                     1 -> R.drawable.ic_button_dpad_highlight_pressed_up
                                     2 -> R.drawable.ic_button_dpad_highlight_pressed_down
@@ -547,7 +548,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 MotionEvent.ACTION_UP -> {
                     updateDpad(0)
                     if (animateButtons) {
-                        dpadHighlight.setImageResource(R.drawable.ic_button_dpad_highlight)
+                        binding.dpad.dpadHighlight.setImageResource(R.drawable.ic_button_dpad_highlight)
                     }
                 }
             }
@@ -580,7 +581,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onResume() {
         super.onResume()
-        screen.onResume()
+        binding.screen.onResume()
         startGBCC()
     }
 
@@ -644,8 +645,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
         handler.post(checkEmulatorState)
         if (resume) {
             loadState(autoSaveState)
-            turboToggle.isChecked = false
-            turboToggleDark.isChecked = false
+            binding.turboToggle.isChecked = false
+            binding.turboToggleDark.isChecked = false
             resume = false
         }
         if (hasAccelerometer()) {
@@ -676,7 +677,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onPause() {
         stopGBCC()
-        screen.onPause()
+        binding.screen.onPause()
         super.onPause()
     }
 
@@ -1007,8 +1008,8 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     private fun toggleTurboWrapper() {
         val turbo = toggleTurbo()
-        turboToggle.isChecked = turbo
-        turboToggleDark.isChecked = turbo
+        binding.turboToggle.isChecked = turbo
+        binding.turboToggleDark.isChecked = turbo
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {

@@ -41,7 +41,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import androidx.transition.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.activity_main.*
+import com.philj56.gbcc.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: FileAdapter
     private lateinit var currentDir: File
     private lateinit var baseDir: File
+    private lateinit var binding: ActivityMainBinding
 
     private var timeBackPressed: Long = 0
 
@@ -96,7 +97,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         baseDir = getExternalFilesDir(null) ?: filesDir
         currentDir = baseDir
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Check if the version has changed since last launch, and perform some setup if so
         Thread {
@@ -126,18 +128,18 @@ class MainActivity : AppCompatActivity() {
         }.start()
 
         // Set up the toolbars
-        mainToolbar.inflateMenu(R.menu.main_menu)
-        mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        fileToolbar.inflateMenu(R.menu.file_menu)
-        fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        fileToolbar.setNavigationOnClickListener { clearSelection() }
-        moveToolbar.inflateMenu(R.menu.move_menu)
-        moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        moveToolbar.setNavigationOnClickListener { clearSelection() }
+        binding.mainToolbar.inflateMenu(R.menu.main_menu)
+        binding.mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        binding.fileToolbar.inflateMenu(R.menu.file_menu)
+        binding.fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        binding.fileToolbar.setNavigationOnClickListener { clearSelection() }
+        binding.moveToolbar.inflateMenu(R.menu.move_menu)
+        binding.moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        binding.moveToolbar.setNavigationOnClickListener { clearSelection() }
 
-        toolbarTransition.addTarget(mainToolbar)
-        toolbarTransition.addTarget(fileToolbar)
-        toolbarTransition.addTarget(moveToolbar)
+        toolbarTransition.addTarget(binding.mainToolbar)
+        toolbarTransition.addTarget(binding.fileToolbar)
+        toolbarTransition.addTarget(binding.moveToolbar)
 
         fileTransition.addTransition(SlideShrink().setDuration(300))
         fileTransition.ordering = TransitionSet.ORDERING_TOGETHER
@@ -150,7 +152,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 clearSelection()
                 updateFiles()
-                fileList.forEach { view ->
+                binding.fileList.forEach { view ->
                     view.clearAnimation()
                     view.layoutParams.height = 0
                     view.translationX = 0.0f
@@ -164,9 +166,9 @@ class MainActivity : AppCompatActivity() {
         deleteTransitionSet.ordering = TransitionSet.ORDERING_TOGETHER
 
         adapter = FileAdapter(this, R.layout.entry_file, R.id.fileEntry, files)
-        fileList.adapter = adapter
-        fileList.setOnItemClickListener { _, _, position, _ ->
-            val file = fileList.adapter.getItem(position) as File
+        binding.fileList.adapter = adapter
+        binding.fileList.setOnItemClickListener { _, _, position, _ ->
+            val file = binding.fileList.adapter.getItem(position) as File
             when (selectionMode) {
                 SelectionMode.DELETE -> {
                 }
@@ -185,11 +187,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 SelectionMode.SELECT -> {
-                    val item = fileList.getChildAt(position - fileList.firstVisiblePosition)
+                    val item = binding.fileList.getChildAt(position - binding.fileList.firstVisiblePosition)
                     if (file in adapter.selected) {
                         adapter.selected.remove(file)
                         if (adapter.selected.isEmpty()) {
-                            TransitionManager.beginDelayedTransition(mainLayout, toolbarTransition)
+                            TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
                             clearSelection()
                         }
                     } else {
@@ -200,11 +202,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        fileList.setOnItemLongClickListener { _, _, position, _ ->
-            val file = fileList.adapter.getItem(position) as File
+        binding.fileList.setOnItemLongClickListener { _, _, position, _ ->
+            val file = binding.fileList.adapter.getItem(position) as File
             if (adapter.selected.isEmpty()) {
                 selectionMode = SelectionMode.SELECT
-                val item = fileList.getChildAt(position - fileList.firstVisiblePosition)
+                val item = binding.fileList.getChildAt(position - binding.fileList.firstVisiblePosition)
                 adapter.selected.add(file)
                 item.isActivated = true
                 item.invalidateDrawable(item.background)
@@ -241,30 +243,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun beginSelection() {
-        TransitionManager.beginDelayedTransition(mainLayout, toolbarTransition)
-        fileToolbar.visibility = View.VISIBLE
-        mainToolbar.visibility = View.GONE
+        TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
+        binding.fileToolbar.visibility = View.VISIBLE
+        binding.mainToolbar.visibility = View.GONE
     }
 
     fun clearSelection() {
         selectionMode = SelectionMode.NORMAL
         if (adapter.selected.isNotEmpty()) {
             adapter.selected.clear()
-            fileList.forEach { view ->
+            binding.fileList.forEach { view ->
                 view.isActivated = false
                 view.invalidateDrawable(view.background)
             }
         }
         moveSelection.clear()
         fileTransition.targets.clear()
-        mainToolbar.visibility = View.VISIBLE
-        fileToolbar.visibility = View.GONE
-        moveToolbar.visibility = View.GONE
+        binding.mainToolbar.visibility = View.VISIBLE
+        binding.fileToolbar.visibility = View.GONE
+        binding.moveToolbar.visibility = View.GONE
     }
 
     private fun updateFiles() {
         val curPath = currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
-        directoryTree.text = getString(R.string.directory_tree, curPath)
+        binding.directoryTree.text = getString(R.string.directory_tree, curPath)
         val unsorted = currentDir.listFiles { file ->
             file.name.matches(Regex(".*\\.gbc?")) or file.isDirectory
         }
@@ -287,9 +289,7 @@ class MainActivity : AppCompatActivity() {
             R.id.settingsItem -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.folderItem -> {
                 val dialog = EditTextDialogFragment(R.string.create_folder, "") { name ->
-                    createFolder(
-                        name
-                    )
+                    createFolder(name)
                 }
                 dialog.show(supportFragmentManager, "")
             }
@@ -307,9 +307,9 @@ class MainActivity : AppCompatActivity() {
             R.id.moveItem -> {
                 selectionMode = SelectionMode.MOVE
                 moveSelection.addAll(0, files.filter { it in adapter.selected })
-                moveToolbar.visibility = View.VISIBLE
-                fileToolbar.visibility = View.GONE
-                mainToolbar.visibility = View.GONE
+                binding.moveToolbar.visibility = View.VISIBLE
+                binding.fileToolbar.visibility = View.GONE
+                binding.mainToolbar.visibility = View.GONE
             }
             R.id.confirmMoveItem -> {
                 Thread {
@@ -347,21 +347,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun performDelete() {
-        fileList.forEachIndexed { index, view ->
-            if (files[fileList.firstVisiblePosition + index] in adapter.selected) {
+        binding.fileList.forEachIndexed { index, view ->
+            if (files[binding.fileList.firstVisiblePosition + index] in adapter.selected) {
                 fileTransition.addTarget(view)
             }
         }
-        val scene = Scene(fileList)
+        val scene = Scene(binding.fileList)
         scene.setEnterAction {
-            fileList.forEachIndexed { index, view ->
-                if (files[fileList.firstVisiblePosition + index] in adapter.selected) {
+            binding.fileList.forEachIndexed { index, view ->
+                if (files[binding.fileList.firstVisiblePosition + index] in adapter.selected) {
                     view.layoutParams.height = 1
                 }
             }
         }
         TransitionManager.go(scene, deleteTransitionSet)
-        fileList.invalidate()
+        binding.fileList.invalidate()
     }
 
     private fun showDirectoryActionsDialog(file: File) {

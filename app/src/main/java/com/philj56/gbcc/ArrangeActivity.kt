@@ -32,22 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
-import kotlinx.android.synthetic.main.activity_arrange.*
-import kotlinx.android.synthetic.main.activity_arrange.bottomLeftCorner
-import kotlinx.android.synthetic.main.activity_arrange.bottomRightCorner
-import kotlinx.android.synthetic.main.activity_arrange.buttonA
-import kotlinx.android.synthetic.main.activity_arrange.buttonB
-import kotlinx.android.synthetic.main.activity_arrange.buttonSelect
-import kotlinx.android.synthetic.main.activity_arrange.buttonStart
-import kotlinx.android.synthetic.main.activity_arrange.dpad
-import kotlinx.android.synthetic.main.activity_arrange.placeholderTouchTarget
-import kotlinx.android.synthetic.main.activity_arrange.screenBorderBottom
-import kotlinx.android.synthetic.main.activity_arrange.screenBorderLeft
-import kotlinx.android.synthetic.main.activity_arrange.screenBorderRight
-import kotlinx.android.synthetic.main.activity_arrange.screenBorderTop
-import kotlinx.android.synthetic.main.activity_arrange_sliders.*
-import kotlinx.android.synthetic.main.activity_gl.*
-import kotlinx.android.synthetic.main.button_dpad.*
+import com.philj56.gbcc.databinding.ActivityArrangeBinding
 import kotlin.math.log
 import kotlin.math.min
 import kotlin.math.pow
@@ -58,6 +43,7 @@ class ArrangeActivity : AppCompatActivity() {
     private val scaleFactorRange : Float = 2f
 
     private lateinit var prefs : SharedPreferences
+    private lateinit var binding: ActivityArrangeBinding
 
     private fun updateLayout(gbc: Boolean) {
         val bgColor = when (gbc) {
@@ -77,45 +63,45 @@ class ArrangeActivity : AppCompatActivity() {
         }
         window.setBackgroundDrawableResource(bgColor)
 
-        abSlider.addOnChangeListener(sliderListener)
-        startSelectSlider.addOnChangeListener(sliderListener)
-        dpadSlider.addOnChangeListener(sliderListener)
+        binding.sliders.abSlider.addOnChangeListener(sliderListener)
+        binding.sliders.startSelectSlider.addOnChangeListener(sliderListener)
+        binding.sliders.dpadSlider.addOnChangeListener(sliderListener)
 
         if (!gbc) {
             val screenBorderColor: Int
             val theme = prefs.getString("dmg_color", "Light")
             if (theme == "Dark") {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgDarkScreenBorder)
-                dpadBackground.setColorFilter(
+                binding.dpad.dpadBackground.setColorFilter(
                     ContextCompat.getColor(this, R.color.dmgDarkDpad),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
 
-                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
-                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
+                binding.buttonB.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
 
-                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
-                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
+                binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                turboToggle.visibility = View.INVISIBLE
-                turboToggleDark.visibility = View.VISIBLE
+                binding.turboToggleLayout.turboToggle.visibility = View.INVISIBLE
+                binding.turboToggleLayout.turboToggleDark.visibility = View.VISIBLE
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
-                buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
-                buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
+                binding.buttonB.setImageResource(R.drawable.ic_button_ab_dmg_selector)
 
-                buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
-                buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
+                binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_selector)
             }
 
-            buttonStart.rotation = -45f
-            buttonSelect.rotation = -45f
+            binding.buttonStart.rotation = -45f
+            binding.buttonSelect.rotation = -45f
 
             val borders = arrayOf(
-                screenBorderTop,
-                screenBorderBottom,
-                screenBorderLeft,
-                screenBorderRight
+                binding.screenBorderTop,
+                binding.screenBorderBottom,
+                binding.screenBorderLeft,
+                binding.screenBorderRight
             )
 
             borders.forEach {
@@ -128,47 +114,47 @@ class ArrangeActivity : AppCompatActivity() {
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val px = (resources.displayMetrics.density + 0.5f).toInt()
 
-                bottomLeftCorner.layoutParams.apply {
+                binding.bottomLeftCorner.layoutParams.apply {
                     width = 16 * px
                     height = width
                 }
 
-                bottomRightCorner.layoutParams.apply {
+                binding.bottomRightCorner.layoutParams.apply {
                     width = 64 * px
                     height = width
                 }
             }
         }
 
-        buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
-        buttonA.scaleY = buttonA.scaleX
-        buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
-        buttonB.scaleY = buttonB.scaleX
-        buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
-        buttonStart.scaleY = buttonStart.scaleX
-        buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
-        buttonSelect.scaleY = buttonSelect.scaleX
-        dpad.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
-        dpad.scaleY = dpad.scaleX
-        turboToggleLayout.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
-        turboToggleLayout.scaleY = turboToggleLayout.scaleX
+        binding.buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
+        binding.buttonA.scaleY = binding.buttonA.scaleX
+        binding.buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
+        binding.buttonB.scaleY = binding.buttonB.scaleX
+        binding.buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
+        binding.buttonStart.scaleY = binding.buttonStart.scaleX
+        binding.buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
+        binding.buttonSelect.scaleY = binding.buttonSelect.scaleX
+        binding.dpad.root.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
+        binding.dpad.root.scaleY = binding.dpad.root.scaleX
+        binding.turboToggleLayout.root.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
+        binding.turboToggleLayout.root.scaleY = binding.turboToggleLayout.root.scaleX
 
-        buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
-        buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
-        buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
-        buttonB.translationY = prefs.getFloat(getString(R.string.b_offset_y_key), 0f)
-        buttonStart.translationX = prefs.getFloat(getString(R.string.start_offset_x_key), 0f)
-        buttonStart.translationY = prefs.getFloat(getString(R.string.start_offset_y_key), 0f)
-        buttonSelect.translationX = prefs.getFloat(getString(R.string.select_offset_x_key), 0f)
-        buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
-        dpad.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
-        dpad.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
-        turboToggleLayout.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
-        turboToggleLayout.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
+        binding.buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
+        binding.buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
+        binding.buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
+        binding.buttonB.translationY = prefs.getFloat(getString(R.string.b_offset_y_key), 0f)
+        binding.buttonStart.translationX = prefs.getFloat(getString(R.string.start_offset_x_key), 0f)
+        binding.buttonStart.translationY = prefs.getFloat(getString(R.string.start_offset_y_key), 0f)
+        binding.buttonSelect.translationX = prefs.getFloat(getString(R.string.select_offset_x_key), 0f)
+        binding.buttonSelect.translationY = prefs.getFloat(getString(R.string.select_offset_y_key), 0f)
+        binding.dpad.root.translationX = prefs.getFloat(getString(R.string.dpad_offset_x_key), 0f)
+        binding.dpad.root.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
+        binding.turboToggleLayout.root.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
+        binding.turboToggleLayout.root.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
 
         if (!prefs.getBoolean("show_turbo", false)) {
-            turboToggle.visibility = View.GONE
-            turboToggleDark.visibility = View.GONE
+            binding.turboToggleLayout.turboToggle.visibility = View.GONE
+            binding.turboToggleLayout.turboToggleDark.visibility = View.GONE
         }
 
         setSizes()
@@ -181,14 +167,16 @@ class ArrangeActivity : AppCompatActivity() {
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         requestedOrientation = prefs.getString("orientation", "-1")?.toInt() ?: -1
 
-        setContentView(R.layout.activity_arrange)
+        binding = ActivityArrangeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         hideNavigation()
 
-        placeholderTouchTarget.setOnTouchListener { v, _ ->
+        binding.placeholderTouchTarget.setOnTouchListener { v, _ ->
             // This shouldn't be needed, but Android
             // seems to act strangely when the root view is touched
             // and ignores any further touches.
-            if (v != placeholderTouchTarget) {
+            if (v != binding.placeholderTouchTarget) {
                 return@setOnTouchListener false
             }
             return@setOnTouchListener true
@@ -207,56 +195,56 @@ class ArrangeActivity : AppCompatActivity() {
         super.onStop()
 
         prefs.edit {
-            putFloat(getString(R.string.a_scale_key), buttonA.scaleX)
-            putFloat(getString(R.string.b_scale_key), buttonB.scaleX)
-            putFloat(getString(R.string.start_scale_key), buttonStart.scaleX)
-            putFloat(getString(R.string.select_scale_key), buttonSelect.scaleX)
-            putFloat(getString(R.string.dpad_scale_key), dpad.scaleX)
-            putFloat(getString(R.string.turbo_scale_key), turboToggleLayout.scaleX)
+            putFloat(getString(R.string.a_scale_key), binding.buttonA.scaleX)
+            putFloat(getString(R.string.b_scale_key), binding.buttonB.scaleX)
+            putFloat(getString(R.string.start_scale_key), binding.buttonStart.scaleX)
+            putFloat(getString(R.string.select_scale_key), binding.buttonSelect.scaleX)
+            putFloat(getString(R.string.dpad_scale_key), binding.dpad.root.scaleX)
+            putFloat(getString(R.string.turbo_scale_key), binding.turboToggleLayout.root.scaleX)
 
-            putFloat(getString(R.string.a_offset_x_key), buttonA.translationX)
-            putFloat(getString(R.string.a_offset_y_key), buttonA.translationY)
-            putFloat(getString(R.string.b_offset_x_key), buttonB.translationX)
-            putFloat(getString(R.string.b_offset_y_key), buttonB.translationY)
-            putFloat(getString(R.string.start_offset_x_key), buttonStart.translationX)
-            putFloat(getString(R.string.start_offset_y_key), buttonStart.translationY)
-            putFloat(getString(R.string.select_offset_x_key), buttonSelect.translationX)
-            putFloat(getString(R.string.select_offset_y_key), buttonSelect.translationY)
-            putFloat(getString(R.string.dpad_offset_x_key), dpad.translationX)
-            putFloat(getString(R.string.dpad_offset_y_key), dpad.translationY)
-            putFloat(getString(R.string.turbo_offset_x_key), turboToggleLayout.translationX)
-            putFloat(getString(R.string.turbo_offset_y_key), turboToggleLayout.translationY)
+            putFloat(getString(R.string.a_offset_x_key), binding.buttonA.translationX)
+            putFloat(getString(R.string.a_offset_y_key), binding.buttonA.translationY)
+            putFloat(getString(R.string.b_offset_x_key), binding.buttonB.translationX)
+            putFloat(getString(R.string.b_offset_y_key), binding.buttonB.translationY)
+            putFloat(getString(R.string.start_offset_x_key), binding.buttonStart.translationX)
+            putFloat(getString(R.string.start_offset_y_key), binding.buttonStart.translationY)
+            putFloat(getString(R.string.select_offset_x_key), binding.buttonSelect.translationX)
+            putFloat(getString(R.string.select_offset_y_key), binding.buttonSelect.translationY)
+            putFloat(getString(R.string.dpad_offset_x_key), binding.dpad.root.translationX)
+            putFloat(getString(R.string.dpad_offset_y_key), binding.dpad.root.translationY)
+            putFloat(getString(R.string.turbo_offset_x_key), binding.turboToggleLayout.root.translationX)
+            putFloat(getString(R.string.turbo_offset_y_key), binding.turboToggleLayout.root.translationY)
             apply()
         }
     }
 
     private fun setSizes() {
-        abSlider.value = sizeToValue(buttonA.scaleX)
-        startSelectSlider.value = sizeToValue(buttonStart.scaleX)
-        dpadSlider.value = sizeToValue(dpad.scaleX)
+        binding.sliders.abSlider.value = sizeToValue(binding.buttonA.scaleX)
+        binding.sliders.startSelectSlider.value = sizeToValue(binding.buttonStart.scaleX)
+        binding.sliders.dpadSlider.value = sizeToValue(binding.dpad.root.scaleX)
     }
 
     fun resetSizes(@Suppress("UNUSED_PARAMETER") view: View) {
-        abSlider.value = 0.5F
-        startSelectSlider.value = 0.5F
-        dpadSlider.value = 0.5F
-        turboToggleLayout.scaleX = 1f
-        turboToggleLayout.scaleY = 1f
+        binding.sliders.abSlider.value = 0.5F
+        binding.sliders.startSelectSlider.value = 0.5F
+        binding.sliders.dpadSlider.value = 0.5F
+        binding.turboToggleLayout.root.scaleX = 1f
+        binding.turboToggleLayout.root.scaleY = 1f
     }
 
     fun resetLayout(@Suppress("UNUSED_PARAMETER") view: View) {
-        buttonA.translationX = 0f
-        buttonA.translationY = 0f
-        buttonB.translationX = 0f
-        buttonB.translationY = 0f
-        buttonStart.translationX = 0f
-        buttonStart.translationY = 0f
-        buttonSelect.translationX = 0f
-        buttonSelect.translationY = 0f
-        dpad.translationX = 0f
-        dpad.translationY = 0f
-        turboToggleLayout.translationX = 0f
-        turboToggleLayout.translationY = 0f
+        binding.buttonA.translationX = 0f
+        binding.buttonA.translationY = 0f
+        binding.buttonB.translationX = 0f
+        binding.buttonB.translationY = 0f
+        binding.buttonStart.translationX = 0f
+        binding.buttonStart.translationY = 0f
+        binding.buttonSelect.translationX = 0f
+        binding.buttonSelect.translationY = 0f
+        binding.dpad.root.translationX = 0f
+        binding.dpad.root.translationY = 0f
+        binding.turboToggleLayout.root.translationX = 0f
+        binding.turboToggleLayout.root.translationY = 0f
     }
 
     private fun valueToSize(value: Float) : Float {
@@ -275,22 +263,22 @@ class ArrangeActivity : AppCompatActivity() {
             val scale = valueToSize(value)
             when (slider.id) {
                 R.id.abSlider -> {
-                    buttonA.scaleX = scale
-                    buttonA.scaleY = scale
-                    buttonB.scaleX = scale
-                    buttonB.scaleY = scale
+                    binding.buttonA.scaleX = scale
+                    binding.buttonA.scaleY = scale
+                    binding.buttonB.scaleX = scale
+                    binding.buttonB.scaleY = scale
                 }
 
                 R.id.startSelectSlider -> {
-                    buttonStart.scaleX = scale
-                    buttonStart.scaleY = scale
-                    buttonSelect.scaleX = scale
-                    buttonSelect.scaleY = scale
+                    binding.buttonStart.scaleX = scale
+                    binding.buttonStart.scaleY = scale
+                    binding.buttonSelect.scaleX = scale
+                    binding.buttonSelect.scaleY = scale
                 }
 
                 R.id.dpadSlider -> {
-                    dpad.scaleX = scale
-                    dpad.scaleY = scale
+                    binding.dpad.root.scaleX = scale
+                    binding.dpad.root.scaleY = scale
                 }
             }
         }

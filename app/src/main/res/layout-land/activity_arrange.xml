@@ -251,7 +251,9 @@
         app:layout_constraintStart_toStartOf="@+id/screen"
         app:layout_constraintTop_toTopOf="@+id/screen">
 
-        <include layout="@layout/activity_arrange_sliders" />
+        <include
+            android:id="@+id/sliders"
+            layout="@layout/activity_arrange_sliders" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

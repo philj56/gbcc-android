@@ -26,7 +26,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.android.synthetic.main.activity_cheat_list.*
+import com.philj56.gbcc.databinding.ActivityCheatListBinding
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,10 +37,12 @@ class CheatActivity : AppCompatActivity() {
     private lateinit var configFile: File
     private lateinit var adapter: CheatAdapter
     private var cheats = ArrayList<Cheat>()
+    private lateinit var binding: ActivityCheatListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cheat_list)
+        binding = ActivityCheatListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val configDir = filesDir.resolve("config")
         configDir.mkdirs()
@@ -55,14 +57,14 @@ class CheatActivity : AppCompatActivity() {
         }
 
         adapter = CheatAdapter(this, R.layout.entry_cheat, R.id.cheatDescription, cheats)
-        cheatList.adapter = adapter
+        binding.cheatList.adapter = adapter
 
-        cheatList.setOnItemClickListener { _, view, position, _ ->
+        binding.cheatList.setOnItemClickListener { _, view, position, _ ->
             cheats[position].active = !cheats[position].active
             view.findViewById<SwitchCompat>(R.id.cheatActive).isChecked = cheats[position].active
         }
 
-        cheatList.setOnItemLongClickListener { _, _, position, _ ->
+        binding.cheatList.setOnItemLongClickListener { _, _, position, _ ->
             val dialog = CheatDialogFragment(position)
             dialog.isCancelable = false
             dialog.show(supportFragmentManager, "")
