@@ -219,7 +219,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                             ).show()
                         }
                         finish()
-                    }.setNegativeButton(R.string.invalid_opcode_button_quit) { _, _ ->
+                    }.setNegativeButton(R.string.button_quit) { _, _ ->
                         finish()
                     }.setCancelable(false)
                     .create()
@@ -940,6 +940,18 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             lastRightTrigger = rt
         }
         return super.onGenericMotionEvent(event)
+    }
+
+    override fun onBackPressed() {
+        if (prefs.getBoolean("back_prompt", false)) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.quit_confirmation)
+                .setPositiveButton(R.string.button_quit) { _, _ -> super.onBackPressed() }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .show()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun gamepadPress(keyCode: Int, pressed: Boolean): Boolean {

@@ -40,10 +40,11 @@
     <string name="start_button_description">Start</string>
     <string name="select_button_description">Select</string>
 
+    <string name="quit_confirmation">Are you sure you want to quit?</string>
     <string name="invalid_opcode_title">Invalid Opcode</string>
     <string name="invalid_opcode_description">GBCC has encountered an error, and will now stop. This could either be due to an error in the ROM you were trying to run, or a bug in GBCC. To see a more detailed report or report this issue, press \"Send feedback\".</string>
     <string name="button_send_feedback">Send feedback</string>
-    <string name="invalid_opcode_button_quit">Quit</string>
+    <string name="button_quit">Quit</string>
 
     <!-- RomConfigActivity -->
     <string name="rom_config_title">Rom Config</string>
@@ -65,6 +66,8 @@
     <string name="settings_auto_resume_summary">Resume games from where you left off</string>
     <string name="settings_auto_save">Auto-save</string>
     <string name="settings_auto_save_summary">Save whenever a game writes to SRAM</string>
+    <string name="settings_back_prompt">Prompt on exit</string>
+    <string name="settings_back_prompt_summary">Ask for confirmation when leaving a game</string>
     <string name="settings_frame_blend">Frame-blending</string>
     <string name="settings_turbo_speed">Turbo limit</string>
     <string name="settings_vsync">Vsync</string>
