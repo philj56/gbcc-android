@@ -786,7 +786,10 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 image.close()
             })
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = when (prefs.getString("camera", "back")) {
+                "front" -> CameraSelector.DEFAULT_FRONT_CAMERA
+                else -> CameraSelector.DEFAULT_BACK_CAMERA
+            }
 
             cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
         }, ContextCompat.getMainExecutor(this))

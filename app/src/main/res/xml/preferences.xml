@@ -225,6 +225,14 @@
             app:title="@string/settings_night_mode"
             app:iconSpaceReserved="false" />
 
+        <com.philj56.gbcc.SummaryListPreference
+            app:defaultValue="back"
+            app:entries="@array/camera_names_array"
+            app:entryValues="@array/camera_values_array"
+            app:key="camera"
+            app:title="@string/settings_camera"
+            app:iconSpaceReserved="false" />
+
         <Preference
             app:key="licenses"
             app:title="@string/settings_licenses"

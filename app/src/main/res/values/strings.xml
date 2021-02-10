@@ -126,6 +126,10 @@
     <string name="settings_night_mode_on">On</string>
     <string name="settings_night_mode_off">Off</string>
 
+    <string name="settings_camera">Default camera</string>
+    <string name="settings_camera_back">Back</string>
+    <string name="settings_camera_front">Front</string>
+
     <string name="settings_arrange">Rearrange layout</string>
     <string name="settings_licenses">Licenses</string>
 

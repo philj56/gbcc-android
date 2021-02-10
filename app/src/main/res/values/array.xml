@@ -104,6 +104,17 @@
     </string-array>
 
 
+    <string-array name="camera_names_array">
+        <item>@string/settings_camera_back</item>
+        <item>@string/settings_camera_front</item>
+    </string-array>
+
+    <string-array name="camera_values_array">
+        <item>back</item>
+        <item>front</item>
+    </string-array>
+
+
     <string-array name="license_names_array">
         <item>AndroidX</item>
         <item>GBCC</item>
