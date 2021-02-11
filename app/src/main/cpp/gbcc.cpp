@@ -31,9 +31,6 @@ extern "C" {
 #pragma GCC visibility pop
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 #define MAX_SHADER_LEN 32
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -188,8 +185,8 @@ void logfile_end() {
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_initWindow(
-		JNIEnv *env,
-		jobject obj) {
+		JNIEnv *,
+		jobject) {
 	gbcc_window_initialise(&gbc);
 	gbcc_window_use_shader(&gbc, shader);
 	gbcc_menu_init(&gbc);
@@ -208,8 +205,8 @@ Java_com_philj56_gbcc_MyGLRenderer_initWindow(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
-		JNIEnv *env,
-		jobject obj) {
+		JNIEnv *,
+		jobject) {
 	if (gbc.menu.initialised) {
 		gbcc_menu_destroy(&gbc);
 	}
@@ -221,24 +218,24 @@ Java_com_philj56_gbcc_MyGLSurfaceView_destroyWindow(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_updateWindow(
-		JNIEnv *env,
-		jobject obj) {
+		JNIEnv *,
+		jobject) {
+	if (pthread_mutex_trylock(&render_mutex) != 0) {
+		return;
+	}
 	if (gbc.core.initialised) {
 		if (!gbc.window.initialised) {
 			gbcc_window_initialise(&gbc);
 		}
-		if (pthread_mutex_trylock(&render_mutex) != 0) {
-			return;
-		}
 		gbcc_window_update(&gbc);
-		pthread_mutex_unlock(&render_mutex);
 	}
+	pthread_mutex_unlock(&render_mutex);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
-		JNIEnv *env,
-		jobject obj,
+		JNIEnv *,
+		jobject,
 		jint width,
 		jint height) {
 	gbc.window.width = width;
@@ -248,7 +245,7 @@ Java_com_philj56_gbcc_MyGLRenderer_resizeWindow(
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_chdir(
 		JNIEnv *env,
-		jobject obj,/* this */
+		jobject,/* this */
 		jstring dirName) {
 	char *path = get_utf_string(env, dirName);
 	chdir(path);
@@ -258,15 +255,20 @@ Java_com_philj56_gbcc_GLActivity_chdir(
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_checkRom(
 		JNIEnv *env,
-		jobject obj,/* this */
+		jobject,/* this */
 		jstring file) {
 	char *filename = get_utf_string(env, file);
+
+	// We don't want the screen to try rendering anything
+	// while we're just checking the rom
+	pthread_mutex_lock(&render_mutex);
 	gbcc_initialise(&gbc.core, filename);
 
 	bool ret = gbc.core.initialised;
 	if (ret) {
 		gbcc_free(&gbc.core);
 	}
+	pthread_mutex_unlock(&render_mutex);
 	free(filename);
 	return static_cast<jboolean>(ret);
 }
@@ -274,14 +276,14 @@ Java_com_philj56_gbcc_GLActivity_checkRom(
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_philj56_gbcc_GLActivity_getErrorMessage(
 		JNIEnv *env,
-		jobject obj/* this */) {
+		jobject/* this */) {
 	return env->NewStringUTF(gbc.core.error_msg);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_loadRom(
 		JNIEnv *env,
-		jobject obj,/* this */
+		jobject,/* this */
 		jstring file,
 		jint sampleRate,
 		jint samplesPerBuffer,
@@ -290,7 +292,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		jstring cheatFile,
 		jobject prefs) {
 
-	size_t name_len = env->GetStringUTFLength(file);
 	fname = get_utf_string(env, file);
 
 	logfile_begin();
@@ -307,9 +308,11 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 	gbc.quit = false;
 	gbc.has_focus = true;
 
-	char *save_dir = get_utf_string(env, saveDir);
-	strncpy(gbc.save_directory, save_dir, sizeof(gbc.save_directory));
-	free(save_dir);
+	{
+		char *save_dir = get_utf_string(env, saveDir);
+		strncpy(gbc.save_directory, save_dir, sizeof(gbc.save_directory));
+		free(save_dir);
+	}
 
 	gbcc_audio_initialise(&gbc, static_cast<size_t>(sampleRate), static_cast<size_t>(samplesPerBuffer));
 
@@ -346,8 +349,8 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 }
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_quit(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 
 	gbc.quit = true;
 	sem_post(&gbc.core.ppu.vsync_semaphore);
@@ -356,12 +359,12 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	logfile_end();
 
 	// Don't allow the screen to be drawn to while we're freeing the core
-	const struct timespec wait_time = { .tv_sec = 1, .tv_nsec = 0 };
+	const struct timespec wait_time = { .tv_sec = 0, .tv_nsec = 100000000 };
 	if (pthread_mutex_timedlock(&render_mutex, &wait_time) == 0) {
 		gbcc_free(&gbc.core);
 		pthread_mutex_unlock(&render_mutex);
 	} else {
-		// If we failed to acquire the lock, just free anyway
+		// If we failed to acquire the lock, just free anyway and hope for the best
 		gbcc_free(&gbc.core);
 	}
 	gbcc_audio_destroy(&gbc);
@@ -372,23 +375,23 @@ Java_com_philj56_gbcc_GLActivity_quit(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleMenu(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	gbcc_input_process_key(&gbc, GBCC_KEY_MENU, true);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_toggleTurbo(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	gbc.core.keys.turbo = !gbc.core.keys.turbo;
 	return gbc.core.keys.turbo;
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_press(
-		JNIEnv *env,
-		jobject obj/* this */,
+		JNIEnv *,
+		jobject /* this */,
 		jint key,
 		jboolean pressed) {
 	switch (key) {
@@ -456,8 +459,8 @@ Java_com_philj56_gbcc_GLActivity_press(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_isPressed(
-		JNIEnv *env,
-		jobject obj/* this */,
+		JNIEnv *,
+		jobject /* this */,
 		jint key) {
 	switch (key) {
 		case 0:
@@ -483,16 +486,16 @@ Java_com_philj56_gbcc_GLActivity_isPressed(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_saveState(
-		JNIEnv *env,
-		jobject obj/* this */,
+		JNIEnv *,
+		jobject /* this */,
 		jint state) {
 	gbc.save_state = static_cast<int8_t>(state);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_loadState(
-		JNIEnv *env,
-		jobject obj/* this */,
+		JNIEnv *,
+		jobject /* this */,
 		jint state) {
 	gbc.load_state = static_cast<int8_t>(state);
 }
@@ -500,7 +503,7 @@ Java_com_philj56_gbcc_GLActivity_loadState(
 extern "C" JNIEXPORT jbyteArray JNICALL
 Java_com_philj56_gbcc_GLActivity_getOptions(
 		JNIEnv *env,
-		jobject obj/* this */) {
+		jobject /* this */) {
 	options = {
 		.initialised = true,
 
@@ -537,7 +540,7 @@ Java_com_philj56_gbcc_GLActivity_getOptions(
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_setOptions(
 		JNIEnv *env,
-		jobject obj/* this */,
+		jobject /* this */,
 		jbyteArray opts) {
 	if (opts == nullptr) {
 		return;
@@ -547,8 +550,8 @@ Java_com_philj56_gbcc_GLActivity_setOptions(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	static bool last_rumble = false;
 	bool rumble = gbc.core.cart.rumble_state;
 	bool ret = (rumble != last_rumble);
@@ -558,22 +561,22 @@ Java_com_philj56_gbcc_GLActivity_checkVibrationFun(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_checkTurboFun(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	return static_cast<jboolean>(gbc.core.keys.turbo);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_checkErrorFun(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	return static_cast<jboolean>(gbc.core.error);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_flushLogs(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	if (logfile != nullptr) {
 		fflush(logfile);
 	}
@@ -581,8 +584,8 @@ Java_com_philj56_gbcc_GLActivity_flushLogs(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
-		JNIEnv *env,
-		jobject obj/* this */,
+		JNIEnv *,
+		jobject /* this */,
 		jfloat x,
 		jfloat y) {
 	const float g = 9.81;
@@ -592,29 +595,29 @@ Java_com_philj56_gbcc_GLActivity_updateAccelerometer(
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasRumble(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	return static_cast<jboolean>(gbc.core.cart.rumble);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_hasAccelerometer(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	return static_cast<jboolean>(gbc.core.cart.mbc.type == MBC7);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_com_philj56_gbcc_GLActivity_isCamera(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	return static_cast<jboolean>(gbc.core.cart.mbc.type == CAMERA);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_updateCamera(
 		JNIEnv *env,
-		jobject obj/* this */,
+		jobject /* this */,
 		jbyteArray array,
 		jint width,
 		jint height,
@@ -706,7 +709,7 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_initialiseTileset(
 		JNIEnv *env,
-		jobject obj,/* this */
+		jobject ,/* this */
 		jint width,
 		jint height,
 		jbyteArray data) {
@@ -727,15 +730,16 @@ Java_com_philj56_gbcc_GLActivity_initialiseTileset(
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_destroyTileset(
-		JNIEnv *env,
-		jobject obj/* this */) {
+		JNIEnv *,
+		jobject /* this */) {
 	free(fontmap.bitmap);
+	fontmap.bitmap = nullptr;
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_setCameraImage(
 		JNIEnv *env,
-		jobject obj,/* this */
+		jobject ,/* this */
 		jbyteArray data) {
 	jbyte *image = env->GetByteArrayElements(data, nullptr);
 	// Have to use a for loop as the data is converted to int
@@ -763,6 +767,7 @@ void gbcc_camera_platform_capture_image(struct gbcc_camera_platform *camera, uin
 }
 
 extern "C" void gbcc_screenshot(struct gbcc *gb) {
+	(void) gb;
 	// Stubbed
 }
 
@@ -773,7 +778,6 @@ extern "C" void gbcc_fontmap_load(struct gbcc_fontmap *font) {
 }
 
 extern "C" void gbcc_fontmap_destroy(struct gbcc_fontmap *font) {
+	(void) font;
 	// Stubbed
 }
-
-#pragma clang diagnostic pop
