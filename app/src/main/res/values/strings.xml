@@ -73,8 +73,10 @@
     <string name="settings_vsync">Vsync</string>
     <string name="settings_interlacing">Interlacing</string>
     <string name="settings_fps">Show FPS counter</string>
-    <string name="settings_show_turbo">Show turbo toggle</string>
     <string name="settings_animate_buttons">Animate button presses</string>
+    <string name="settings_show_turbo">Show turbo toggle</string>
+    <string name="settings_dpad_turbo">Dpad turbo control</string>
+    <string name="settings_dpad_turbo_summary">Double-tap the center of the Dpad to toggle turbo</string>
 
     <string name="settings_shader_gbc">GBC Shader</string>
     <string name="settings_shader_dmg">DMG Shader</string>

@@ -494,7 +494,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             }
             if (dpadState == 0) {
                 if (gestureDetector.onTouchEvent(motionEvent)) {
-                    if (!prefs.getBoolean("show_turbo", false)) {
+                    if (prefs.getBoolean("dpad_turbo", false)) {
                         toggleTurboWrapper()
                     }
                     return@OnTouchListener true

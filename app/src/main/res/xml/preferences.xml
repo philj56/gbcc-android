@@ -117,14 +117,21 @@
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
+            app:key="show_fps"
+            app:title="@string/settings_fps" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="show_turbo"
             app:title="@string/settings_show_turbo" />
 
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:iconSpaceReserved="false"
-            app:key="show_fps"
-            app:title="@string/settings_fps" />
+            app:key="dpad_turbo"
+            app:title="@string/settings_dpad_turbo"
+            app:summary="@string/settings_dpad_turbo_summary" />
 
         <com.philj56.gbcc.SummaryListPreference
             app:defaultValue="auto"
