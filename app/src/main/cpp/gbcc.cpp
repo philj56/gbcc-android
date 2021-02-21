@@ -359,7 +359,9 @@ Java_com_philj56_gbcc_GLActivity_quit(
 	logfile_end();
 
 	// Don't allow the screen to be drawn to while we're freeing the core
-	const struct timespec wait_time = { .tv_sec = 0, .tv_nsec = 100000000 };
+	struct timespec wait_time;  // NOLINT
+	clock_gettime(CLOCK_REALTIME, &wait_time);
+	wait_time.tv_sec += 1;
 	if (pthread_mutex_timedlock(&render_mutex, &wait_time) == 0) {
 		gbcc_free(&gbc.core);
 		pthread_mutex_unlock(&render_mutex);

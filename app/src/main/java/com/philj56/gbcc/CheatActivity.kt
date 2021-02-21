@@ -84,7 +84,7 @@ class CheatActivity : AppCompatActivity() {
         finish()
     }
 
-    fun showCheatDialog() {
+    private fun showCheatDialog() {
         val dialog = CheatDialogFragment(-1)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "")

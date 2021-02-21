@@ -227,7 +227,7 @@ class ArrangeActivity : AppCompatActivity() {
         binding.sliders.dpadSlider.value = sizeToValue(binding.dpad.root.scaleX)
     }
 
-    fun resetSizes() {
+    private fun resetSizes() {
         binding.sliders.abSlider.value = 0.5F
         binding.sliders.startSelectSlider.value = 0.5F
         binding.sliders.dpadSlider.value = 0.5F
@@ -235,7 +235,7 @@ class ArrangeActivity : AppCompatActivity() {
         binding.turboToggleLayout.root.scaleY = 1f
     }
 
-    fun resetLayout() {
+    private fun resetLayout() {
         binding.buttonA.translationX = 0f
         binding.buttonA.translationY = 0f
         binding.buttonB.translationX = 0f
