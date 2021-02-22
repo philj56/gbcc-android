@@ -24,9 +24,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.AudioDeviceInfo
-import android.media.AudioManager
-import android.media.MediaRouter
+import android.media.*
 import android.net.Uri
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
@@ -641,6 +639,28 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
             ).show()
             finish()
             return
+        }
+
+        if (!prefs.getBoolean("audio_background_music", false)) {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            if (Build.VERSION.SDK_INT >= 26) {
+                val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+                    setAudioAttributes(AudioAttributes.Builder().run {
+                        setUsage(AudioAttributes.USAGE_GAME)
+                        setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        build()
+                    })
+                    build()
+                }
+                audioManager.requestAudioFocus(focusRequest)
+            } else {
+                @Suppress("Deprecation")
+                audioManager.requestAudioFocus(
+                    {},
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN
+                )
+            }
         }
         handler.post(checkEmulatorState)
         if (resume) {

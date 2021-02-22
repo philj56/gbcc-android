@@ -66,12 +66,12 @@
 			android:screenOrientation="userLandscape"
 			android:theme="@style/Theme.GBCC.Fullscreen"/>
 
-        <activity android:name=".LicenseListActivity"
-					android:parentActivityName=".SettingsActivity"
-					android:label="@string/license_title"/>
+		<activity android:name=".LicenseListActivity"
+			android:parentActivityName=".SettingsActivity"
+			android:label="@string/license_title"/>
 
-				<activity android:name=".LicenseActivity"
-					android:parentActivityName=".LicenseListActivity"/>
+		<activity android:name=".LicenseActivity"
+			android:parentActivityName=".LicenseListActivity"/>
 
 
 		<activity android:name=".MainActivity" android:theme="@style/Theme.GBCC.NoActionBar">
@@ -84,7 +84,7 @@
 
 	<!-- Needed to use file managers with custom content providers e.g. Solid Explorer -->
 	<queries>
-        <intent>
+		<intent>
 			<action android:name="android.intent.action.GET_CONTENT" />
 			<data android:mimeType="*/*" />
 		</intent>

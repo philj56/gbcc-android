@@ -112,6 +112,9 @@
 
     <string name="settings_audio_volume">Volume</string>
 
+    <string name="settings_audio_background_music">Allow background music</string>
+    <string name="settings_audio_background_music_summary">If enabled, music from other apps will keep playing when launching a game</string>
+
     <string name="settings_audio_low_latency">Use low-latency audio path</string>
     <string name="settings_audio_low_latency_summary">Try disabling this if you have audio problems</string>
 
