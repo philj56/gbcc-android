@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
@@ -43,12 +44,15 @@ import androidx.transition.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.philj56.gbcc.databinding.ActivityMainBinding
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.lang.IllegalArgumentException
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.collections.ArrayList
@@ -544,55 +548,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val iStream = try {
-            contentResolver.openInputStream(uri)
-        } catch (e: Exception) {
-            val tag: String
-            val subject: String
-            when (e) {
-                is FileNotFoundException -> {
-                    tag = "file_not_found"
-                    subject = "File not found"
-                }
-                is SecurityException -> {
-                    tag = "security_exception"
-                    subject = "Security exception"
-                }
-                else -> throw e
-            }
-            runOnUiThread {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle(getString(R.string.message_failed_import_reason, e.message))
-                    .setMessage(R.string.message_failed_import_no_file)
-                    .setPositiveButton(R.string.button_send_feedback) { _, _ ->
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(
-                                Intent.EXTRA_EMAIL,
-                                arrayOf("gbcc.emu+\"$tag\"@gmail.com")
-                            )
-                            putExtra(Intent.EXTRA_SUBJECT, subject)
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                "Traceback:\n----------\n" + e.stackTraceToString()
-                            )
+        fun importZipWithCharset(iStream: InputStream, charset: Charset) : Exception? {
+            try {
+                if (Build.VERSION.SDK_INT >= 24) {
+                    ZipInputStream(iStream, charset)
+                } else {
+                    ZipInputStream(iStream)
+                }.use { zip ->
+                    var entry = zip.nextEntry
+                    while (entry != null) {
+                        if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
+                            doCopy(zip, entry.name)
                         }
-                        try {
-                            startActivity(intent)
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(
-                                this,
-                                R.string.message_no_email_app,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }.setNegativeButton(android.R.string.cancel) { _, _ -> }
-                    .setCancelable(false)
-                    .show()
+                        entry = zip.nextEntry
+                    }
+                }
+            } catch (e: IllegalArgumentException) {
+                return e
+            } catch (e: ZipException) {
+                return e
             }
-            return
+            return null
         }
-        if (iStream == null) {
+
+        fun showImportFailToast() {
             runOnUiThread {
                 Toast.makeText(
                     baseContext,
@@ -600,8 +579,8 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            return
         }
+
         val name = getFileName(uri)
         when {
             name == null -> {
@@ -614,32 +593,46 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             name.matches(Regex(".*\\.(gbc?|sav|s[0-9])")) -> {
+                val iStream = contentResolver.openInputStream(uri)
+                if (iStream == null) {
+                    showImportFailToast()
+                    return
+                }
                 doCopy(iStream, name)
+                iStream.close()
             }
             contentResolver.getType(uri).equals("application/zip")
                     or contentResolver.getType(uri).equals("application/x-zip-compressed")
                     or name.endsWith("zip") -> {
-                ZipInputStream(iStream).use { zip ->
-                    try {
-                        var entry = zip.nextEntry
-                        while (entry != null) {
-                            if (entry.name.matches(Regex(".*\\.(gbc?|sav|s[0-9])"))) {
-                                doCopy(zip, entry.name)
-                            }
-                            entry = zip.nextEntry
-                        }
-                    } catch (e: IllegalArgumentException) {
+                val iStream = contentResolver.openInputStream(uri)
+                if (iStream == null) {
+                    showImportFailToast()
+                    return
+                }
+                // We have no way of knowing what encoding was used to create the zip,
+                // so just try utf-8, then cp437, then give up
+                var e = importZipWithCharset(iStream, StandardCharsets.UTF_8)
+                if (e != null) {
+                    // importZipWithCharset closes the input stream, so we have to open a new one
+                    val iStream2 = contentResolver.openInputStream(uri)
+                    if (iStream2 == null) {
+                        showImportFailToast()
+                        return
+                    }
+                    e = importZipWithCharset(iStream2, Charset.forName("Cp437"))
+                    if (e != null) {
                         runOnUiThread {
-                            MaterialAlertDialogBuilder(this)
-                                .setTitle(
+                            MaterialAlertDialogBuilder(this).run {
+                                setTitle(
                                     resources.getString(
                                         R.string.error_zip_title,
                                         e.message
                                     )
                                 )
-                                .setMessage(R.string.error_zip_body)
-                                .setPositiveButton(android.R.string.ok, null)
-                                .show()
+                                setMessage(R.string.error_zip_body)
+                                setPositiveButton(android.R.string.ok, null)
+                                show()
+                            }
                         }
                     }
                 }
@@ -654,7 +647,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        iStream.close()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
