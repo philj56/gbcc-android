@@ -234,6 +234,9 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun vibrate(milliseconds: Long) {
+        if (!vibrator.hasVibrator()) {
+            return
+        }
         if (milliseconds == 0L) {
             vibrator.cancel()
             return
