@@ -22,6 +22,7 @@ import androidx.preference.*
 import com.philj56.gbcc.databinding.ActivitySettingsBinding
 import com.philj56.gbcc.preference.MaterialTurboPreferenceDialogFragmentCompat
 import com.philj56.gbcc.preference.MaterialListPreferenceDialogFragmentCompat
+import com.philj56.gbcc.preference.SliderPreference
 
 
 class SettingsActivity : BaseActivity() {
@@ -116,7 +117,7 @@ object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
 }
 
 class UnitSeekbarPreference(context: Context, attrs: AttributeSet) :
-    SeekBarPreference(context, attrs) {
+    SliderPreference(context, attrs) {
 
     lateinit var textView: TextView
     val watcher = UnitSeekbarPreferenceWatcher()

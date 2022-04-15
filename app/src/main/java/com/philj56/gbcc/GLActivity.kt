@@ -34,7 +34,6 @@ import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -758,6 +757,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 cameraPermissionRefused = true
             }
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun checkCameraPermission() : Boolean {

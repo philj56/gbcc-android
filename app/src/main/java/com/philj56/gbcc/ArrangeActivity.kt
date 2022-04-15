@@ -23,7 +23,6 @@ import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat

@@ -43,7 +43,8 @@
                 android:targetClass="com.philj56.gbcc.RemapActivity" />
         </Preference>
 
-        <SeekBarPreference
+        <com.philj56.gbcc.preference.SliderPreference
+            android:layout="@layout/preference_widget_slider"
             app:defaultValue="10"
             app:min="0"
             android:max="100"
@@ -195,6 +196,7 @@
             app:summary="@string/settings_audio_low_latency_summary" />
 
         <com.philj56.gbcc.UnitSeekbarPreference
+            android:layout="@layout/preference_widget_slider"
             app:dependency="audio_low_latency"
             app:min="40"
             android:max="500"
@@ -206,6 +208,7 @@
             app:iconSpaceReserved="false" />
 
         <com.philj56.gbcc.UnitSeekbarPreference
+            android:layout="@layout/preference_widget_slider"
             app:min="40"
             android:max="500"
             app:defaultValue="40"
@@ -215,7 +218,8 @@
             app:summary="@string/settings_bluetooth_latency_summary"
             app:iconSpaceReserved="false" />
 
-        <SeekBarPreference
+        <com.philj56.gbcc.preference.SliderPreference
+            android:layout="@layout/preference_widget_slider"
             app:min="0"
             android:max="100"
             app:defaultValue="100"
