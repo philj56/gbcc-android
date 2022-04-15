@@ -11,28 +11,28 @@
 package com.philj56.gbcc
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.philj56.gbcc.databinding.ActivityRomConfigBinding
 import java.io.File
 
 class RomConfigActivity : BaseActivity() {
-    private lateinit var configFile: File
+    lateinit var configFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rom_config)
-
+        // Make sure we initialise configFile before calling anything else,
+        // as it's accessed from within RomConfigFragment.
         val configDir = filesDir.resolve("config")
         configDir.mkdirs()
         val bundle = intent.extras
         val filename = File(bundle?.getString("file") ?: "").nameWithoutExtension
         configFile = configDir.resolve("$filename.cfg")
-        val fragment = RomConfigFragment(configFile)
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.romConfigFragment, fragment)
-            .commit()
+        super.onCreate(savedInstanceState)
+
+        val binding = ActivityRomConfigBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
     }
 
     fun clearConfig() {
@@ -41,13 +41,12 @@ class RomConfigActivity : BaseActivity() {
     }
 }
 
-@Suppress("unused")
-class RomConfigFragment(private val file: File) : PreferenceFragmentCompat() {
+class RomConfigFragment : PreferenceFragmentCompat() {
     private lateinit var dataStore: IniDataStore
     private var save = true
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        dataStore = IniDataStore(file)
+        dataStore = IniDataStore((requireActivity() as RomConfigActivity).configFile)
         preferenceManager.preferenceDataStore = dataStore
         setPreferencesFromResource(R.xml.rom_config, rootKey)
     }

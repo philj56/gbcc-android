@@ -16,12 +16,12 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.setPadding
 import androidx.preference.*
 import com.philj56.gbcc.databinding.ActivitySettingsBinding
+import com.philj56.gbcc.preference.MaterialTurboPreferenceDialogFragmentCompat
+import com.philj56.gbcc.preference.MaterialListPreferenceDialogFragmentCompat
 
 
 class SettingsActivity : BaseActivity() {
@@ -34,6 +34,7 @@ class SettingsActivity : BaseActivity() {
 }
 
 class SettingsFragment : PreferenceFragmentCompat() {
+    private val DIALOG_FRAGMENT_TAG = "com.philj56.gbcc.preference.DIALOG"
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
@@ -56,6 +57,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
             return@setOnPreferenceChangeListener true
         }
     }
+
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+        if (preference is ListPreference) {
+            val f = MaterialListPreferenceDialogFragmentCompat.newInstance(preference.key)
+            f.setTargetFragment(this, 0)
+            f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
+        } else if (preference is TurboPreference) {
+            val f = MaterialTurboPreferenceDialogFragmentCompat.newInstance(preference.key)
+            f.setTargetFragment(this, 0)
+            f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
+        } else {
+            super.onDisplayPreferenceDialog(preference)
+        }
+    }
 }
 
 class SummaryListPreference(context: Context, attrs: AttributeSet) :
@@ -70,10 +85,13 @@ class TurboPreference(context: Context, attrs: AttributeSet) :
     init {
         summaryProvider = TurboSummaryProvider
 
-        setOnBindEditTextListener { editText ->
-            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-            editText.selectAll()
-        }
+        // This is currently unneeded, as it's hardcoded into
+        // MaterialTurboPreferenceDialogFragmentCompat.
+        // If that ever gets changed back to a less hacky solution, we'll want this again.
+        // setOnBindEditTextListener { editText ->
+        //     editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        //     editText.selectAll()
+        // }
     }
 
     override fun setText(text: String?) {
