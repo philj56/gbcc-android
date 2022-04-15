@@ -174,7 +174,7 @@ class RemapActivity : BaseActivity() {
     private fun highlight(button: Button, pressed: Boolean) {
         val color = if (pressed) {
             val typedValue = TypedValue()
-            theme.resolveAttribute(R.attr.colorSecondary, typedValue, true)
+            theme.resolveAttribute(R.attr.colorPrimaryInverse, typedValue, true)
             typedValue.data
         } else {
             val typedValue = TypedValue()
