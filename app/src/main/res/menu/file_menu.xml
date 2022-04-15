@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/moveItem"
-        android:icon="@drawable/ic_file_move_white_24dp"
+        android:icon="@drawable/ic_file_move_24dp"
         android:title="@string/move"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/deleteItem"
-        android:icon="@drawable/ic_delete_white_24dp"
+        android:icon="@drawable/ic_delete_24dp"
         android:title="@string/delete"
         app:showAsAction="ifRoom" />
 </menu>

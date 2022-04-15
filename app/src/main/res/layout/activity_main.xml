@@ -1,50 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/mainToolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/mainAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/app_name" />
+        android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/fileToolbar"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/mainToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name"
+            app:menu="@menu/main_menu" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/fileAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/fileToolbar"
-        android:visibility="gone"
-        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-        app:title="@string/select_items" />
+        android:background="?attr/colorSurfaceVariant"
+        android:fitsSystemWindows="true"
+        android:visibility="invisible">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/moveToolbar"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/fileToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_close_24dp"
+            app:title="@string/select_items"
+            app:menu="@menu/file_menu"
+            style="@style/Widget.GBCC.Toolbar.Variant" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/moveAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/fileToolbar"
-        android:visibility="gone"
-        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-        app:title="@string/select_destination" />
+        android:background="?attr/colorSurfaceVariant"
+        android:fitsSystemWindows="true"
+        android:visibility="invisible">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/directoryTree"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/moveToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="?attr/colorOnSurfaceVariant"
+            app:navigationIcon="@drawable/ic_close_24dp"
+            app:title="@string/select_destination"
+            app:menu="@menu/move_menu"
+            style="@style/Widget.GBCC.Toolbar.Variant" />
 
-    <ListView
-        android:id="@+id/fileList"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@null" />
-</LinearLayout>
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/directoryTree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
+
+        <ListView
+            android:id="@+id/fileList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:nestedScrollingEnabled="true" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

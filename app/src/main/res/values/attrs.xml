@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color to use for the GBC icon (currently unused) -->
+    <attr name="colorGBC" format="color"/>
+</resources>

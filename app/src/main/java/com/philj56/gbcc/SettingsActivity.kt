@@ -16,19 +16,23 @@ import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.setPadding
 import androidx.preference.*
+import com.philj56.gbcc.databinding.ActivitySettingsBinding
 
-class SettingsActivity : AppCompatActivity() {
+
+class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        val binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
     }
 }
 
-@Suppress("unused")
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
@@ -43,6 +47,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     else -> return@setOnPreferenceChangeListener false
                 }
             )
+            return@setOnPreferenceChangeListener true
+        }
+
+        val theme = preferenceManager.findPreference<SummaryListPreference>("theme")
+        theme?.setOnPreferenceChangeListener { _, _ ->
+            activity?.recreate()
             return@setOnPreferenceChangeListener true
         }
     }
@@ -76,16 +86,11 @@ class TurboPreference(context: Context, attrs: AttributeSet) :
 }
 
 object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
-    override fun provideSummary(preference: EditTextPreference?): CharSequence {
-        if (preference == null) {
-            return "Not set"
-        }
-        val text = if (preference.text.isEmpty()) {
+    override fun provideSummary(preference: EditTextPreference): CharSequence {
+        val text = preference.text?.ifEmpty {
             "0"
-        } else {
-            preference.text
         }
-        return when (text.toFloat()) {
+        return when (text?.toFloat()) {
             0F -> "0 (Unlimited)"
             else -> "$text×"
         }
@@ -95,21 +100,21 @@ object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
 class UnitSeekbarPreference(context: Context, attrs: AttributeSet) :
     SeekBarPreference(context, attrs) {
 
-    var textView: TextView? = null
+    lateinit var textView: TextView
     val watcher = UnitSeekbarPreferenceWatcher()
 
-    override fun onBindViewHolder(view: PreferenceViewHolder?) {
-        textView = view?.findViewById(R.id.seekbar_value) as TextView?
-        textView?.removeTextChangedListener(watcher)
-        textView?.addTextChangedListener(watcher)
+    override fun onBindViewHolder(view: PreferenceViewHolder) {
+        textView = view.findViewById(R.id.seekbar_value) as TextView
+        textView.removeTextChangedListener(watcher)
+        textView.addTextChangedListener(watcher)
         super.onBindViewHolder(view)
     }
 
     inner class UnitSeekbarPreferenceWatcher : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
-            textView?.removeTextChangedListener(watcher)
+            textView.removeTextChangedListener(watcher)
             s?.insert(s.length, context.resources.getString(R.string.settings_bluetooth_latency_units))
-            textView?.addTextChangedListener(watcher)
+            textView.addTextChangedListener(watcher)
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

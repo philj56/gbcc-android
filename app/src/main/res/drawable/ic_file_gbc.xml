@@ -7,7 +7,7 @@
       android:pathData="M0.9444,0C0.4212,0 0,0.4374 0,0.9807v47.0769h0.0037a1.8889,1.9615 0,0 0,1.2396 1.8428c0,0 3.479,1.0995 15.7567,1.0995 12.2778,0 15.7567,-1.0995 15.7567,-1.0995a1.8889,1.9615 0,0 0,1.2396 -1.8428L34,48.0577v-47.0769c0,-0.5433 -0.4212,-0.9808 -0.9444,-0.9808z"
       android:strokeAlpha="1"
       android:strokeWidth="7.69948435"
-      android:fillColor="#fdd827"
+      android:fillColor="@color/gbcDandelion"
       android:strokeColor="#00000000"
       android:fillAlpha="1"/>
   <path

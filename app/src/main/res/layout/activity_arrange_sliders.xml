@@ -13,8 +13,7 @@
             android:layout_height="wrap_content"
             android:text="@string/size_title"
             android:textAlignment="center"
-            android:textColor="@android:color/primary_text_dark"
-            android:textSize="24sp" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <TextView
             android:id="@+id/abSliderLabel"
@@ -23,8 +22,8 @@
             android:layout_gravity="center_vertical"
             android:labelFor="@id/abSlider"
             android:text="@string/a_b_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?android:textColorSecondary" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/abSlider"
@@ -41,8 +40,8 @@
             android:layout_gravity="center_vertical"
             android:labelFor="@id/startSelectSlider"
             android:text="@string/start_select_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?android:textColorSecondary" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/startSelectSlider"
@@ -59,8 +58,8 @@
             android:layout_gravity="center_vertical"
             android:labelFor="@id/dpadSlider"
             android:text="@string/dpad_size"
-            android:textColor="@android:color/secondary_text_dark"
-            android:textSize="14sp" />
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?android:textColorSecondary" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/dpadSlider"

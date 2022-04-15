@@ -17,9 +17,10 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.radiobutton.MaterialRadioButton
 import com.philj56.gbcc.databinding.ActivityRemapControllerBinding
+import java.lang.reflect.Type
 import kotlin.math.abs
 
-class RemapActivity : AppCompatActivity() {
+class RemapActivity : BaseActivity() {
 
     data class ButtonInfo(val keyCode: Int, val mapKey: String, val button: Button, val drawable: Drawable, val analogue: Boolean)
 
@@ -172,7 +173,9 @@ class RemapActivity : AppCompatActivity() {
 
     private fun highlight(button: Button, pressed: Boolean) {
         val color = if (pressed) {
-            ContextCompat.getColor(button.context, R.color.colorSecondary)
+            val typedValue = TypedValue()
+            theme.resolveAttribute(R.attr.colorSecondary, typedValue, true)
+            typedValue.data
         } else {
             val typedValue = TypedValue()
             val theme = button.context.theme
@@ -197,45 +200,43 @@ class RemapActivity : AppCompatActivity() {
 class RemapButtonDialogFragment(private val button: Button, private val key: String, private val analogue: Boolean) :
     DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            val mapping = prefs.getString(key, "unmapped")
-            val buttonNames: Array<String>
-            val buttonValues: Array<String>
-            if (analogue) {
-                buttonNames = resources.getStringArray(R.array.button_map_analogue_names_array)
-                buttonValues = resources.getStringArray(R.array.button_map_analogue_values_array)
-            } else {
-                buttonNames = resources.getStringArray(R.array.button_map_names_array)
-                buttonValues = resources.getStringArray(R.array.button_map_values_array)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val mapping = prefs.getString(key, "unmapped")
+        val buttonNames: Array<String>
+        val buttonValues: Array<String>
+        if (analogue) {
+            buttonNames = resources.getStringArray(R.array.button_map_analogue_names_array)
+            buttonValues = resources.getStringArray(R.array.button_map_analogue_values_array)
+        } else {
+            buttonNames = resources.getStringArray(R.array.button_map_names_array)
+            buttonValues = resources.getStringArray(R.array.button_map_values_array)
+        }
+
+        val layout = requireActivity().layoutInflater.inflate(R.layout.dialog_remap_button, null, false)
+        val radioGroup = layout.findViewById<RadioGroup>(R.id.remapDialogRadioGroup)
+        buttonNames.forEachIndexed { index, name ->
+            val radio = MaterialRadioButton(radioGroup.context)
+            radio.text = name
+            radio.id = index
+            radioGroup.addView(radio)
+
+            if (mapping == buttonValues[index]) {
+                radioGroup.check(index)
             }
+        }
 
-            val layout = it.layoutInflater.inflate(R.layout.dialog_remap_button, null, false)
-            val radioGroup = layout.findViewById<RadioGroup>(R.id.remapDialogRadioGroup)
-            buttonNames.forEachIndexed { index, name ->
-                val radio = MaterialRadioButton(radioGroup.context)
-                radio.text = name
-                radio.id = index
-                radioGroup.addView(radio)
-
-                if (mapping == buttonValues[index]) {
-                    radioGroup.check(index)
+        val builder = MaterialAlertDialogBuilder(requireActivity())
+        builder.setTitle(R.string.select_mapping)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                prefs.edit {
+                    putString(key, buttonValues[radioGroup.checkedRadioButtonId])
+                    apply()
                 }
+                button.text = buttonNames[radioGroup.checkedRadioButtonId]
             }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> }
+            .setView(layout)
 
-            val builder = MaterialAlertDialogBuilder(it)
-            builder.setTitle(R.string.select_mapping)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    prefs.edit {
-                        putString(key, buttonValues[radioGroup.checkedRadioButtonId])
-                        apply()
-                    }
-                    button.text = buttonNames[radioGroup.checkedRadioButtonId]
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .setView(layout)
-
-            return builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+        return builder.create()
     }
 }

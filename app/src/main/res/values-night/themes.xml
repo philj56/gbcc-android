@@ -1,42 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.GBCC" parent="Base.Theme.GBCC">
-        <!-- Material color attributes (dark theme) -->
-        <item name="colorPrimary">@color/colorPrimaryNight</item>
-
-        <item name="android:colorBackground">@color/black_800</item>
-        <item name="colorSurface">@color/black_800</item>
-
-        <item name="colorOnPrimary">@color/black_900</item>
-        <item name="colorOnBackground">@color/white_50</item>
-        <item name="colorOnSurface">@color/white_50</item>
-
-        <!-- Component styles -->
-        <item name="android:statusBarColor">@color/black_900</item>
-        <item name="materialButtonStyle">@style/Widget.GBCC.Button</item>
-        <item name="borderlessButtonStyle">@style/Widget.GBCC.Button.TextButton</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GBCC.MaterialAlertDialog</item>
-        <item name="alertDialogTheme">@style/ThemeOverlay.GBCC.MaterialAlertDialog</item>
-    </style>
-
-    <style name="ThemeOverlay.GBCC.Toolbar" parent="">
-        <item name="colorPrimary">@color/colorPrimaryNightDark</item>
-        <item name="colorOnPrimary">@color/white_50</item>
-    </style>
-
-    <style name="ThemeOverlay.GBCC.Button" parent="">
-        <item name="colorPrimary">@color/colorPrimaryNightDark</item>
-        <item name="colorOnPrimary">@color/white_50</item>
-    </style>
-
-    <style name="ThemeOverlay.GBCC.Button.TextButton" parent="">
-        <item name="colorPrimary">@color/colorPrimaryNight</item>
-        <item name="colorOnPrimary">@color/black_900</item>
-    </style>
-
-    <style name="ThemeOverlay.GBCC.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <!--
+    <style name="ThemeOverlay.GBCC.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
         <item name="buttonBarNegativeButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
         <item name="buttonBarNeutralButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
+    </style>
+    -->
+    <style name="Theme.GBCC.Berry" parent="Theme.GBCC">
+        <!-- Material color attributes (dark theme) -->
+        <item name="colorPrimary"> @color/theme_berry_dark_primary </item>
+        <item name="colorOnPrimary"> @color/theme_berry_dark_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_berry_dark_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_berry_dark_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_berry_dark_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_berry_dark_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_berry_dark_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_berry_dark_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_berry_dark_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_berry_dark_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_berry_dark_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_berry_dark_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_berry_dark_error </item>
+        <item name="colorErrorContainer"> @color/theme_berry_dark_errorContainer </item>
+        <item name="colorOnError"> @color/theme_berry_dark_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_berry_dark_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_berry_dark_background </item>
+        <item name="colorOnBackground"> @color/theme_berry_dark_onBackground </item>
+        <item name="colorSurface"> @color/theme_berry_dark_surface </item>
+        <item name="colorOnSurface"> @color/theme_berry_dark_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_berry_dark_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_berry_dark_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_berry_dark_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_berry_dark_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_berry_dark_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_berry_dark_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_berry_dark_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_berry_dark_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcBerry</item>
+    </style>
+
+    <style name="Theme.GBCC.Dandelion" parent="Theme.GBCC">
+        <!-- Material color attributes (dark theme) -->
+        <item name="colorPrimary"> @color/theme_dandelion_dark_primary </item>
+        <item name="colorOnPrimary"> @color/theme_dandelion_dark_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_dandelion_dark_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_dandelion_dark_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_dandelion_dark_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_dandelion_dark_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_dandelion_dark_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_dandelion_dark_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_dandelion_dark_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_dandelion_dark_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_dandelion_dark_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_dandelion_dark_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_dandelion_dark_error </item>
+        <item name="colorErrorContainer"> @color/theme_dandelion_dark_errorContainer </item>
+        <item name="colorOnError"> @color/theme_dandelion_dark_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_dandelion_dark_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_dandelion_dark_background </item>
+        <item name="colorOnBackground"> @color/theme_dandelion_dark_onBackground </item>
+        <item name="colorSurface"> @color/theme_dandelion_dark_surface </item>
+        <item name="colorOnSurface"> @color/theme_dandelion_dark_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_dandelion_dark_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_dandelion_dark_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_dandelion_dark_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_dandelion_dark_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_dandelion_dark_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_dandelion_dark_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_dandelion_dark_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_dandelion_dark_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcDandelion</item>
+    </style>
+
+    <style name="Theme.GBCC.Grape" parent="Theme.GBCC">
+        <!-- Material color attributes (dark theme) -->
+        <item name="colorPrimary"> @color/theme_grape_dark_primary </item>
+        <item name="colorOnPrimary"> @color/theme_grape_dark_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_grape_dark_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_grape_dark_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_grape_dark_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_grape_dark_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_grape_dark_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_grape_dark_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_grape_dark_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_grape_dark_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_grape_dark_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_grape_dark_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_grape_dark_error </item>
+        <item name="colorErrorContainer"> @color/theme_grape_dark_errorContainer </item>
+        <item name="colorOnError"> @color/theme_grape_dark_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_grape_dark_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_grape_dark_background </item>
+        <item name="colorOnBackground"> @color/theme_grape_dark_onBackground </item>
+        <item name="colorSurface"> @color/theme_grape_dark_surface </item>
+        <item name="colorOnSurface"> @color/theme_grape_dark_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_grape_dark_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_grape_dark_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_grape_dark_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_grape_dark_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_grape_dark_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_grape_dark_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_grape_dark_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_grape_dark_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcGrape</item>
+    </style>
+
+    <style name="Theme.GBCC.Kiwi" parent="Theme.GBCC">
+        <!-- Material color attributes (dark theme) -->
+        <item name="colorPrimary"> @color/theme_kiwi_dark_primary </item>
+        <item name="colorOnPrimary"> @color/theme_kiwi_dark_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_kiwi_dark_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_kiwi_dark_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_kiwi_dark_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_kiwi_dark_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_kiwi_dark_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_kiwi_dark_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_kiwi_dark_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_kiwi_dark_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_kiwi_dark_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_kiwi_dark_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_kiwi_dark_error </item>
+        <item name="colorErrorContainer"> @color/theme_kiwi_dark_errorContainer </item>
+        <item name="colorOnError"> @color/theme_kiwi_dark_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_kiwi_dark_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_kiwi_dark_background </item>
+        <item name="colorOnBackground"> @color/theme_kiwi_dark_onBackground </item>
+        <item name="colorSurface"> @color/theme_kiwi_dark_surface </item>
+        <item name="colorOnSurface"> @color/theme_kiwi_dark_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_kiwi_dark_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_kiwi_dark_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_kiwi_dark_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_kiwi_dark_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_kiwi_dark_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_kiwi_dark_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_kiwi_dark_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_kiwi_dark_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcKiwi</item>
+    </style>
+
+    <style name="Theme.GBCC.Teal" parent="Theme.GBCC">
+        <!-- Material color attributes (dark theme) -->
+        <item name="colorPrimary"> @color/theme_teal_dark_primary </item>
+        <item name="colorOnPrimary"> @color/theme_teal_dark_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_teal_dark_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_teal_dark_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_teal_dark_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_teal_dark_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_teal_dark_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_teal_dark_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_teal_dark_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_teal_dark_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_teal_dark_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_teal_dark_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_teal_dark_error </item>
+        <item name="colorErrorContainer"> @color/theme_teal_dark_errorContainer </item>
+        <item name="colorOnError"> @color/theme_teal_dark_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_teal_dark_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_teal_dark_background </item>
+        <item name="colorOnBackground"> @color/theme_teal_dark_onBackground </item>
+        <item name="colorSurface"> @color/theme_teal_dark_surface </item>
+        <item name="colorOnSurface"> @color/theme_teal_dark_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_teal_dark_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_teal_dark_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_teal_dark_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_teal_dark_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_teal_dark_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_teal_dark_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_teal_dark_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_teal_dark_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcTeal</item>
     </style>
 </resources>

@@ -24,14 +24,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewAnimationUtils
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.animation.addListener
 import androidx.core.view.forEach
@@ -66,7 +62,7 @@ private const val BACK_DELAY: Int = 2000
 private const val SAVE_DIR: String = "saves"
 private const val IMPORTED_SAVE_SUBDIR: String = "imported"
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     enum class SelectionMode {
         NORMAL, MOVE, DELETE, SELECT
@@ -132,18 +128,18 @@ class MainActivity : AppCompatActivity() {
         }.start()
 
         // Set up the toolbars
-        binding.mainToolbar.inflateMenu(R.menu.main_menu)
+        //binding.mainToolbar.inflateMenu(R.menu.main_menu)
         binding.mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        binding.fileToolbar.inflateMenu(R.menu.file_menu)
+        //binding.fileToolbar.inflateMenu(R.menu.file_menu)
         binding.fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
         binding.fileToolbar.setNavigationOnClickListener { clearSelection() }
-        binding.moveToolbar.inflateMenu(R.menu.move_menu)
+        //binding.moveToolbar.inflateMenu(R.menu.move_menu)
         binding.moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
         binding.moveToolbar.setNavigationOnClickListener { clearSelection() }
 
-        toolbarTransition.addTarget(binding.mainToolbar)
-        toolbarTransition.addTarget(binding.fileToolbar)
-        toolbarTransition.addTarget(binding.moveToolbar)
+        toolbarTransition.addTarget(binding.mainAppBarLayout)
+        toolbarTransition.addTarget(binding.fileAppBarLayout)
+        toolbarTransition.addTarget(binding.moveAppBarLayout)
 
         fileTransition.addTransition(SlideShrink().setDuration(300))
         fileTransition.ordering = TransitionSet.ORDERING_TOGETHER
@@ -248,8 +244,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun beginSelection() {
         TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
-        binding.fileToolbar.visibility = View.VISIBLE
-        binding.mainToolbar.visibility = View.GONE
+        binding.fileAppBarLayout.visibility = View.VISIBLE
+        binding.mainAppBarLayout.visibility = View.INVISIBLE
     }
 
     fun clearSelection() {
@@ -263,9 +259,9 @@ class MainActivity : AppCompatActivity() {
         }
         moveSelection.clear()
         fileTransition.targets.clear()
-        binding.mainToolbar.visibility = View.VISIBLE
-        binding.fileToolbar.visibility = View.GONE
-        binding.moveToolbar.visibility = View.GONE
+        binding.mainAppBarLayout.visibility = View.VISIBLE
+        binding.fileAppBarLayout.visibility = View.INVISIBLE
+        binding.moveAppBarLayout.visibility = View.INVISIBLE
     }
 
     private fun updateFiles() {
@@ -311,9 +307,9 @@ class MainActivity : AppCompatActivity() {
             R.id.moveItem -> {
                 selectionMode = SelectionMode.MOVE
                 moveSelection.addAll(0, files.filter { it in adapter.selected })
-                binding.moveToolbar.visibility = View.VISIBLE
-                binding.fileToolbar.visibility = View.GONE
-                binding.mainToolbar.visibility = View.GONE
+                binding.moveAppBarLayout.visibility = View.VISIBLE
+                binding.fileAppBarLayout.visibility = View.INVISIBLE
+                binding.mainAppBarLayout.visibility = View.INVISIBLE
             }
             R.id.confirmMoveItem -> {
                 Thread {
@@ -390,6 +386,13 @@ class MainActivity : AppCompatActivity() {
             .setOnCancelListener { clearSelection() }
             .show()
 
+        dialog.findViewById<Button>(R.id.buttonMultiplayer)?.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setView(R.layout.dialog_multiplayer_searching)
+                .setOnDismissListener { clearSelection() }
+                .show()
+            dialog.dismiss()
+        }
         dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
             beginSelection()
             dialog.dismiss()
@@ -781,7 +784,7 @@ class FileAdapter(
                 imageView.clearColorFilter()
             }
             else -> {
-                imageView.setImageResource(R.drawable.ic_folder_white_34dp)
+                imageView.setImageResource(R.drawable.ic_folder_34dp)
             }
         }
 
@@ -970,14 +973,11 @@ class SlideShrink : Transition() {
 
 class CircularReveal : Visibility() {
     override fun onAppear(
-        sceneRoot: ViewGroup?,
-        view: View?,
-        startValues: TransitionValues?,
-        endValues: TransitionValues?
+        sceneRoot: ViewGroup,
+        view: View,
+        startValues: TransitionValues,
+        endValues: TransitionValues
     ): Animator {
-        if (view == null) {
-            return super.onAppear(sceneRoot, view, startValues, endValues)
-        }
         val animator = ViewAnimationUtils.createCircularReveal(
             view,
             view.width / 2,
@@ -993,14 +993,11 @@ class CircularReveal : Visibility() {
     }
 
     override fun onDisappear(
-        sceneRoot: ViewGroup?,
-        view: View?,
-        startValues: TransitionValues?,
-        endValues: TransitionValues?
+        sceneRoot: ViewGroup,
+        view: View,
+        startValues: TransitionValues,
+        endValues: TransitionValues
     ): Animator {
-        if (view == null) {
-            return super.onDisappear(sceneRoot, view, startValues, endValues)
-        }
         return ViewAnimationUtils.createCircularReveal(
             view,
             view.width / 2,

@@ -216,24 +216,22 @@
 
     <Button
         android:id="@+id/resetSizes"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="@string/reset_sizes"
-        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/sizeMenu"
         app:layout_constraintEnd_toStartOf="@+id/resetLayout"
         app:layout_constraintStart_toStartOf="@+id/sizeMenu" />
 
     <Button
         android:id="@+id/resetLayout"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="@string/reset_layout"
-        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/sizeMenu"
         app:layout_constraintEnd_toEndOf="@+id/sizeMenu"
         app:layout_constraintHorizontal_bias="0.5"

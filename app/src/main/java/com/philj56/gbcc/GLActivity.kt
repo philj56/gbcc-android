@@ -35,11 +35,15 @@ import android.util.Size
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -109,7 +113,7 @@ private val ACTION_TO_KEY_MAP = mapOf(
     "unmapped" to -1
 )
 
-class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
+class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var prefs: SharedPreferences
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
@@ -421,6 +425,12 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        ViewCompat.getWindowInsetsController(window.decorView)?.let {
+            // Hide system bars
+            it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            it.hide(WindowInsetsCompat.Type.systemBars())
+        }
         super.onCreate(savedInstanceState)
         chdir(filesDir.absolutePath)
 
@@ -793,7 +803,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                 .setTargetResolution(targetResolution)
                 .build()
 
-            imageAnalysis.setAnalyzer(executor, { image ->
+            imageAnalysis.setAnalyzer(executor) { image ->
                 // Images are always in YUV_420_888 format, with Y as plane 0
                 // with a pixel stride of 1, so we can just grab the greyscale from here
                 val yplane = image.planes[0]
@@ -807,7 +817,7 @@ class GLActivity : AppCompatActivity(), SensorEventListener, LifecycleOwner {
                     yplane.rowStride
                 )
                 image.close()
-            })
+            }
 
             val cameraSelector = when (prefs.getString("camera", "back")) {
                 "front" -> CameraSelector.DEFAULT_FRONT_CAMERA

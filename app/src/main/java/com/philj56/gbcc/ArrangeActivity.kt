@@ -14,10 +14,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -27,9 +24,13 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
 import com.philj56.gbcc.databinding.ActivityArrangeBinding
@@ -38,8 +39,7 @@ import kotlin.math.min
 import kotlin.math.pow
 
 
-class ArrangeActivity : AppCompatActivity() {
-    private val sliderListener = SliderListener()
+class ArrangeActivity : BaseActivity() {
     private val scaleFactorRange : Float = 2f
 
     private lateinit var prefs : SharedPreferences
@@ -66,9 +66,9 @@ class ArrangeActivity : AppCompatActivity() {
         binding.resetLayout.setOnClickListener { resetLayout() }
         binding.resetSizes.setOnClickListener { resetSizes() }
 
-        binding.sliders.abSlider.addOnChangeListener(sliderListener)
-        binding.sliders.startSelectSlider.addOnChangeListener(sliderListener)
-        binding.sliders.dpadSlider.addOnChangeListener(sliderListener)
+        binding.sliders.abSlider.addOnChangeListener { slider, value, fromUser -> onValueChange(slider, value, fromUser) }
+        binding.sliders.startSelectSlider.addOnChangeListener { slider, value, fromUser -> onValueChange(slider, value, fromUser) }
+        binding.sliders.dpadSlider.addOnChangeListener { slider, value, fromUser -> onValueChange(slider, value, fromUser) }
 
         if (!gbc) {
             val screenBorderColor: Int
@@ -165,6 +165,12 @@ class ArrangeActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+        delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        ViewCompat.getWindowInsetsController(window.decorView)?.let {
+            // Hide system bars
+            it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            it.hide(WindowInsetsCompat.Type.systemBars())
+        }
         super.onCreate(savedInstanceState)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -260,29 +266,26 @@ class ArrangeActivity : AppCompatActivity() {
         return (t + 1f) / 2
     }
 
-    private inner class SliderListener: Slider.OnChangeListener {
+    private fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
+        val scale = valueToSize(value)
+        when (slider.id) {
+            R.id.abSlider -> {
+                binding.buttonA.scaleX = scale
+                binding.buttonA.scaleY = scale
+                binding.buttonB.scaleX = scale
+                binding.buttonB.scaleY = scale
+            }
 
-        override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
-            val scale = valueToSize(value)
-            when (slider.id) {
-                R.id.abSlider -> {
-                    binding.buttonA.scaleX = scale
-                    binding.buttonA.scaleY = scale
-                    binding.buttonB.scaleX = scale
-                    binding.buttonB.scaleY = scale
-                }
+            R.id.startSelectSlider -> {
+                binding.buttonStart.scaleX = scale
+                binding.buttonStart.scaleY = scale
+                binding.buttonSelect.scaleX = scale
+                binding.buttonSelect.scaleY = scale
+            }
 
-                R.id.startSelectSlider -> {
-                    binding.buttonStart.scaleX = scale
-                    binding.buttonStart.scaleY = scale
-                    binding.buttonSelect.scaleX = scale
-                    binding.buttonSelect.scaleY = scale
-                }
-
-                R.id.dpadSlider -> {
-                    binding.dpad.root.scaleX = scale
-                    binding.dpad.root.scaleY = scale
-                }
+            R.id.dpadSlider -> {
+                binding.dpad.root.scaleX = scale
+                binding.dpad.root.scaleY = scale
             }
         }
     }
@@ -354,7 +357,13 @@ class ResizableImage : AppCompatImageView {
 
     private fun vibrate() {
         val milliseconds: Long = 10
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibrator = when {
+            Build.VERSION.SDK_INT >= 31 -> {
+                val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                vibratorManager.defaultVibrator
+            }
+            else -> context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {

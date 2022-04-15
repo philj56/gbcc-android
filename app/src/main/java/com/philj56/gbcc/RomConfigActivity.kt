@@ -16,7 +16,7 @@ import androidx.preference.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
-class RomConfigActivity : AppCompatActivity() {
+class RomConfigActivity : BaseActivity() {
     private lateinit var configFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +59,8 @@ class RomConfigFragment(private val file: File) : PreferenceFragmentCompat() {
         super.onDestroy()
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        if (preference != null && preference.key == "delete") {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        if (preference.key == "delete") {
             val context = requireContext()
             MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.delete_config_confirmation)

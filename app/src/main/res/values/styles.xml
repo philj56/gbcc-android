@@ -1,36 +1,22 @@
 <resources>
-    <style name="Widget.GBCC.PreferenceFragmentList" parent="PreferenceFragmentList">
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">0dp</item>
+    <!-- Variant toolbar theme for contextual action bars -->
+    <style name="Widget.GBCC.Toolbar.Variant" parent="Widget.Material3.Toolbar">
+        <item name="navigationIconTint">?attr/colorOnSurfaceVariant</item>
+        <item name="titleTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
     <style name="TurboToggleTheme" parent="">
-        <item name="thumbTint">@color/gbcButton</item>
-        <item name="colorSurface">@color/gbcToggleBackground</item>
-        <item name="colorSecondary">@color/gbcButton</item>
+        <item name="colorPrimary">@color/gbcButton</item>
         <item name="colorOnSurface">@color/gbcButton</item>
-        <item name="colorControlHighlight">@color/gbcButton</item>
-        <item name="colorControlActivated">@color/gbcButton</item>
+        <item name="colorOutline">@color/gbcToggleBackground</item>
+        <item name="colorPrimaryContainer">@color/gbcToggleBackground</item>
     </style>
 
     <style name="TurboToggleThemeDark" parent="">
-        <item name="thumbTint">@color/dmgDarkButton</item>
-        <item name="colorSurface">@color/dmgDarkToggleBackground</item>
-        <item name="colorSecondary">@color/dmgDarkButton</item>
+        <item name="colorPrimary">@color/dmgDarkButton</item>
         <item name="colorOnSurface">@color/dmgDarkButton</item>
-        <item name="colorControlHighlight">@color/dmgDarkButton</item>
-        <item name="colorControlActivated">@color/dmgDarkButton</item>
-    </style>
-
-    <style name="Widget.GBCC.Button" parent="Widget.MaterialComponents.Button">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button</item>
-    </style>
-
-    <style name="Widget.GBCC.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
-    </style>
-
-    <style name="Widget.GBCC.Button.TextButton.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Button.TextButton</item>
+        <item name="colorOutline">@color/dmgDarkToggleBackground</item>
+        <item name="colorPrimaryContainer">@color/dmgDarkToggleBackground</item>
     </style>
 </resources>

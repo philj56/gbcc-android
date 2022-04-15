@@ -2,62 +2,196 @@
 <resources>
     <style name="Theme.GBCC" parent="Base.Theme.GBCC" />
 
-    <style name="Theme.GBCC.NoActionBar" parent="Theme.GBCC">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.GBCC.Fullscreen" parent="Theme.GBCC.NoActionBar">
-        <item name="android:windowFullscreen">true</item>
-    </style>
     <!-- Base application theme. -->
-    <style name="Base.Theme.GBCC" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Material color attributes (light theme) -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <!--item name="colorSecondaryVariant">@color/colorAccent</item-->
-
-        <item name="android:colorBackground">@color/white_50</item>
-        <item name="colorSurface">@color/white_50</item>
-        <!--item name="colorError">@color/colorAccent</item-->
-
-        <item name="colorOnPrimary">@color/white_50</item>
-        <item name="colorOnSecondary">@color/black_900</item>
-        <item name="colorOnBackground">@color/black_900</item>
-        <item name="colorOnSurface">@color/black_900</item>
-        <!--item name="colorOnError">#FFFFFF</item-->
+    <style name="Base.Theme.GBCC" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Used by sliders and section headings in the settings screen -->
+        <item name="colorAccent">?attr/colorPrimary</item>
 
         <!-- Component styles -->
-        <!--item name="actionMenuTextColor">#000000</item-->
-        <item name="toolbarStyle">@style/Widget.GBCC.Toolbar</item>
-        <item name="actionBarTheme">@style/ThemeOverlay.GBCC.Toolbar</item>
-        <item name="preferenceTheme">@style/ThemeOverlay.GBCC.Preference</item>
-        <item name="sliderStyle">@style/Widget.GBCC.Slider</item>
-        <item name="alertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
         <item name="android:textAlignment">gravity</item>
         <item name="android:textDirection">locale</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- Enable window transition animations -->
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
-    <!-- Colour the toolbar correctly -->
-    <style name="Widget.GBCC.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Toolbar</item>
+    <style name="Theme.GBCC.Berry" parent="Theme.GBCC">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary"> @color/theme_berry_light_primary </item>
+        <item name="colorOnPrimary"> @color/theme_berry_light_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_berry_light_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_berry_light_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_berry_light_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_berry_light_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_berry_light_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_berry_light_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_berry_light_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_berry_light_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_berry_light_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_berry_light_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_berry_light_error </item>
+        <item name="colorErrorContainer"> @color/theme_berry_light_errorContainer </item>
+        <item name="colorOnError"> @color/theme_berry_light_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_berry_light_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_berry_light_background </item>
+        <item name="colorOnBackground"> @color/theme_berry_light_onBackground </item>
+        <item name="colorSurface"> @color/theme_berry_light_surface </item>
+        <item name="colorOnSurface"> @color/theme_berry_light_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_berry_light_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_berry_light_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_berry_light_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_berry_light_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_berry_light_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_berry_light_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_berry_light_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_berry_light_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcBerry</item>
     </style>
 
-    <style name="ThemeOverlay.GBCC.Toolbar" parent="">
-        <item name="colorControlNormal">#E0FFFFFF</item>
+    <style name="Theme.GBCC.Dandelion" parent="Theme.GBCC">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary"> @color/theme_dandelion_light_primary </item>
+        <item name="colorOnPrimary"> @color/theme_dandelion_light_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_dandelion_light_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_dandelion_light_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_dandelion_light_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_dandelion_light_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_dandelion_light_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_dandelion_light_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_dandelion_light_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_dandelion_light_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_dandelion_light_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_dandelion_light_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_dandelion_light_error </item>
+        <item name="colorErrorContainer"> @color/theme_dandelion_light_errorContainer </item>
+        <item name="colorOnError"> @color/theme_dandelion_light_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_dandelion_light_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_dandelion_light_background </item>
+        <item name="colorOnBackground"> @color/theme_dandelion_light_onBackground </item>
+        <item name="colorSurface"> @color/theme_dandelion_light_surface </item>
+        <item name="colorOnSurface"> @color/theme_dandelion_light_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_dandelion_light_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_dandelion_light_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_dandelion_light_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_dandelion_light_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_dandelion_light_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_dandelion_light_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_dandelion_light_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_dandelion_light_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcDandelion</item>
     </style>
 
-    <style name="Widget.GBCC.Slider" parent="Widget.MaterialComponents.Slider">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.GBCC.Slider</item>
+    <style name="Theme.GBCC.Grape" parent="Theme.GBCC">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary"> @color/theme_grape_light_primary </item>
+        <item name="colorOnPrimary"> @color/theme_grape_light_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_grape_light_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_grape_light_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_grape_light_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_grape_light_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_grape_light_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_grape_light_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_grape_light_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_grape_light_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_grape_light_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_grape_light_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_grape_light_error </item>
+        <item name="colorErrorContainer"> @color/theme_grape_light_errorContainer </item>
+        <item name="colorOnError"> @color/theme_grape_light_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_grape_light_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_grape_light_background </item>
+        <item name="colorOnBackground"> @color/theme_grape_light_onBackground </item>
+        <item name="colorSurface"> @color/theme_grape_light_surface </item>
+        <item name="colorOnSurface"> @color/theme_grape_light_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_grape_light_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_grape_light_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_grape_light_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_grape_light_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_grape_light_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_grape_light_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_grape_light_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_grape_light_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcGrape</item>
     </style>
 
-    <style name="ThemeOverlay.GBCC.Slider" parent="">
-        <item name="colorPrimary">@color/gbcBerry</item>
+    <style name="Theme.GBCC.Kiwi" parent="Theme.GBCC">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary"> @color/theme_kiwi_light_primary </item>
+        <item name="colorOnPrimary"> @color/theme_kiwi_light_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_kiwi_light_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_kiwi_light_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_kiwi_light_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_kiwi_light_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_kiwi_light_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_kiwi_light_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_kiwi_light_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_kiwi_light_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_kiwi_light_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_kiwi_light_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_kiwi_light_error </item>
+        <item name="colorErrorContainer"> @color/theme_kiwi_light_errorContainer </item>
+        <item name="colorOnError"> @color/theme_kiwi_light_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_kiwi_light_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_kiwi_light_background </item>
+        <item name="colorOnBackground"> @color/theme_kiwi_light_onBackground </item>
+        <item name="colorSurface"> @color/theme_kiwi_light_surface </item>
+        <item name="colorOnSurface"> @color/theme_kiwi_light_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_kiwi_light_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_kiwi_light_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_kiwi_light_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_kiwi_light_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_kiwi_light_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_kiwi_light_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_kiwi_light_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_kiwi_light_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcKiwi</item>
     </style>
 
-    <style name="ThemeOverlay.GBCC.Preference" parent="PreferenceThemeOverlay">
-        <item name="preferenceFragmentListStyle">@style/Widget.GBCC.PreferenceFragmentList</item>
+    <style name="Theme.GBCC.Teal" parent="Theme.GBCC">
+        <!-- Material color attributes (light theme) -->
+        <item name="colorPrimary"> @color/theme_teal_light_primary </item>
+        <item name="colorOnPrimary"> @color/theme_teal_light_onPrimary </item>
+        <item name="colorPrimaryContainer"> @color/theme_teal_light_primaryContainer </item>
+        <item name="colorOnPrimaryContainer"> @color/theme_teal_light_onPrimaryContainer </item>
+        <item name="colorSecondary"> @color/theme_teal_light_secondary </item>
+        <item name="colorOnSecondary"> @color/theme_teal_light_onSecondary </item>
+        <item name="colorSecondaryContainer"> @color/theme_teal_light_secondaryContainer </item>
+        <item name="colorOnSecondaryContainer"> @color/theme_teal_light_onSecondaryContainer </item>
+        <item name="colorTertiary"> @color/theme_teal_light_tertiary </item>
+        <item name="colorOnTertiary"> @color/theme_teal_light_onTertiary </item>
+        <item name="colorTertiaryContainer"> @color/theme_teal_light_tertiaryContainer </item>
+        <item name="colorOnTertiaryContainer"> @color/theme_teal_light_onTertiaryContainer </item>
+        <item name="colorError"> @color/theme_teal_light_error </item>
+        <item name="colorErrorContainer"> @color/theme_teal_light_errorContainer </item>
+        <item name="colorOnError"> @color/theme_teal_light_onError </item>
+        <item name="colorOnErrorContainer"> @color/theme_teal_light_onErrorContainer </item>
+        <item name="android:colorBackground"> @color/theme_teal_light_background </item>
+        <item name="colorOnBackground"> @color/theme_teal_light_onBackground </item>
+        <item name="colorSurface"> @color/theme_teal_light_surface </item>
+        <item name="colorOnSurface"> @color/theme_teal_light_onSurface </item>
+        <item name="colorSurfaceVariant"> @color/theme_teal_light_surfaceVariant </item>
+        <item name="colorOnSurfaceVariant"> @color/theme_teal_light_onSurfaceVariant </item>
+        <item name="colorOutline"> @color/theme_teal_light_outline </item>
+        <item name="colorOnSurfaceInverse"> @color/theme_teal_light_inverseOnSurface </item>
+        <item name="colorSurfaceInverse"> @color/theme_teal_light_inverseSurface </item>
+        <!-- Not yet implemented
+        <item name="colorInversePrimary"> @color/theme_teal_light_inversePrimary </item>
+        <item name="colorShadow"> @color/theme_teal_light_shadow </item>
+        -->
+        <item name="colorPrimaryInverse"> @color/theme_teal_light_primaryInverse </item>
+
+        <item name="colorGBC">@color/gbcTeal</item>
     </style>
 </resources>

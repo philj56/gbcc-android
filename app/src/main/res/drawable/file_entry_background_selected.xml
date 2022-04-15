@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Dumb workaround for https://issuetracker.google.com/issues/36941443
+The app crashes if an ?attr appears in a selector directly, so we have to have this dummy drawable
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?attr/colorPrimary"/>
+</shape>

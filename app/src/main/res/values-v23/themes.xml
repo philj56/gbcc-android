@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.GBCC" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Used by sliders and section headings in the settings screen -->
+        <item name="colorAccent">?attr/colorPrimary</item>
+
+        <!-- Component styles -->
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Enable window transition animations -->
+        <item name="android:windowActivityTransitions">true</item>
+    </style>
+</resources>

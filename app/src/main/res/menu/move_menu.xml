@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/confirmMoveItem"
-        android:icon="@drawable/ic_check_white_24dp"
+        android:icon="@drawable/ic_check_24dp"
         android:title="@string/move"
         app:showAsAction="ifRoom" />
 </menu>

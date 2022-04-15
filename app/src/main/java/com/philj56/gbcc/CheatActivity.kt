@@ -28,12 +28,11 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.philj56.gbcc.databinding.ActivityCheatListBinding
 import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 
 data class Cheat(var description: String, var code: String, var active: Boolean)
 
-class CheatActivity : AppCompatActivity() {
+class CheatActivity : BaseActivity() {
     private lateinit var configFile: File
     private lateinit var adapter: CheatAdapter
     private var cheats = ArrayList<Cheat>()
@@ -43,6 +42,7 @@ class CheatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCheatListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         val configDir = filesDir.resolve("config")
         configDir.mkdirs()
@@ -193,7 +193,7 @@ class CheatDialogFragment(private val index: Int) : DialogFragment() {
                 activity.addCheat(
                     Cheat(
                         descriptionInput.text.toString().trim(),
-                        codeInput.text.toString().toUpperCase(Locale.getDefault()),
+                        codeInput.text.toString().uppercase(),
                         true),
                     index
                 )

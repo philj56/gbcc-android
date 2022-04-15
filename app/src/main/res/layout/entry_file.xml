@@ -27,14 +27,14 @@
             android:gravity="center|start"
             android:paddingStart="0dp"
             android:paddingEnd="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/file_entry_text" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="1dp"
         android:importantForAccessibility="no"
         app:srcCompat="@drawable/file_entry_divider" />
 

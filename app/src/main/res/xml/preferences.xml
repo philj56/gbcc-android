@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="0dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
@@ -231,6 +230,14 @@
         app:iconSpaceReserved="false"
         app:key="miscellaneous_category"
         app:title="@string/settings_category_miscellaneous">
+
+        <com.philj56.gbcc.SummaryListPreference
+            app:defaultValue="Teal"
+            app:entries="@array/color_names_array"
+            app:entryValues="@array/color_values_array"
+            app:key="theme"
+            app:title="@string/settings_theme"
+            app:iconSpaceReserved="false" />
 
         <com.philj56.gbcc.SummaryListPreference
             app:defaultValue="auto"
