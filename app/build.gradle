@@ -59,12 +59,11 @@ android {
 		useIR = true
 	}
 
-	ndkVersion '21.1.6352462'
+	ndkVersion '24.0.8215888'
 }
 
 dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 	implementation "androidx.camera:camera-core:1.1.0-beta03"
 	implementation "androidx.camera:camera-camera2:1.1.0-beta03"
 	implementation "androidx.camera:camera-lifecycle:1.1.0-beta03"
