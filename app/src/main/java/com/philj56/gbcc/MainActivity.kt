@@ -11,7 +11,6 @@
 package com.philj56.gbcc
 
 import android.animation.Animator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -31,7 +30,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.animation.addListener
 import androidx.core.view.forEach
-import androidx.core.view.forEachIndexed
 import androidx.core.view.postDelayed
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
@@ -39,6 +37,7 @@ import androidx.preference.PreferenceManager
 import androidx.transition.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.philj56.gbcc.databinding.ActivityMainBinding
+import com.philj56.gbcc.fileList.FileAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -54,7 +53,6 @@ import java.util.zip.ZipOutputStream
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 import kotlin.math.max
-import kotlin.math.min
 
 private const val IMPORT_REQUEST_CODE: Int = 10
 private const val EXPORT_REQUEST_CODE: Int = 11
@@ -71,18 +69,20 @@ class MainActivity : BaseActivity() {
     private var selectionMode = SelectionMode.NORMAL
     private val moveSelection = mutableListOf<File>()
     private lateinit var files: ArrayList<File>
-    private lateinit var adapter: FileAdapter
     private lateinit var currentDir: File
     private lateinit var baseDir: File
     private lateinit var binding: ActivityMainBinding
 
     private var timeBackPressed: Long = 0
 
+    private val adapter = FileAdapter(
+        onClick = {file, view -> onListItemClick(file, view)},
+        onLongClick = {file, view -> onListItemLongClick(file, view)}
+    )
+
     private val toolbarTransition = CircularReveal()
         .setDuration(300)
         .setInterpolator(AccelerateDecelerateInterpolator())
-    private val fileTransition = TransitionSet()
-    private val deleteTransitionSet = TransitionSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
@@ -99,6 +99,24 @@ class MainActivity : BaseActivity() {
         currentDir = baseDir
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Set up the toolbars
+        //binding.mainToolbar.inflateMenu(R.menu.main_menu)
+        binding.mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        //binding.fileToolbar.inflateMenu(R.menu.file_menu)
+        binding.fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        binding.fileToolbar.setNavigationOnClickListener { clearSelection() }
+        //binding.moveToolbar.inflateMenu(R.menu.move_menu)
+        binding.moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
+        binding.moveToolbar.setNavigationOnClickListener { clearSelection() }
+
+        toolbarTransition.addTarget(binding.mainAppBarLayout)
+        toolbarTransition.addTarget(binding.fileAppBarLayout)
+        toolbarTransition.addTarget(binding.moveAppBarLayout)
+
+        binding.fileList.adapter = adapter
+        binding.fileList.itemAnimator = null
+        updateFiles()
 
         // Check if the version has changed since last launch, and perform some setup if so
         Thread {
@@ -126,100 +144,6 @@ class MainActivity : BaseActivity() {
                 runOnUiThread { updateFiles() }
             }
         }.start()
-
-        // Set up the toolbars
-        //binding.mainToolbar.inflateMenu(R.menu.main_menu)
-        binding.mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        //binding.fileToolbar.inflateMenu(R.menu.file_menu)
-        binding.fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        binding.fileToolbar.setNavigationOnClickListener { clearSelection() }
-        //binding.moveToolbar.inflateMenu(R.menu.move_menu)
-        binding.moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        binding.moveToolbar.setNavigationOnClickListener { clearSelection() }
-
-        toolbarTransition.addTarget(binding.mainAppBarLayout)
-        toolbarTransition.addTarget(binding.fileAppBarLayout)
-        toolbarTransition.addTarget(binding.moveAppBarLayout)
-
-        fileTransition.addTransition(SlideShrink().setDuration(300))
-        fileTransition.ordering = TransitionSet.ORDERING_TOGETHER
-
-        deleteTransitionSet.addListener(object : TransitionListenerAdapter() {
-            override fun onTransitionEnd(transition: Transition) {
-                adapter.selected.forEach { file ->
-                    files.remove(file)
-                    file.deleteRecursively()
-                }
-                clearSelection()
-                updateFiles()
-                binding.fileList.forEach { view ->
-                    view.clearAnimation()
-                    view.layoutParams.height = 0
-                    view.translationX = 0.0f
-                    view.requestLayout()
-                }
-            }
-        })
-
-        deleteTransitionSet.addTransition(fileTransition)
-        deleteTransitionSet.addTransition(toolbarTransition)
-        deleteTransitionSet.ordering = TransitionSet.ORDERING_TOGETHER
-
-        adapter = FileAdapter(this, R.layout.entry_file, R.id.fileEntry, files)
-        binding.fileList.adapter = adapter
-        binding.fileList.setOnItemClickListener { _, _, position, _ ->
-            val file = binding.fileList.adapter.getItem(position) as File
-            when (selectionMode) {
-                SelectionMode.DELETE -> {
-                }
-                SelectionMode.MOVE -> {
-                    if (file.isDirectory) {
-                        currentDir = file
-                        updateFiles()
-                    }
-                }
-                SelectionMode.NORMAL -> {
-                    if (file.isDirectory) {
-                        currentDir = file
-                        updateFiles()
-                    } else {
-                        switchToGL(file.toString())
-                    }
-                }
-                SelectionMode.SELECT -> {
-                    val item = binding.fileList.getChildAt(position - binding.fileList.firstVisiblePosition)
-                    if (file in adapter.selected) {
-                        adapter.selected.remove(file)
-                        if (adapter.selected.isEmpty()) {
-                            TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
-                            clearSelection()
-                        }
-                    } else {
-                        adapter.selected.add(file)
-                    }
-                    item.isActivated = file in adapter.selected
-                    item.invalidateDrawable(item.background)
-                }
-            }
-        }
-        binding.fileList.setOnItemLongClickListener { _, _, position, _ ->
-            val file = binding.fileList.adapter.getItem(position) as File
-            if (adapter.selected.isEmpty()) {
-                selectionMode = SelectionMode.SELECT
-                val item = binding.fileList.getChildAt(position - binding.fileList.firstVisiblePosition)
-                adapter.selected.add(file)
-                item.isActivated = true
-                item.invalidateDrawable(item.background)
-
-                if (file.isDirectory) {
-                    showDirectoryActionsDialog(file)
-                } else {
-                    showRomActionsDialog(file)
-                }
-            }
-
-            return@setOnItemLongClickListener true
-        }
     }
 
     override fun onPause() {
@@ -248,7 +172,7 @@ class MainActivity : BaseActivity() {
         binding.mainAppBarLayout.visibility = View.INVISIBLE
     }
 
-    fun clearSelection() {
+    private fun clearSelection() {
         selectionMode = SelectionMode.NORMAL
         if (adapter.selected.isNotEmpty()) {
             adapter.selected.clear()
@@ -258,7 +182,6 @@ class MainActivity : BaseActivity() {
             }
         }
         moveSelection.clear()
-        fileTransition.targets.clear()
         binding.mainAppBarLayout.visibility = View.VISIBLE
         binding.fileAppBarLayout.visibility = View.INVISIBLE
         binding.moveAppBarLayout.visibility = View.INVISIBLE
@@ -273,13 +196,62 @@ class MainActivity : BaseActivity() {
         files = unsorted?.sortedWith(
             compareBy(
                 { !it.isDirectory },
-                { it.name }
+                { it.name.lowercase() }
             )
         )?.toCollection(ArrayList()) ?: ArrayList()
-        if (::adapter.isInitialized) {
-            adapter.clear()
-            adapter.addAll(files)
-            adapter.notifyDataSetChanged()
+        adapter.submitList(files)
+    }
+
+    private fun onListItemClick(file: File, view: View) {
+        Log.d("Click", "${file.absoluteFile}")
+        when (selectionMode) {
+            SelectionMode.DELETE -> {
+            }
+            SelectionMode.MOVE -> {
+                if (file.isDirectory) {
+                    currentDir = file
+                    updateFiles()
+                }
+            }
+            SelectionMode.NORMAL -> {
+                if (file.isDirectory) {
+                    currentDir = file
+                    updateFiles()
+                } else {
+                    switchToGL(file.toString())
+                }
+            }
+            SelectionMode.SELECT -> {
+                if (file in adapter.selected) {
+                    adapter.selected.remove(file)
+                    if (adapter.selected.isEmpty()) {
+                        TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
+                        clearSelection()
+                    }
+                } else {
+                    adapter.selected.add(file)
+                }
+                view.isActivated = file in adapter.selected
+                view.invalidateDrawable(view.background)
+            }
+        }
+    }
+
+    private fun onListItemLongClick(file: File, view: View) {
+        if (file == getExternalFilesDir(null)) {
+            return
+        }
+        if (adapter.selected.isEmpty()) {
+            selectionMode = SelectionMode.SELECT
+            adapter.selected.add(file)
+            view.isActivated = true
+            view.invalidateDrawable(view.background)
+
+            if (file.isDirectory) {
+                showDirectoryActionsDialog(file)
+            } else {
+                showRomActionsDialog(file)
+            }
         }
     }
 
@@ -347,21 +319,13 @@ class MainActivity : BaseActivity() {
     }
 
     private fun performDelete() {
-        binding.fileList.forEachIndexed { index, view ->
-            if (files[binding.fileList.firstVisiblePosition + index] in adapter.selected) {
-                fileTransition.addTarget(view)
-            }
+        adapter.selected.forEach { file ->
+            val index = files.indexOf(file)
+            files.removeAt(index)
+            file.deleteRecursively()
+            adapter.notifyItemRemoved(index)
         }
-        val scene = Scene(binding.fileList)
-        scene.setEnterAction {
-            binding.fileList.forEachIndexed { index, view ->
-                if (files[binding.fileList.firstVisiblePosition + index] in adapter.selected) {
-                    view.layoutParams.height = 1
-                }
-            }
-        }
-        TransitionManager.go(scene, deleteTransitionSet)
-        binding.fileList.invalidate()
+        clearSelection()
     }
 
     private fun showDirectoryActionsDialog(file: File) {
@@ -758,40 +722,6 @@ class MainActivity : BaseActivity() {
     }
 }
 
-class FileAdapter(
-    context: Context,
-    resource: Int,
-    textViewResourceId: Int,
-    private val objects: List<File>
-) : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
-
-    val selected = HashSet<File>()
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = super.getView(position, convertView, parent)
-        val textView = view.findViewById<TextView>(R.id.fileEntry)
-        val imageView = view.findViewById<ImageView>(R.id.fileIcon)
-        val file = objects[position]
-
-        view.isActivated = file in selected
-        when (file.extension) {
-            "gbc" -> {
-                imageView.setImageResource(R.drawable.ic_file_gbc)
-                imageView.clearColorFilter()
-            }
-            "gb" -> {
-                imageView.setImageResource(R.drawable.ic_file_dmg)
-                imageView.clearColorFilter()
-            }
-            else -> {
-                imageView.setImageResource(R.drawable.ic_folder_34dp)
-            }
-        }
-
-        textView.text = file.nameWithoutExtension
-        return view
-    }
-}
 
 class ImportOverwriteAdapter(
     context: Context,
@@ -918,56 +848,6 @@ class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : Dialog
                 .setOnDismissListener { deleteFiles() }
             return builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
-    }
-}
-
-class SlideShrink : Transition() {
-
-    companion object {
-        private const val PROPNAME_HEIGHT = "com.philj56.gbcc.slideshrink:SlideShrink:height"
-        private const val PROPNAME_LAYOUT_HEIGHT =
-            "com.philj56.gbcc.slideshrink:SlideShrink:layoutParams.height"
-    }
-
-    override fun captureStartValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
-    }
-
-    override fun captureEndValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
-    }
-
-    private fun captureValues(transitionValues: TransitionValues) {
-        val view = transitionValues.view
-        transitionValues.values[PROPNAME_HEIGHT] = view.height
-        transitionValues.values[PROPNAME_LAYOUT_HEIGHT] = view.layoutParams.height
-    }
-
-    override fun createAnimator(
-        sceneRoot: ViewGroup,
-        startValues: TransitionValues?,
-        endValues: TransitionValues?
-    ): Animator? {
-        if (startValues == null || endValues == null) {
-            return null
-        }
-        val view = endValues.view
-        val startHeight = startValues.values[PROPNAME_HEIGHT] as Int
-        val endLayoutHeight = endValues.values[PROPNAME_LAYOUT_HEIGHT] as Int
-
-        if (startHeight == endLayoutHeight) {
-            return null
-        }
-
-        val animator = ValueAnimator.ofInt(startHeight, endLayoutHeight)
-        animator.addUpdateListener {
-            view.translationX = it.animatedFraction * view.width
-            val offsetTime = min((1 - it.animatedFraction) * 2, 1.0f)
-            view.layoutParams.height = max(offsetTime * startHeight, 1.0f).toInt()
-            view.requestLayout()
-        }
-
-        return animator
     }
 }
 

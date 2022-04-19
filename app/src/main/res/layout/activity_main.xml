@@ -73,17 +73,17 @@
             android:id="@+id/directoryTree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="8dp"
+            android:minHeight="?attr/minTouchTargetSize"
+            android:layout_gravity="center_vertical"
             android:textAppearance="?attr/textAppearanceTitleLarge" />
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:nestedScrollingEnabled="true" />
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
