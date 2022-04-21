@@ -38,6 +38,7 @@ import androidx.transition.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.philj56.gbcc.databinding.ActivityMainBinding
 import com.philj56.gbcc.fileList.FileAdapter
+import com.philj56.gbcc.fileList.PathAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -75,14 +76,18 @@ class MainActivity : BaseActivity() {
 
     private var timeBackPressed: Long = 0
 
-    private val adapter = FileAdapter(
-        onClick = {file, view -> onListItemClick(file, view)},
-        onLongClick = {file, view -> onListItemLongClick(file, view)}
+    private val fileAdapter = FileAdapter(
+        onClick = { file, view -> onListItemClick(file, view) },
+        onLongClick = { file, view -> onListItemLongClick(file, view) }
+    )
+    private val pathAdapter = PathAdapter(
+        onClick = { file -> onPathItemClick(file) }
     )
 
     private val toolbarTransition = CircularReveal()
         .setDuration(300)
         .setInterpolator(AccelerateDecelerateInterpolator())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
@@ -101,12 +106,9 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
 
         // Set up the toolbars
-        //binding.mainToolbar.inflateMenu(R.menu.main_menu)
         binding.mainToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
-        //binding.fileToolbar.inflateMenu(R.menu.file_menu)
         binding.fileToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
         binding.fileToolbar.setNavigationOnClickListener { clearSelection() }
-        //binding.moveToolbar.inflateMenu(R.menu.move_menu)
         binding.moveToolbar.setOnMenuItemClickListener { item -> onMenuItemClick(item) }
         binding.moveToolbar.setNavigationOnClickListener { clearSelection() }
 
@@ -114,8 +116,11 @@ class MainActivity : BaseActivity() {
         toolbarTransition.addTarget(binding.fileAppBarLayout)
         toolbarTransition.addTarget(binding.moveAppBarLayout)
 
-        binding.fileList.adapter = adapter
+        binding.fileList.adapter = fileAdapter
         binding.fileList.itemAnimator = null
+        binding.path.adapter = pathAdapter
+        binding.path.itemAnimator = null
+        changeDir(baseDir)
         updateFiles()
 
         // Check if the version has changed since last launch, and perform some setup if so
@@ -127,7 +132,7 @@ class MainActivity : BaseActivity() {
                 lastLaunchVersion.createNewFile()
                 lastLaunchVersion.writeText("${BuildConfig.VERSION_CODE}\n")
 
-                getExternalFilesDir(null)?.resolve("Tutorial.gbc")?.outputStream()?.use {
+                baseDir.resolve("Tutorial.gbc").outputStream().use {
                     assets.open("Tutorial.gbc").copyTo(it)
                 }
                 assets.open("print.wav").use { iStream ->
@@ -174,8 +179,8 @@ class MainActivity : BaseActivity() {
 
     private fun clearSelection() {
         selectionMode = SelectionMode.NORMAL
-        if (adapter.selected.isNotEmpty()) {
-            adapter.selected.clear()
+        if (fileAdapter.selected.isNotEmpty()) {
+            fileAdapter.selected.clear()
             binding.fileList.forEach { view ->
                 view.isActivated = false
                 view.invalidateDrawable(view.background)
@@ -188,8 +193,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun updateFiles() {
-        val curPath = currentDir.path.removePrefix(baseDir.path).replace("/", " / ")
-        binding.directoryTree.text = getString(R.string.directory_tree, curPath)
         val unsorted = currentDir.listFiles { file ->
             file.name.matches(Regex(".*\\.gbc?")) or file.isDirectory
         }
@@ -199,11 +202,29 @@ class MainActivity : BaseActivity() {
                 { it.name.lowercase() }
             )
         )?.toCollection(ArrayList()) ?: ArrayList()
-        adapter.submitList(files)
+        fileAdapter.submitList(files)
+    }
+
+    private fun toggleSelection(file: File) {
+        if (file in fileAdapter.selected) {
+            fileAdapter.selected.remove(file)
+            if (fileAdapter.selected.isEmpty()) {
+                TransitionManager.beginDelayedTransition(
+                    binding.mainLayout,
+                    toolbarTransition
+                )
+                clearSelection()
+            }
+        } else {
+            fileAdapter.selected.add(file)
+        }
+    }
+
+    private fun onPathItemClick(dir: File) {
+        changeDir(baseDir.resolve(dir))
     }
 
     private fun onListItemClick(file: File, view: View) {
-        Log.d("Click", "${file.absoluteFile}")
         when (selectionMode) {
             SelectionMode.DELETE -> {
             }
@@ -215,42 +236,45 @@ class MainActivity : BaseActivity() {
             }
             SelectionMode.NORMAL -> {
                 if (file.isDirectory) {
-                    currentDir = file
-                    updateFiles()
+                    changeDir(file)
                 } else {
                     switchToGL(file.toString())
                 }
             }
             SelectionMode.SELECT -> {
-                if (file in adapter.selected) {
-                    adapter.selected.remove(file)
-                    if (adapter.selected.isEmpty()) {
-                        TransitionManager.beginDelayedTransition(binding.mainLayout, toolbarTransition)
-                        clearSelection()
-                    }
+                if (file.isDirectory) {
+                    changeDir(file)
                 } else {
-                    adapter.selected.add(file)
+                    toggleSelection(file)
+                    view.isActivated = file in fileAdapter.selected
+                    view.invalidateDrawable(view.background)
                 }
-                view.isActivated = file in adapter.selected
-                view.invalidateDrawable(view.background)
             }
         }
     }
 
     private fun onListItemLongClick(file: File, view: View) {
-        if (file == getExternalFilesDir(null)) {
-            return
-        }
-        if (adapter.selected.isEmpty()) {
-            selectionMode = SelectionMode.SELECT
-            adapter.selected.add(file)
-            view.isActivated = true
-            view.invalidateDrawable(view.background)
+        when (selectionMode) {
+            SelectionMode.SELECT -> {
+               if (file.isDirectory) {
+                   toggleSelection(file)
+                   view.isActivated = file in fileAdapter.selected
+                   view.invalidateDrawable(view.background)
+               }
+            }
+            else -> {
+                if (fileAdapter.selected.isEmpty()) {
+                    selectionMode = SelectionMode.SELECT
+                    fileAdapter.selected.add(file)
+                    view.isActivated = true
+                    view.invalidateDrawable(view.background)
 
-            if (file.isDirectory) {
-                showDirectoryActionsDialog(file)
-            } else {
-                showRomActionsDialog(file)
+                    if (file.isDirectory) {
+                        showDirectoryActionsDialog(file)
+                    } else {
+                        showRomActionsDialog(file)
+                    }
+                }
             }
         }
     }
@@ -268,7 +292,7 @@ class MainActivity : BaseActivity() {
             R.id.exportItem -> selectExportDir()
             R.id.deleteItem -> {
                 selectionMode = SelectionMode.DELETE
-                val count = adapter.selected.count()
+                val count = fileAdapter.selected.count()
                 MaterialAlertDialogBuilder(this)
                     .setMessage(resources.getQuantityString(R.plurals.delete_confirmation, count, count))
                     .setPositiveButton(R.string.delete) { _, _ -> performDelete() }
@@ -278,7 +302,7 @@ class MainActivity : BaseActivity() {
             }
             R.id.moveItem -> {
                 selectionMode = SelectionMode.MOVE
-                moveSelection.addAll(0, files.filter { it in adapter.selected })
+                moveSelection.addAll(0, fileAdapter.selected)
                 binding.moveAppBarLayout.visibility = View.VISIBLE
                 binding.fileAppBarLayout.visibility = View.INVISIBLE
                 binding.mainAppBarLayout.visibility = View.INVISIBLE
@@ -306,6 +330,27 @@ class MainActivity : BaseActivity() {
         startActivity(intent)
     }
 
+    private fun changeDir(dir: File) {
+        currentDir = dir
+        val pathList = if (currentDir == baseDir) {
+            listOf(File(""))
+        } else {
+            currentDir
+                .relativeTo(baseDir)
+                .path
+                .split(File.separatorChar)
+                .runningFold(File("")) { a, b -> a.resolve(b) }
+        }
+        pathAdapter.submitList(pathList) {
+            val count = pathAdapter.itemCount - 1
+            for (index in 0..count) {
+                val viewHolder = binding.path.findViewHolderForAdapterPosition(index)
+                viewHolder?.itemView?.findViewById<Button>(R.id.pathButton)?.isActivated = (index == count)
+            }
+        }
+        updateFiles()
+    }
+
     private fun createFolder(name: String) {
         if (currentDir.resolve(name).mkdirs()) {
             updateFiles()
@@ -319,11 +364,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun performDelete() {
-        adapter.selected.forEach { file ->
+        fileAdapter.selected.forEach { file ->
             val index = files.indexOf(file)
             files.removeAt(index)
             file.deleteRecursively()
-            adapter.notifyItemRemoved(index)
+            fileAdapter.notifyItemRemoved(index)
         }
         clearSelection()
     }
@@ -420,7 +465,7 @@ class MainActivity : BaseActivity() {
 
     private fun showSaveDeleteDialog() {
         selectionMode = SelectionMode.DELETE
-        val count = adapter.selected.count()
+        val count = fileAdapter.selected.count()
         MaterialAlertDialogBuilder(this)
             .setMessage(resources.getQuantityString(R.plurals.delete_save_confirmation, count, count))
             .setPositiveButton(R.string.delete) { _, _ -> performSaveDelete() }
@@ -431,7 +476,7 @@ class MainActivity : BaseActivity() {
 
     private fun performSaveDelete() {
         val saveDir = filesDir.resolve(SAVE_DIR)
-        adapter.selected.forEach { file ->
+        fileAdapter.selected.forEach { file ->
             saveDir.listFiles { _, name ->
                 name.startsWith(file.nameWithoutExtension)
             }?.forEach { save ->
@@ -704,9 +749,8 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (currentDir != getExternalFilesDir(null)) {
-            currentDir = currentDir.parentFile ?: filesDir
-            updateFiles()
+        if (currentDir != baseDir) {
+            changeDir(currentDir.parentFile ?: baseDir)
             return
         }
 

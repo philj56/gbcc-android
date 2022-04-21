@@ -2,7 +2,7 @@
     <string name="app_name">GBCC</string>
 
     <!-- MainActivity -->
-    <string name="directory_tree">Files<xliff:g>%1$s</xliff:g></string>
+    <string name="base_directory_name">Files</string>
     <string name="import_rom">Import</string>
     <string name="settings">Settings</string>
     <string name="create_folder">Create folder</string>

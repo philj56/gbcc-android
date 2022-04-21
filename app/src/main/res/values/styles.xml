@@ -6,6 +6,21 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
+    <style name="Widget.GBCC.Button.PathButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">?attr/minTouchTargetSize</item>
+        <item name="android:minWidth">?attr/minTouchTargetSize</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleLarge</item>
+        <item name="android:textColor">@color/path_entry_text</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.GBCC.Button.PathButton</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.GBCC.Button.PathButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
     <style name="TurboToggleTheme" parent="">
         <item name="colorPrimary">@color/gbcButton</item>
         <item name="colorOnSurface">@color/gbcButton</item>

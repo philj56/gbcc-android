@@ -59,7 +59,7 @@ class FileAdapter(private val onClick: (File, View) -> Unit, private val onLongC
 
     private object FileDiffCallback : DiffUtil.ItemCallback<File>() {
         override fun areItemsTheSame(oldItem: File, newItem: File): Boolean {
-            return oldItem.name == newItem.name
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: File, newItem: File): Boolean {
