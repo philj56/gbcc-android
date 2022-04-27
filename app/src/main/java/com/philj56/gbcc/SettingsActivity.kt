@@ -13,7 +13,6 @@ package com.philj56.gbcc
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.widget.TextView
@@ -23,7 +22,6 @@ import com.philj56.gbcc.databinding.ActivitySettingsBinding
 import com.philj56.gbcc.preference.MaterialTurboPreferenceDialogFragmentCompat
 import com.philj56.gbcc.preference.MaterialListPreferenceDialogFragmentCompat
 import com.philj56.gbcc.preference.SliderPreference
-
 
 class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,16 +58,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (preference is ListPreference) {
-            val f = MaterialListPreferenceDialogFragmentCompat.newInstance(preference.key)
-            f.setTargetFragment(this, 0)
-            f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
-        } else if (preference is TurboPreference) {
-            val f = MaterialTurboPreferenceDialogFragmentCompat.newInstance(preference.key)
-            f.setTargetFragment(this, 0)
-            f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
-        } else {
-            super.onDisplayPreferenceDialog(preference)
+        when (preference) {
+            is ListPreference -> {
+                val f = MaterialListPreferenceDialogFragmentCompat.newInstance(preference.key)
+                f.setTargetFragment(this, 0)
+                f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
+            }
+            is TurboPreference -> {
+                val f = MaterialTurboPreferenceDialogFragmentCompat.newInstance(preference.key)
+                f.setTargetFragment(this, 0)
+                f.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
+            }
+            else -> super.onDisplayPreferenceDialog(preference)
         }
     }
 }

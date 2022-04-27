@@ -142,7 +142,9 @@
     <string name="settings_arrange">Rearrange layout</string>
     <string name="settings_licenses">Licenses</string>
 
-    <string name="settings_haptic_strength">Haptic feedback strength</string>
+    <string name="settings_haptic_key_press">Vibrate on button press</string>
+    <string name="settings_haptic_key_release">Vibrate on button release</string>
+    <string name="settings_rumble_strength">Rumble pak strength</string>
     <string name="settings_remap">Remap gamepad</string>
 
     <string name="settings_category_behaviour">Behaviour</string>

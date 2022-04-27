@@ -52,10 +52,7 @@ import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.min
+import kotlin.math.*
 
 private const val autoSaveState: Int = 10
 private const val REQUEST_CODE_PERMISSIONS = 10
@@ -183,7 +180,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     init {
         checkEmulatorState = Runnable {
             if (checkVibrationFun()) {
-                vibrate(10)
+                rumblePakVibrate(prefs.getInt("rumble_strength", 255))
             }
             val turbo = checkTurboFun()
             if (binding.turboToggle.isChecked != turbo) {
@@ -231,29 +228,39 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         }
     }
 
-    private fun hapticVibrate() {
-        val milliseconds = prefs.getInt("haptic_strength", 0).toLong()
-        vibrate(milliseconds)
+    private fun hapticVibrate(view: View, pressed: Boolean) {
+        if (pressed && !prefs.getBoolean("haptic_key_press", true)) {
+            return
+        }
+        if (!pressed && !prefs.getBoolean("haptic_key_release", false)) {
+            return
+        }
+        val effect = if (pressed) {
+            HapticFeedbackConstants.VIRTUAL_KEY
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                HapticFeedbackConstants.VIRTUAL_KEY_RELEASE
+            } else {
+                HapticFeedbackConstants.VIRTUAL_KEY
+            }
+        }
+        view.performHapticFeedback(effect)
     }
 
-    private fun vibrate(milliseconds: Long) {
+    private fun rumblePakVibrate(strength: Int) {
         if (!vibrator.hasVibrator()) {
             return
         }
-        if (milliseconds == 0L) {
-            vibrator.cancel()
-            return
-        }
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
-                    milliseconds,
-                    VibrationEffect.DEFAULT_AMPLITUDE
+                    10,
+                    strength
                 )
             )
         } else {
             @Suppress("DEPRECATION")
-            vibrator.vibrate(milliseconds)
+            vibrator.vibrate(10)
         }
     }
 
@@ -276,12 +283,13 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                     MotionEvent.ACTION_DOWN -> {
                         press(buttons[index], true)
                         view.isPressed = true && animateButtons
-                        hapticVibrate()
+                        hapticVibrate(view, true)
                     }
                     MotionEvent.ACTION_UP -> {
                         views.forEachIndexed { index2, view2 ->
                             press(buttons[index2], false)
                             view2.isPressed = false && animateButtons
+                            hapticVibrate(view2, false)
                         }
                     }
                     MotionEvent.ACTION_MOVE -> run {
@@ -291,7 +299,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                             if (view2 != view) {
                                 val pressed = inBounds(view2, x, y)
                                 if (pressed && !isPressed(buttons[index2])) {
-                                    hapticVibrate()
+                                    hapticVibrate(view2, true)
                                 }
                                 press(buttons[index2], pressed)
                                 view2.isPressed = pressed && animateButtons
@@ -468,7 +476,13 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         gestureDetector = GestureDetector(this, DpadListener())
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
 
         checkFiles()
 
@@ -537,7 +551,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                     val changed = updateDpad(state)
 
                     if (changed) {
-                        hapticVibrate()
+                        hapticVibrate(view, true)
                         if (animateButtons) {
                             binding.dpad.dpadHighlight.setImageResource(
                                 when (state) {
@@ -557,6 +571,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 }
                 MotionEvent.ACTION_UP -> {
                     updateDpad(0)
+                    hapticVibrate(view, false)
                     if (animateButtons) {
                         binding.dpad.dpadHighlight.setImageResource(R.drawable.ic_button_dpad_highlight)
                     }
@@ -575,11 +590,11 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun hideNavigation() {
-        @Suppress("Deprecation")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars()
                     or WindowInsets.Type.navigationBars())
         } else {
+            @Suppress("Deprecation")
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -655,7 +670,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
         if (!prefs.getBoolean("audio_background_music", false)) {
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (Build.VERSION.SDK_INT >= 26) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
                     setAudioAttributes(AudioAttributes.Builder().run {
                         setUsage(AudioAttributes.USAGE_GAME)

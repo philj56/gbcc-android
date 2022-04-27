@@ -16,12 +16,9 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.*
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.View.OnLongClickListener
 import android.view.View.OnTouchListener
-import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatImageView
@@ -265,6 +262,7 @@ class ArrangeActivity : BaseActivity() {
         return (t + 1f) / 2
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
         val scale = valueToSize(value)
         when (slider.id) {
@@ -349,26 +347,9 @@ class ResizableImage : AppCompatImageView {
     private fun addLongClickListener() {
         setOnLongClickListener(OnLongClickListener {
             floating = true
-            vibrate()
+            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
             return@OnLongClickListener false
         })
-    }
-
-    private fun vibrate() {
-        val milliseconds: Long = 10
-        val vibrator = when {
-            Build.VERSION.SDK_INT >= 31 -> {
-                val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                vibratorManager.defaultVibrator
-            }
-            else -> context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        }
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(milliseconds)
-        }
     }
 }
 
@@ -408,20 +389,9 @@ class ResizableLayout : FrameLayout {
     private fun addLongClickListener() {
         setOnLongClickListener(OnLongClickListener {
             floating = true
-            vibrate()
+            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
             return@OnLongClickListener false
         })
-    }
-
-    private fun vibrate() {
-        val milliseconds: Long = 10
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(milliseconds)
-        }
     }
 }
 

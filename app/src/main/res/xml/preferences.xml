@@ -28,6 +28,18 @@
             app:title="@string/settings_back_prompt"
             app:summary="@string/settings_back_prompt_summary" />
 
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="haptic_key_press"
+            app:title="@string/settings_haptic_key_press" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="haptic_key_release"
+            app:title="@string/settings_haptic_key_release" />
+
         <com.philj56.gbcc.TurboPreference
             app:defaultValue="0"
             app:iconSpaceReserved="false"
@@ -42,15 +54,6 @@
                 android:targetPackage="com.philj56.gbcc"
                 android:targetClass="com.philj56.gbcc.RemapActivity" />
         </Preference>
-
-        <com.philj56.gbcc.preference.SliderPreference
-            android:layout="@layout/preference_widget_slider"
-            app:defaultValue="10"
-            app:min="0"
-            android:max="100"
-            app:iconSpaceReserved="false"
-            app:key="haptic_strength"
-            app:title="@string/settings_haptic_strength" />
 
     </PreferenceCategory>
 
@@ -258,6 +261,15 @@
             app:key="camera"
             app:title="@string/settings_camera"
             app:iconSpaceReserved="false" />
+
+        <com.philj56.gbcc.preference.SliderPreference
+            android:layout="@layout/preference_widget_slider"
+            app:defaultValue="255"
+            app:min="1"
+            android:max="255"
+            app:iconSpaceReserved="false"
+            app:key="rumble_strength"
+            app:title="@string/settings_rumble_strength" />
 
         <Preference
             app:key="licenses"

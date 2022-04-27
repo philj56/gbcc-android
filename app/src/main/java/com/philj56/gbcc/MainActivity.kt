@@ -562,7 +562,7 @@ class MainActivity : BaseActivity() {
 
         fun importZipWithCharset(iStream: InputStream, charset: Charset) : Exception? {
             try {
-                if (Build.VERSION.SDK_INT >= 24) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     ZipInputStream(iStream, charset)
                 } else {
                     ZipInputStream(iStream)

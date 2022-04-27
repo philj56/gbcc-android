@@ -9,15 +9,12 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.Button
 import android.widget.RadioGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.radiobutton.MaterialRadioButton
 import com.philj56.gbcc.databinding.ActivityRemapControllerBinding
-import java.lang.reflect.Type
 import kotlin.math.abs
 
 class RemapActivity : BaseActivity() {

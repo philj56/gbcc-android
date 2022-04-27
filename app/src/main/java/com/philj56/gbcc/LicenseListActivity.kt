@@ -13,7 +13,6 @@ package com.philj56.gbcc
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
 import com.philj56.gbcc.databinding.ActivityLicenseListBinding
 
 class LicenseListActivity : BaseActivity() {
