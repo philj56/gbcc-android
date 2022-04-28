@@ -16,16 +16,4 @@
         android:theme="@style/TurboToggleTheme"
         app:switchMinWidth="64dp" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/turboToggleDark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:clickable="false"
-        android:enabled="false"
-        android:focusable="false"
-        android:theme="@style/TurboToggleThemeDark"
-        android:visibility="gone"
-        app:switchMinWidth="64dp" />
-
 </com.philj56.gbcc.ResizableLayout>

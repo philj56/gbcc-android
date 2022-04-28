@@ -28,13 +28,6 @@
         <item name="colorPrimaryContainer">@color/gbcToggleBackground</item>
     </style>
 
-    <style name="TurboToggleThemeDark" parent="">
-        <item name="colorPrimary">@color/dmgDarkButton</item>
-        <item name="colorOnSurface">@color/dmgDarkButton</item>
-        <item name="colorOutline">@color/dmgDarkToggleBackground</item>
-        <item name="colorPrimaryContainer">@color/dmgDarkToggleBackground</item>
-    </style>
-
     <style name="OledDark" parent="">
         <item name="colorSurface">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>

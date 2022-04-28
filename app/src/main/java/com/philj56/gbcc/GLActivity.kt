@@ -17,6 +17,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.Rect
@@ -186,9 +187,6 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             if (binding.turboToggle.isChecked != turbo) {
                 binding.turboToggle.isChecked = turbo
             }
-            if (binding.turboToggleDark.isChecked != turbo) {
-                binding.turboToggleDark.isChecked = turbo
-            }
             if (checkErrorFun()) {
                 flushLogs()
                 MaterialAlertDialogBuilder(this)
@@ -332,7 +330,6 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
         binding.screen.setOnClickListener { toggleMenu() }
         binding.turboToggle.setOnClickListener { toggleTurbo() }
-        binding.turboToggleDark.setOnClickListener { toggleTurbo() }
 
         if (!gbc) {
             val screenBorderColor: Int
@@ -350,8 +347,8 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                binding.turboToggle.visibility = View.INVISIBLE
-                binding.turboToggleDark.visibility = View.VISIBLE
+                binding.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkButton))
+                binding.turboToggle.trackTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleTrack))
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
                 binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
@@ -406,8 +403,6 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         binding.dpad.root.scaleY = binding.dpad.root.scaleX
         binding.turboToggle.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
         binding.turboToggle.scaleY = binding.turboToggle.scaleX
-        binding.turboToggleDark.scaleX = binding.turboToggle.scaleX
-        binding.turboToggleDark.scaleY = binding.turboToggle.scaleX
 
         binding.buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
         binding.buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
@@ -421,12 +416,9 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         binding.dpad.root.translationY = prefs.getFloat(getString(R.string.dpad_offset_y_key), 0f)
         binding.turboToggle.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
         binding.turboToggle.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
-        binding.turboToggleDark.translationX = prefs.getFloat(getString(R.string.turbo_offset_x_key), 0f)
-        binding.turboToggleDark.translationY = prefs.getFloat(getString(R.string.turbo_offset_y_key), 0f)
 
         if (!prefs.getBoolean("show_turbo", false)) {
             binding.turboToggle.visibility = View.GONE
-            binding.turboToggleDark.visibility = View.GONE
         }
     }
 
@@ -693,7 +685,6 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         if (resume) {
             loadState(autoSaveState)
             binding.turboToggle.isChecked = false
-            binding.turboToggleDark.isChecked = false
             resume = false
         }
         if (hasAccelerometer()) {
@@ -1072,7 +1063,6 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private fun toggleTurboWrapper() {
         val turbo = toggleTurbo()
         binding.turboToggle.isChecked = turbo
-        binding.turboToggleDark.isChecked = turbo
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {

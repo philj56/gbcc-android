@@ -8,7 +8,8 @@
     <color name="dmgDarkButton">#484649</color>
     <color name="dmgDarkBackground">#101010</color>
     <color name="dmgDarkDpad">#484649</color>
-    <color name="dmgDarkToggleBackground">#20484649</color>
+    <color name="dmgDarkToggleThumb">@color/dmgDarkButton</color>
+    <color name="dmgDarkToggleTrack">#20484649</color>
     <color name="gbcScreenBorder">#262E31</color>
     <color name="gbcButton">#202020</color>
     <color name="gbcToggleBackground">#20202020</color>

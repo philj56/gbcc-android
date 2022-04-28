@@ -13,6 +13,7 @@ package com.philj56.gbcc
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.*
 import android.util.AttributeSet
@@ -82,8 +83,8 @@ class ArrangeActivity : BaseActivity() {
                 binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                binding.turboToggleLayout.turboToggle.visibility = View.INVISIBLE
-                binding.turboToggleLayout.turboToggleDark.visibility = View.VISIBLE
+                binding.turboToggleLayout.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkButton))
+                binding.turboToggleLayout.turboToggle.trackTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleTrack))
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
                 binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_selector)
@@ -153,7 +154,6 @@ class ArrangeActivity : BaseActivity() {
 
         if (!prefs.getBoolean("show_turbo", false)) {
             binding.turboToggleLayout.turboToggle.visibility = View.GONE
-            binding.turboToggleLayout.turboToggleDark.visibility = View.GONE
         }
 
         setSizes()
