@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="Teal"
+        app:entries="@array/color_names_array"
+        app:entryValues="@array/color_values_array"
+        app:key="theme"
+        app:title="@string/settings_theme"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="auto"
+        app:entries="@array/night_mode_names_array"
+        app:entryValues="@array/night_mode_values_array"
+        app:key="night_mode"
+        app:title="@string/settings_night_mode"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:key="oled_night_mode"
+        app:title="@string/settings_oled_night_mode"
+        app:summary="@string/settings_oled_night_mode_summary"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="back"
+        app:entries="@array/camera_names_array"
+        app:entryValues="@array/camera_values_array"
+        app:key="camera"
+        app:title="@string/settings_camera"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.preference.SliderPreference
+        android:layout="@layout/preference_widget_slider"
+        app:defaultValue="255"
+        app:min="1"
+        android:max="255"
+        app:iconSpaceReserved="false"
+        app:key="rumble_strength"
+        app:title="@string/settings_rumble_strength" />
+
+    <Preference
+        app:key="licenses"
+        app:title="@string/settings_licenses"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.LicenseListActivity" />
+    </Preference>
+
+</PreferenceScreen>

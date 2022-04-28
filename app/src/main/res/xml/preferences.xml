@@ -2,284 +2,55 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:key="behaviour_category"
-        app:title="@string/settings_category_behaviour">
+    <Preference
+        app:key="behaviour"
+        app:title="@string/settings_category_behaviour"
+        app:summary="@string/settings_category_behaviour_summary"
+        app:icon="@drawable/ic_gamepad_24dp">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.BehaviourSettingsActivity" />
+    </Preference>
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="auto_resume"
-            app:title="@string/settings_auto_resume"
-            app:summary="@string/settings_auto_resume_summary" />
+    <Preference
+        app:key="graphics"
+        app:title="@string/settings_category_graphics"
+        app:summary="@string/settings_category_graphics_summary"
+        app:icon="@drawable/ic_image_24dp">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.GraphicsSettingsActivity" />
+    </Preference>
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="auto_save"
-            app:title="@string/settings_auto_save"
-            app:summary="@string/settings_auto_save_summary" />
+    <Preference
+        app:key="display"
+        app:title="@string/settings_category_display"
+        app:summary="@string/settings_category_display_summary"
+        app:icon="@drawable/ic_smartphone_24dp">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.DisplaySettingsActivity" />
+    </Preference>
 
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="back_prompt"
-            app:title="@string/settings_back_prompt"
-            app:summary="@string/settings_back_prompt_summary" />
+    <Preference
+        app:key="audio"
+        app:title="@string/settings_category_audio"
+        app:summary="@string/settings_category_audio_summary"
+        app:icon="@drawable/ic_music_note_24dp">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.AudioSettingsActivity" />
+    </Preference>
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="haptic_key_press"
-            app:title="@string/settings_haptic_key_press" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="haptic_key_release"
-            app:title="@string/settings_haptic_key_release" />
-
-        <com.philj56.gbcc.TurboPreference
-            app:defaultValue="0"
-            app:iconSpaceReserved="false"
-            app:key="turbo_speed"
-            app:title="@string/settings_turbo_speed" />
-
-        <Preference
-            app:key="remap"
-            app:title="@string/settings_remap"
-            app:iconSpaceReserved="false">
-            <intent
-                android:targetPackage="com.philj56.gbcc"
-                android:targetClass="com.philj56.gbcc.RemapActivity" />
-        </Preference>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:key="graphics_category"
-        app:title="@string/settings_category_graphics">
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="frame_blend"
-            app:title="@string/settings_frame_blend" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="vsync"
-            app:title="@string/settings_vsync" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="interlacing"
-            app:title="@string/settings_interlacing" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="@string/settings_shader_dot_matrix"
-            app:entries="@array/shader_names_array"
-            app:entryValues="@array/shader_values_array"
-            app:key="shader_dmg"
-            app:title="@string/settings_shader_dmg"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="@string/settings_shader_subpixel"
-            app:entries="@array/shader_names_array"
-            app:entryValues="@array/shader_values_array"
-            app:key="shader_gbc"
-            app:title="@string/settings_shader_gbc"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="Default"
-            app:entries="@array/dmg_palettes_array"
-            app:entryValues="@array/dmg_palettes_array"
-            app:key="palette"
-            app:title="@string/settings_palette"
-            app:iconSpaceReserved="false" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:key="display_category"
-        app:title="@string/settings_category_display">
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="animate_buttons"
-            app:title="@string/settings_animate_buttons" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="show_fps"
-            app:title="@string/settings_fps" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="show_turbo"
-            app:title="@string/settings_show_turbo" />
-
-        <SwitchPreferenceCompat
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="dpad_turbo"
-            app:title="@string/settings_dpad_turbo"
-            app:summary="@string/settings_dpad_turbo_summary" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="auto"
-            app:entries="@array/skin_names_array"
-            app:entryValues="@array/skin_values_array"
-            app:key="skin"
-            app:title="@string/settings_skin"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="Light"
-            app:entries="@array/dmg_color_names_array"
-            app:entryValues="@array/dmg_color_values_array"
-            app:key="dmg_color"
-            app:title="@string/settings_dmg_color"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="Teal"
-            app:entries="@array/color_names_array"
-            app:entryValues="@array/color_values_array"
-            app:key="color"
-            app:title="@string/settings_color"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="-1"
-            app:entries="@array/orientation_names_array"
-            app:entryValues="@array/orientation_values_array"
-            app:key="orientation"
-            app:title="@string/settings_orientation"
-            app:iconSpaceReserved="false" />
-
-        <Preference
-            app:key="arrange"
-            app:title="@string/settings_arrange"
-            app:iconSpaceReserved="false">
-            <intent
-                android:targetPackage="com.philj56.gbcc"
-                android:targetClass="com.philj56.gbcc.ArrangeActivity" />
-        </Preference>
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:key="audio_category"
-        app:title="@string/settings_category_audio">
-
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:iconSpaceReserved="false"
-            app:key="audio_background_music"
-            app:title="@string/settings_audio_background_music"
-            app:summary="@string/settings_audio_background_music_summary" />
-
-        <SwitchPreferenceCompat
-            app:disableDependentsState="true"
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"
-            app:key="audio_low_latency"
-            app:title="@string/settings_audio_low_latency"
-            app:summary="@string/settings_audio_low_latency_summary" />
-
-        <com.philj56.gbcc.UnitSeekbarPreference
-            android:layout="@layout/preference_widget_slider"
-            app:dependency="audio_low_latency"
-            app:min="40"
-            android:max="500"
-            app:defaultValue="40"
-            app:showSeekBarValue="true"
-            app:key="audio_latency_ms"
-            app:title="@string/settings_audio_latency"
-            app:summary="@string/settings_audio_latency_summary"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.UnitSeekbarPreference
-            android:layout="@layout/preference_widget_slider"
-            app:min="40"
-            android:max="500"
-            app:defaultValue="40"
-            app:showSeekBarValue="true"
-            app:key="bluetooth_latency_ms"
-            app:title="@string/settings_bluetooth_latency"
-            app:summary="@string/settings_bluetooth_latency_summary"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.preference.SliderPreference
-            android:layout="@layout/preference_widget_slider"
-            app:min="0"
-            android:max="100"
-            app:defaultValue="100"
-            app:showSeekBarValue="false"
-            app:key="audio_volume"
-            app:title="@string/settings_audio_volume"
-            app:iconSpaceReserved="false" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:iconSpaceReserved="false"
-        app:key="miscellaneous_category"
-        app:title="@string/settings_category_miscellaneous">
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="Teal"
-            app:entries="@array/color_names_array"
-            app:entryValues="@array/color_values_array"
-            app:key="theme"
-            app:title="@string/settings_theme"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="auto"
-            app:entries="@array/night_mode_names_array"
-            app:entryValues="@array/night_mode_values_array"
-            app:key="night_mode"
-            app:title="@string/settings_night_mode"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.SummaryListPreference
-            app:defaultValue="back"
-            app:entries="@array/camera_names_array"
-            app:entryValues="@array/camera_values_array"
-            app:key="camera"
-            app:title="@string/settings_camera"
-            app:iconSpaceReserved="false" />
-
-        <com.philj56.gbcc.preference.SliderPreference
-            android:layout="@layout/preference_widget_slider"
-            app:defaultValue="255"
-            app:min="1"
-            android:max="255"
-            app:iconSpaceReserved="false"
-            app:key="rumble_strength"
-            app:title="@string/settings_rumble_strength" />
-
-        <Preference
-            app:key="licenses"
-            app:title="@string/settings_licenses"
-            app:iconSpaceReserved="false">
-            <intent
-                android:targetPackage="com.philj56.gbcc"
-                android:targetClass="com.philj56.gbcc.LicenseListActivity" />
-        </Preference>
-    </PreferenceCategory>
+    <Preference
+        app:key="miscellaneous"
+        app:title="@string/settings_category_miscellaneous"
+        app:summary="@string/settings_category_miscellaneous_summary"
+        app:icon="@drawable/ic_cogs_24dp">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.MiscellaneousSettingsActivity" />
+    </Preference>
 
     <PreferenceCategory
         app:iconSpaceReserved="false"

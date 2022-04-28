@@ -28,7 +28,6 @@ the collapsing bar work properly when rotating / toggling night mode
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
-                app:title="@string/settings"
                 app:navigationIcon="@drawable/ic_arrow_back_24dp"
                 app:layout_collapseMode="pin"/>
 
@@ -38,9 +37,8 @@ the collapsing bar work properly when rotating / toggling night mode
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/settingsFragment"
-        android:name="com.philj56.gbcc.SettingsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

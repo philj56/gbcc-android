@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="auto_resume"
+        app:title="@string/settings_auto_resume"
+        app:summary="@string/settings_auto_resume_summary" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="auto_save"
+        app:title="@string/settings_auto_save"
+        app:summary="@string/settings_auto_save_summary" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="back_prompt"
+        app:title="@string/settings_back_prompt"
+        app:summary="@string/settings_back_prompt_summary" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="haptic_key_press"
+        app:title="@string/settings_haptic_key_press" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="haptic_key_release"
+        app:title="@string/settings_haptic_key_release" />
+
+    <com.philj56.gbcc.TurboPreference
+        app:defaultValue="0"
+        app:iconSpaceReserved="false"
+        app:key="turbo_speed"
+        app:title="@string/settings_turbo_speed" />
+
+    <Preference
+        app:key="remap"
+        app:title="@string/settings_remap"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.RemapActivity" />
+    </Preference>
+</PreferenceScreen>

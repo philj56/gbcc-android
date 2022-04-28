@@ -64,21 +64,35 @@
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
+    <string name="settings_category_behaviour">Behaviour</string>
+    <string name="settings_category_behaviour_summary">General emulator behaviour: auto-resume, vibration, gamepad mapping etc.</string>
+    <string name="settings_category_graphics">Graphics</string>
+    <string name="settings_category_graphics_summary">How the emulated Game Boy screen looks</string>
+    <string name="settings_category_display">Display</string>
+    <string name="settings_category_display_summary">Which controls to show, Game Boy style and layout</string>
+    <string name="settings_category_audio">Audio</string>
+    <string name="settings_category_audio_summary">Audio latency and volume</string>
+    <string name="settings_category_miscellaneous">Miscellaneous</string>
+    <string name="settings_category_miscellaneous_summary">General app behaviour, uncommon settings and licenses</string>
+
+    <string name="settings_animate_buttons">Animate button presses</string>
     <string name="settings_auto_resume">Auto-resume</string>
     <string name="settings_auto_resume_summary">Resume games from where you left off</string>
     <string name="settings_auto_save">Auto-save</string>
     <string name="settings_auto_save_summary">Save whenever a game writes to SRAM</string>
     <string name="settings_back_prompt">Prompt on exit</string>
     <string name="settings_back_prompt_summary">Ask for confirmation when leaving a game</string>
-    <string name="settings_frame_blend">Frame-blending</string>
-    <string name="settings_turbo_speed">Turbo limit</string>
-    <string name="settings_vsync">Vsync</string>
-    <string name="settings_interlacing">Interlacing</string>
     <string name="settings_fps">Show FPS counter</string>
-    <string name="settings_animate_buttons">Animate button presses</string>
-    <string name="settings_show_turbo">Show turbo toggle</string>
-    <string name="settings_dpad_turbo">Dpad turbo control</string>
-    <string name="settings_dpad_turbo_summary">Double-tap the center of the Dpad to toggle turbo</string>
+    <string name="settings_frame_blend">Frame-blending</string>
+    <string name="settings_frame_blend_summary">Blend consecutive frames together similarly to a real console</string>
+    <string name="settings_interlacing">Interlacing</string>
+    <string name="settings_interlacing_summary">Draw alternate lines darker similarly to a real console (enabling without frame-blending may lead to flickering)</string>
+    <string name="settings_turbo_dpad">Dpad turbo control</string>
+    <string name="settings_turbo_dpad_summary">Double-tap the center of the Dpad to toggle turbo</string>
+    <string name="settings_turbo_speed">Turbo limit</string>
+    <string name="settings_turbo_toggle">Show turbo toggle</string>
+    <string name="settings_vsync">Vsync</string>
+    <string name="settings_vsync_summary">Try to sync emulator speed to video refresh rate rather than audio</string>
 
     <string name="settings_shader_gbc">GBC shader</string>
     <string name="settings_shader_dmg">DMG shader</string>
@@ -135,6 +149,9 @@
     <string name="settings_night_mode_on">On</string>
     <string name="settings_night_mode_off">Off</string>
 
+    <string name="settings_oled_night_mode">OLED night mode</string>
+    <string name="settings_oled_night_mode_summary">Use a pure black background in night mode</string>
+
     <string name="settings_camera">Default camera</string>
     <string name="settings_camera_back">Back</string>
     <string name="settings_camera_front">Front</string>
@@ -146,12 +163,6 @@
     <string name="settings_haptic_key_release">Vibrate on button release</string>
     <string name="settings_rumble_strength">Rumble pak strength</string>
     <string name="settings_remap">Remap gamepad</string>
-
-    <string name="settings_category_behaviour">Behaviour</string>
-    <string name="settings_category_graphics">Graphics</string>
-    <string name="settings_category_display">Display</string>
-    <string name="settings_category_audio">Audio</string>
-    <string name="settings_category_miscellaneous">Miscellaneous</string>
 
     <!-- Arrange Activity -->
     <string name="size_title">Button sizes</string>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="animate_buttons"
+        app:title="@string/settings_animate_buttons" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="show_fps"
+        app:title="@string/settings_fps" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="show_turbo"
+        app:title="@string/settings_turbo_toggle" />
+
+    <SwitchPreferenceCompat
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="dpad_turbo"
+        app:title="@string/settings_turbo_dpad"
+        app:summary="@string/settings_turbo_dpad_summary" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="auto"
+        app:entries="@array/skin_names_array"
+        app:entryValues="@array/skin_values_array"
+        app:key="skin"
+        app:title="@string/settings_skin"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="Light"
+        app:entries="@array/dmg_color_names_array"
+        app:entryValues="@array/dmg_color_values_array"
+        app:key="dmg_color"
+        app:title="@string/settings_dmg_color"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="Teal"
+        app:entries="@array/color_names_array"
+        app:entryValues="@array/color_values_array"
+        app:key="color"
+        app:title="@string/settings_color"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.SummaryListPreference
+        app:defaultValue="-1"
+        app:entries="@array/orientation_names_array"
+        app:entryValues="@array/orientation_values_array"
+        app:key="orientation"
+        app:title="@string/settings_orientation"
+        app:iconSpaceReserved="false" />
+
+    <Preference
+        app:key="arrange"
+        app:title="@string/settings_arrange"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.ArrangeActivity" />
+    </Preference>
+
+</PreferenceScreen>

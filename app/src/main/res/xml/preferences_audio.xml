@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="audio_background_music"
+        app:title="@string/settings_audio_background_music"
+        app:summary="@string/settings_audio_background_music_summary" />
+
+    <SwitchPreferenceCompat
+        app:disableDependentsState="true"
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="audio_low_latency"
+        app:title="@string/settings_audio_low_latency"
+        app:summary="@string/settings_audio_low_latency_summary" />
+
+    <com.philj56.gbcc.UnitSeekbarPreference
+        android:layout="@layout/preference_widget_slider"
+        app:dependency="audio_low_latency"
+        app:min="40"
+        android:max="500"
+        app:defaultValue="40"
+        app:showSeekBarValue="true"
+        app:key="audio_latency_ms"
+        app:title="@string/settings_audio_latency"
+        app:summary="@string/settings_audio_latency_summary"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.UnitSeekbarPreference
+        android:layout="@layout/preference_widget_slider"
+        app:min="40"
+        android:max="500"
+        app:defaultValue="40"
+        app:showSeekBarValue="true"
+        app:key="bluetooth_latency_ms"
+        app:title="@string/settings_bluetooth_latency"
+        app:summary="@string/settings_bluetooth_latency_summary"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.preference.SliderPreference
+        android:layout="@layout/preference_widget_slider"
+        app:min="0"
+        android:max="100"
+        app:defaultValue="100"
+        app:showSeekBarValue="false"
+        app:key="audio_volume"
+        app:title="@string/settings_audio_volume"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

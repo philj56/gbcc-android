@@ -60,6 +60,26 @@
 			android:parentActivityName="MainActivity"
             android:label="@string/settings_title"/>
 
+		<activity android:name=".AudioSettingsActivity"
+			android:parentActivityName="SettingsActivity"
+			android:label="@string/settings_category_audio" />
+
+		<activity android:name=".BehaviourSettingsActivity"
+			android:parentActivityName="SettingsActivity"
+			android:label="@string/settings_category_behaviour" />
+
+		<activity android:name=".DisplaySettingsActivity"
+			android:parentActivityName="SettingsActivity"
+			android:label="@string/settings_category_display" />
+
+		<activity android:name=".GraphicsSettingsActivity"
+			android:parentActivityName="SettingsActivity"
+			android:label="@string/settings_category_graphics" />
+
+		<activity android:name=".MiscellaneousSettingsActivity"
+			android:parentActivityName="SettingsActivity"
+			android:label="@string/settings_category_miscellaneous" />
+
 		<activity android:name=".ArrangeActivity"
 			android:parentActivityName=".SettingsActivity"
 			android:immersive="true"/>

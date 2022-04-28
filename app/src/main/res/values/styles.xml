@@ -34,4 +34,9 @@
         <item name="colorOutline">@color/dmgDarkToggleBackground</item>
         <item name="colorPrimaryContainer">@color/dmgDarkToggleBackground</item>
     </style>
+
+    <style name="OledDark" parent="">
+        <item name="colorSurface">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
 </resources>

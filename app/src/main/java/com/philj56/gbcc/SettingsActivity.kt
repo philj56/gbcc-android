@@ -17,25 +17,62 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.bundleOf
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.preference.*
 import com.philj56.gbcc.databinding.ActivitySettingsBinding
 import com.philj56.gbcc.preference.MaterialTurboPreferenceDialogFragmentCompat
 import com.philj56.gbcc.preference.MaterialListPreferenceDialogFragmentCompat
 import com.philj56.gbcc.preference.SliderPreference
 
-class SettingsActivity : BaseActivity() {
+abstract class BaseSettingsActivity : BaseActivity() {
+    abstract val preferenceResource : Int
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        if (savedInstanceState == null) {
+            val bundle = bundleOf("preferenceResource" to preferenceResource)
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add<SettingsFragment>(R.id.settingsFragment, args = bundle)
+            }
+        }
     }
+}
+
+class SettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences
+}
+
+class AudioSettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences_audio
+}
+
+class BehaviourSettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences_behaviour
+}
+
+class DisplaySettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences_display
+}
+
+class GraphicsSettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences_graphics
+}
+
+class MiscellaneousSettingsActivity : BaseSettingsActivity() {
+    override val preferenceResource = R.xml.preferences_miscellaneous
 }
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val DIALOG_FRAGMENT_TAG = "com.philj56.gbcc.preference.DIALOG"
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
+        val preferenceResource = requireArguments().getInt("preferenceResource")
+        setPreferencesFromResource(preferenceResource, rootKey)
 
         val nightMode = preferenceManager.findPreference<SummaryListPreference>("night_mode")
         nightMode?.setOnPreferenceChangeListener { _, newValue ->
@@ -47,6 +84,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     else -> return@setOnPreferenceChangeListener false
                 }
             )
+            return@setOnPreferenceChangeListener true
+        }
+
+        val oledNightMode = preferenceManager.findPreference<SwitchPreferenceCompat>("oled_night_mode")
+        oledNightMode?.setOnPreferenceChangeListener { _, _ ->
+            val activity = requireActivity() as BaseActivity
+            if (activity.inNightMode) {
+                activity.recreate()
+            }
             return@setOnPreferenceChangeListener true
         }
 
