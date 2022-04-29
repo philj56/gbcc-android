@@ -76,16 +76,13 @@ public class MaterialListPreferenceDialogFragmentCompat extends MaterialPreferen
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
         builder.setSingleChoiceItems(mEntries, mClickedDialogEntryIndex,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mClickedDialogEntryIndex = which;
-                        // Clicking on an item simulates the positive button click, and dismisses
-                        // the dialog.
-                        MaterialListPreferenceDialogFragmentCompat.this.onClick(dialog,
-                                DialogInterface.BUTTON_POSITIVE);
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    mClickedDialogEntryIndex = which;
+                    // Clicking on an item simulates the positive button click, and dismisses
+                    // the dialog.
+                    MaterialListPreferenceDialogFragmentCompat.this.onClick(dialog,
+                            DialogInterface.BUTTON_POSITIVE);
+                    dialog.dismiss();
                 });
         // The typical interaction for list-based dialogs is to have click-on-an-item dismiss the
         // dialog instead of the user having to press 'Ok'.

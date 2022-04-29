@@ -33,6 +33,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SeekBarPreference;
@@ -82,9 +83,9 @@ public class MaterialSeekbarPreference extends Preference {
     /**
      * Listener reacting to the {@link SeekBar} changing value by the user
      */
-    private Slider.OnChangeListener mSeekBarChangeListener = new Slider.OnChangeListener() {
+    private final Slider.OnChangeListener mSeekBarChangeListener = new Slider.OnChangeListener() {
         @Override
-        public void onValueChange(Slider seekBar, float progress, boolean fromUser) {
+        public void onValueChange(@NonNull Slider seekBar, float progress, boolean fromUser) {
             if (fromUser && (mUpdatesContinuously || !mTrackingTouch)) {
                 syncValueInternal(seekBar);
             } else {
@@ -97,9 +98,9 @@ public class MaterialSeekbarPreference extends Preference {
     /**
      * Listener reacting to the {@link SeekBar} being touched by the user
      */
-    private Slider.OnSliderTouchListener mSeekBarTouchListener = new Slider.OnSliderTouchListener() {
+    private final Slider.OnSliderTouchListener mSeekBarTouchListener = new Slider.OnSliderTouchListener() {
         @Override
-        public void onStartTrackingTouch(Slider seekBar) {
+        public void onStartTrackingTouch(@NonNull Slider seekBar) {
             mTrackingTouch = true;
         }
         @Override
@@ -117,7 +118,7 @@ public class MaterialSeekbarPreference extends Preference {
      * adjustable} attribute is set to true; it transfers the key presses to the {@link SeekBar}
      * to be handled accordingly.
      */
-    private View.OnKeyListener mSeekBarKeyListener = new View.OnKeyListener() {
+    private final View.OnKeyListener mSeekBarKeyListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -166,7 +167,7 @@ public class MaterialSeekbarPreference extends Preference {
         this(context, null);
     }
     @Override
-    public void onBindViewHolder(PreferenceViewHolder holder) {
+    public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         holder.itemView.setOnKeyListener(mSeekBarKeyListener);
         mSeekBar = (Slider) holder.findViewById(R.id.seekbar);
@@ -428,11 +429,12 @@ public class MaterialSeekbarPreference extends Preference {
      */
     private static class SavedState extends BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
+                new Parcelable.Creator<>() {
                     @Override
                     public SavedState createFromParcel(Parcel in) {
                         return new SavedState(in);
                     }
+
                     @Override
                     public SavedState[] newArray(int size) {
                         return new SavedState[size];
