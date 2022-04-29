@@ -347,7 +347,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                binding.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkButton))
+                binding.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleThumb))
                 binding.turboToggle.trackTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleTrack))
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)

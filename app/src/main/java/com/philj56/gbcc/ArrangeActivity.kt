@@ -83,7 +83,7 @@ class ArrangeActivity : BaseActivity() {
                 binding.buttonStart.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
                 binding.buttonSelect.setImageResource(R.drawable.ic_button_startselect_dmg_dark_selector)
 
-                binding.turboToggleLayout.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkButton))
+                binding.turboToggleLayout.turboToggle.thumbTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleThumb))
                 binding.turboToggleLayout.turboToggle.trackTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.dmgDarkToggleTrack))
             } else {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgLightScreenBorder)
