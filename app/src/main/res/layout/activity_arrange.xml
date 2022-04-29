@@ -23,7 +23,7 @@
         and ignores any further touches. -->
     </ImageView>
 
-    <com.philj56.gbcc.ScreenPlaceholder
+    <com.philj56.gbcc.arrange.ScreenPlaceholder
         android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
         app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonA"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -90,7 +90,7 @@
         app:layout_constraintTop_toTopOf="@+id/dpad"
         app:layout_constraintVertical_bias="0.33" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -109,7 +109,7 @@
         app:layout_constraintTop_toTopOf="@+id/buttonA"
         app:layout_constraintVertical_bias="0.0" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonStart"
         android:layout_width="64dp"
         android:layout_height="48dp"
@@ -125,7 +125,7 @@
         app:layout_constraintStart_toEndOf="@+id/buttonSelect"
         app:layout_constraintTop_toTopOf="@+id/buttonSelect" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonSelect"
         android:layout_width="64dp"
         android:layout_height="48dp"

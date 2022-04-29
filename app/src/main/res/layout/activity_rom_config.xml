@@ -38,7 +38,7 @@ the collapsing bar work properly when rotating / toggling night mode
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/romConfigFragment"
-        android:name="com.philj56.gbcc.RomConfigFragment"
+        android:name="com.philj56.gbcc.romConfig.RomConfigFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

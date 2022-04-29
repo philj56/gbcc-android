@@ -10,21 +10,17 @@
 
 package com.philj56.gbcc
 
-import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.AttributeSet
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.preference.*
 import com.philj56.gbcc.databinding.ActivitySettingsBinding
-import com.philj56.gbcc.preference.MaterialTurboPreferenceDialogFragmentCompat
-import com.philj56.gbcc.preference.MaterialListPreferenceDialogFragmentCompat
-import com.philj56.gbcc.preference.SliderPreference
+import com.philj56.gbcc.materialPreferences.MaterialListPreferenceDialogFragmentCompat
+import com.philj56.gbcc.materialPreferences.MaterialTurboPreferenceDialogFragmentCompat
+import com.philj56.gbcc.settings.SummaryListPreference
+import com.philj56.gbcc.settings.TurboPreference
 
 abstract class BaseSettingsActivity : BaseActivity() {
     abstract val preferenceResource : Int
@@ -120,72 +116,3 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 }
 
-class SummaryListPreference(context: Context, attrs: AttributeSet) :
-    ListPreference(context, attrs) {
-    init {
-        summaryProvider = SimpleSummaryProvider.getInstance()
-    }
-}
-
-class TurboPreference(context: Context, attrs: AttributeSet) :
-    EditTextPreference(context, attrs) {
-    init {
-        summaryProvider = TurboSummaryProvider
-
-        // This is currently unneeded, as it's hardcoded into
-        // MaterialTurboPreferenceDialogFragmentCompat.
-        // If that ever gets changed back to a less hacky solution, we'll want this again.
-        // setOnBindEditTextListener { editText ->
-        //     editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-        //     editText.selectAll()
-        // }
-    }
-
-    override fun setText(text: String?) {
-        if (text?.toFloatOrNull() == null) {
-            super.setText("0")
-        } else {
-            super.setText(text)
-        }
-    }
-}
-
-object TurboSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
-    override fun provideSummary(preference: EditTextPreference): CharSequence {
-        val text = preference.text?.ifEmpty {
-            "0"
-        }
-        return when (text?.toFloat()) {
-            0F -> "0 (Unlimited)"
-            else -> "$text×"
-        }
-    }
-}
-
-class UnitSeekbarPreference(context: Context, attrs: AttributeSet) :
-    SliderPreference(context, attrs) {
-
-    lateinit var textView: TextView
-    val watcher = UnitSeekbarPreferenceWatcher()
-
-    override fun onBindViewHolder(view: PreferenceViewHolder) {
-        textView = view.findViewById(R.id.seekbar_value) as TextView
-        textView.removeTextChangedListener(watcher)
-        textView.addTextChangedListener(watcher)
-        super.onBindViewHolder(view)
-    }
-
-    inner class UnitSeekbarPreferenceWatcher : TextWatcher {
-        override fun afterTextChanged(s: Editable?) {
-            textView.removeTextChangedListener(watcher)
-            s?.insert(s.length, context.resources.getString(R.string.settings_bluetooth_latency_units))
-            textView.addTextChangedListener(watcher)
-        }
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        }
-    }
-}

@@ -17,7 +17,7 @@
         app:title="@string/settings_audio_low_latency"
         app:summary="@string/settings_audio_low_latency_summary" />
 
-    <com.philj56.gbcc.UnitSeekbarPreference
+    <com.philj56.gbcc.settings.UnitSeekbarPreference
         android:layout="@layout/preference_widget_slider"
         app:dependency="audio_low_latency"
         app:min="40"
@@ -29,7 +29,7 @@
         app:summary="@string/settings_audio_latency_summary"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.UnitSeekbarPreference
+    <com.philj56.gbcc.settings.UnitSeekbarPreference
         android:layout="@layout/preference_widget_slider"
         app:min="40"
         android:max="500"
@@ -40,7 +40,7 @@
         app:summary="@string/settings_bluetooth_latency_summary"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.preference.SliderPreference
+    <com.philj56.gbcc.materialPreferences.MaterialSeekbarPreference
         android:layout="@layout/preference_widget_slider"
         app:min="0"
         android:max="100"

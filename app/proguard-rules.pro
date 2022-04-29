@@ -1,9 +1,5 @@
 -keep class com.philj56.gbcc.SettingsFragment {
-	*;
-}
-
--keep class com.philj56.gbcc.RomConfigFragment {
-	*;
+	<init>();
 }
 
 #-dontobfuscate

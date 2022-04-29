@@ -23,7 +23,7 @@
         and ignores any further touches. -->
     </ImageView>
 
-    <com.philj56.gbcc.ScreenPlaceholder
+    <com.philj56.gbcc.arrange.ScreenPlaceholder
         android:id="@+id/screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
         app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonA"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -93,7 +93,7 @@
         app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonB"
         android:layout_width="64dp"
         android:layout_height="64dp"
@@ -109,7 +109,7 @@
         app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
         app:layout_constraintTop_toBottomOf="@+id/buttonA" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonSelect"
         android:layout_width="64dp"
         android:layout_height="48dp"
@@ -128,7 +128,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_weight="0" />
 
-    <com.philj56.gbcc.ResizableImage
+    <com.philj56.gbcc.arrange.ResizableImage
         android:id="@+id/buttonStart"
         android:layout_width="64dp"
         android:layout_height="48dp"
@@ -216,7 +216,6 @@
 
     <Button
         android:id="@+id/resetSizes"
-        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -227,7 +226,6 @@
 
     <Button
         android:id="@+id/resetLayout"
-        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"

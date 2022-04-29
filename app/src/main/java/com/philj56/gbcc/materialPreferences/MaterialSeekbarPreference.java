@@ -20,7 +20,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.philj56.gbcc.preference;
+package com.philj56.gbcc.materialPreferences;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -57,7 +57,7 @@ import com.philj56.gbcc.R;
  * max})
  * can be set directly on the preference widget layout.
  */
-public class SliderPreference extends Preference {
+public class MaterialSeekbarPreference extends Preference {
     private static final String TAG = "SliderPreference";
     @SuppressWarnings("WeakerAccess") /* synthetic access */
             int mSeekBarValue;
@@ -140,7 +140,7 @@ public class SliderPreference extends Preference {
             return mSeekBar.onKeyDown(keyCode, event);
         }
     };
-    public SliderPreference(
+    public MaterialSeekbarPreference(
             Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         TypedArray a = context.obtainStyledAttributes(
@@ -156,13 +156,13 @@ public class SliderPreference extends Preference {
         mUpdatesContinuously = false; //a.getBoolean(R.styleable.SeekBarPreference_updatesContinuously, false);
         a.recycle();
     }
-    public SliderPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MaterialSeekbarPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
-    public SliderPreference(Context context, AttributeSet attrs) {
+    public MaterialSeekbarPreference(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.seekBarPreferenceStyle);
     }
-    public SliderPreference(Context context) {
+    public MaterialSeekbarPreference(Context context) {
         this(context, null);
     }
     @Override

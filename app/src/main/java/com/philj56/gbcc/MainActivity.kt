@@ -10,59 +10,47 @@
 
 package com.philj56.gbcc
 
-import android.animation.Animator
-import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
-import android.view.*
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.animation.addListener
 import androidx.core.view.forEach
-import androidx.core.view.postDelayed
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
-import androidx.transition.*
+import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.philj56.gbcc.animations.CircularReveal
 import com.philj56.gbcc.databinding.ActivityMainBinding
-import com.philj56.gbcc.fileList.FileAdapter
-import com.philj56.gbcc.fileList.PathAdapter
+import com.philj56.gbcc.databinding.DialogDirectoryActionsBinding
+import com.philj56.gbcc.databinding.DialogRomActionsBinding
+import com.philj56.gbcc.main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.lang.IllegalArgumentException
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
-import kotlin.math.max
 
 private const val BACK_DELAY: Int = 2000
 private const val SAVE_DIR: String = "saves"
-private const val IMPORTED_SAVE_SUBDIR: String = "imported"
+const val IMPORTED_SAVE_SUBDIR: String = "imported"
 
 class MainActivity : BaseActivity() {
 
-    enum class SelectionMode {
+    private enum class SelectionMode {
         NORMAL, MOVE, DELETE, SELECT
     }
 
@@ -373,54 +361,56 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showDirectoryActionsDialog(file: File) {
+        val binding = DialogDirectoryActionsBinding.inflate(layoutInflater)
         val dialog = MaterialAlertDialogBuilder(this)
-            .setView(R.layout.dialog_directory_actions)
+            .setView(binding.root)
             .setOnCancelListener { clearSelection() }
             .show()
 
-        dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
+        binding.buttonSelectItems.setOnClickListener {
             beginSelection()
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonRenameDirectory)?.setOnClickListener {
+        binding.buttonRenameDirectory.setOnClickListener {
             showRenameDialog(file)
             dialog.dismiss()
         }
     }
 
     private fun showRomActionsDialog(file: File) {
+        val binding = DialogRomActionsBinding.inflate(layoutInflater)
         val dialog = MaterialAlertDialogBuilder(this)
-            .setView(R.layout.dialog_rom_actions)
+            .setView(binding.root)
             .setOnCancelListener { clearSelection() }
             .show()
 
-        dialog.findViewById<Button>(R.id.buttonMultiplayer)?.setOnClickListener {
+        binding.buttonMultiplayer.setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setView(R.layout.dialog_multiplayer_searching)
                 .setOnDismissListener { clearSelection() }
                 .show()
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonSelectItems)?.setOnClickListener {
+        binding.buttonSelectItems.setOnClickListener {
             beginSelection()
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonRenameRom)?.setOnClickListener {
+        binding.buttonRenameRom.setOnClickListener {
             showRenameDialog(file)
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonDeleteSave)?.setOnClickListener {
+        binding.buttonDeleteSave.setOnClickListener {
             showSaveDeleteDialog()
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonEditCheats)?.setOnClickListener {
+        binding.buttonEditCheats.setOnClickListener {
             val intent = Intent(this, CheatActivity::class.java).apply {
                 putExtra("file", file.name)
             }
             startActivity(intent)
             dialog.dismiss()
         }
-        dialog.findViewById<Button>(R.id.buttonEditConfig)?.setOnClickListener {
+        binding.buttonEditConfig.setOnClickListener {
             val intent = Intent(this, RomConfigActivity::class.java).apply {
                 putExtra("file", file.name)
             }
@@ -743,184 +733,5 @@ class MainActivity : BaseActivity() {
 
         Toast.makeText(baseContext, getString(R.string.message_repeat_back), Toast.LENGTH_SHORT)
             .show()
-    }
-}
-
-
-class ImportOverwriteAdapter(
-    context: Context,
-    resource: Int,
-    textViewResourceId: Int,
-    private val objects: List<File>
-) : ArrayAdapter<File>(context, resource, textViewResourceId, objects) {
-
-    val selected = HashSet<File>()
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view: View = super.getView(position, convertView, parent)
-        val textView: CheckedTextView = view.findViewById(R.id.importOverwriteText)
-        val file: File = objects[position]
-
-        textView.isChecked = file in selected
-
-        textView.text = file.nameWithoutExtension
-        return view
-    }
-}
-
-class EditTextDialogFragment(private val title: Int, private val initialText: String, private val onConfirm: (String) -> Unit) : DialogFragment() {
-    private var onDismissListener: (() -> Unit)? = null
-
-    @SuppressLint("InflateParams")
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val textView = it.layoutInflater.inflate(R.layout.dialog_create_folder, null, false)
-            val input = textView?.findViewById<EditText>(R.id.createFolderInput)
-            input?.setText(initialText)
-
-            val builder = MaterialAlertDialogBuilder(it)
-            builder.setTitle(title)
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    onConfirm(input?.text.toString())
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .setView(textView)
-
-            val dialog = builder.create()
-            dialog.setOnShowListener {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-            }
-
-            input?.addTextChangedListener { editor ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled =
-                    editor?.isNotBlank() ?: false
-            }
-            input?.setOnFocusChangeListener { v, hasFocus ->
-                v.postDelayed(50) {
-                    if (hasFocus) {
-                        val imm =
-                            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        imm.showSoftInput(v, 0)
-                    }
-                }
-            }
-            input?.requestFocus()
-
-            return dialog
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        onDismissListener?.invoke()
-        super.onDismiss(dialog)
-    }
-
-    fun setOnDismissListener(listener: () -> Unit) {
-        onDismissListener = listener
-    }
-}
-
-class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : DialogFragment() {
-    @SuppressLint("InflateParams")
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val adapter = ImportOverwriteAdapter(requireContext(), R.layout.entry_import_overwrite, R.id.importOverwriteText, files)
-            adapter.selected.addAll(files)
-            val view = it.layoutInflater.inflate(R.layout.dialog_import_overwrite, null, false)
-            val listView = view.findViewById<ListView>(R.id.listView)
-            listView.adapter = adapter
-            listView.setOnItemClickListener { _, _, position, _ ->
-                val file = listView.adapter.getItem(position) as File
-                val item = listView.getChildAt(position - listView.firstVisiblePosition)
-                if (file in adapter.selected) {
-                    adapter.selected.remove(file)
-                } else {
-                    adapter.selected.add(file)
-                }
-                item.findViewById<CheckedTextView>(R.id.importOverwriteText).isChecked = file in adapter.selected
-            }
-
-            val saveDir = requireContext().filesDir.resolve("saves")
-            fun deleteFiles() {
-                saveDir.resolve(IMPORTED_SAVE_SUBDIR).deleteRecursively()
-            }
-            val builder = MaterialAlertDialogBuilder(it)
-            builder.setTitle(resources.getString(R.string.overwrite_confirmation))
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    Thread {
-                        adapter.selected.forEach { file ->
-                            val dest = saveDir.resolve(file.name)
-                            dest.delete()
-                            file.renameTo(dest)
-                        }
-                        activity?.runOnUiThread {
-                            Toast.makeText(
-                                context,
-                                resources.getQuantityString(
-                                    R.plurals.message_imported,
-                                    adapter.selected.size,
-                                    adapter.selected.size
-                                ),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        deleteFiles()
-                    }.start()
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ -> deleteFiles() }
-                .setView(view)
-                .setOnDismissListener { deleteFiles() }
-            return builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-}
-
-class CreateSaveExportZip : ActivityResultContracts.CreateDocument() {
-    @SuppressLint("SimpleDateFormat")
-    override fun createIntent(context: Context, input: String): Intent {
-        val intent = super.createIntent(context, input)
-        intent.apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-        }
-        val date = SimpleDateFormat("yyyyMMdd").format(Date())
-        intent.putExtra(Intent.EXTRA_TITLE, "gbcc_saves_$date.zip")
-        return intent
-    }
-}
-
-class CircularReveal : Visibility() {
-    override fun onAppear(
-        sceneRoot: ViewGroup,
-        view: View,
-        startValues: TransitionValues,
-        endValues: TransitionValues
-    ): Animator {
-        val animator = ViewAnimationUtils.createCircularReveal(
-            view,
-            view.width / 2,
-            view.height / 2,
-            0.0f,
-            max(view.width, view.height).toFloat()
-        )
-        view.alpha = 0.0f
-        animator.addListener(
-            onStart = { view.alpha = 1.0f }
-        )
-        return animator
-    }
-
-    override fun onDisappear(
-        sceneRoot: ViewGroup,
-        view: View,
-        startValues: TransitionValues,
-        endValues: TransitionValues
-    ): Animator {
-        return ViewAnimationUtils.createCircularReveal(
-            view,
-            view.width / 2,
-            view.height / 2,
-            max(view.width, view.height).toFloat(),
-            0.0f
-        )
     }
 }

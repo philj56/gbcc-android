@@ -22,7 +22,7 @@
         app:title="@string/settings_vsync"
         app:summary="@string/settings_vsync_summary"/>
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="@string/settings_shader_dot_matrix"
         app:entries="@array/shader_names_array"
         app:entryValues="@array/shader_values_array"
@@ -30,7 +30,7 @@
         app:title="@string/settings_shader_dmg"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="@string/settings_shader_subpixel"
         app:entries="@array/shader_names_array"
         app:entryValues="@array/shader_values_array"
@@ -38,7 +38,7 @@
         app:title="@string/settings_shader_gbc"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="Default"
         app:entries="@array/dmg_palettes_array"
         app:entryValues="@array/dmg_palettes_array"

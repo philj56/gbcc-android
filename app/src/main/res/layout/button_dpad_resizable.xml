@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.philj56.gbcc.ResizableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.philj56.gbcc.arrange.ResizableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:contentDescription="@string/dpad_description"
     android:layout_width="match_parent"
@@ -19,4 +19,4 @@
         android:importantForAccessibility="no"
         app:srcCompat="@drawable/ic_button_dpad_highlight" />
 
-</com.philj56.gbcc.ResizableLayout>
+</com.philj56.gbcc.arrange.ResizableLayout>

@@ -27,7 +27,7 @@
         app:title="@string/settings_turbo_dpad"
         app:summary="@string/settings_turbo_dpad_summary" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="auto"
         app:entries="@array/skin_names_array"
         app:entryValues="@array/skin_values_array"
@@ -35,7 +35,7 @@
         app:title="@string/settings_skin"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="Light"
         app:entries="@array/dmg_color_names_array"
         app:entryValues="@array/dmg_color_values_array"
@@ -43,7 +43,7 @@
         app:title="@string/settings_dmg_color"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="Teal"
         app:entries="@array/color_names_array"
         app:entryValues="@array/color_values_array"
@@ -51,7 +51,7 @@
         app:title="@string/settings_color"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="-1"
         app:entries="@array/orientation_names_array"
         app:entryValues="@array/orientation_values_array"

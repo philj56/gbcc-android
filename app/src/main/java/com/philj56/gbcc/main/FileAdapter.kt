@@ -1,4 +1,4 @@
-package com.philj56.gbcc.fileList
+package com.philj56.gbcc.main
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.philj56.gbcc.R
 import java.io.File
 
-class FileAdapter(private val onClick: (File, View) -> Unit, private val onLongClick: (File, View) -> Unit) :
+class FileAdapter(
+    private val onClick: (File, View) -> Unit,
+    private val onLongClick: (File, View) -> Unit
+) :
     ListAdapter<File, FileAdapter.FileViewHolder>(FileDiffCallback) {
 
     val selected = HashSet<File>()

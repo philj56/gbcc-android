@@ -10,26 +10,13 @@
 
 package com.philj56.gbcc
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
-import android.text.InputFilter
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.philj56.gbcc.cheat.Cheat
+import com.philj56.gbcc.cheat.CheatAdapter
+import com.philj56.gbcc.cheat.CheatDialogFragment
 import com.philj56.gbcc.databinding.ActivityCheatListBinding
 import java.io.File
-import kotlin.collections.ArrayList
-
-data class Cheat(var description: String, var code: String, var active: Boolean)
 
 class CheatActivity : BaseActivity() {
     private lateinit var configFile: File
@@ -133,103 +120,3 @@ class CheatActivity : BaseActivity() {
     }
 }
 
-class CheatAdapter(
-    context: Context,
-    resource: Int,
-    textViewResourceId: Int,
-    private val objects: List<Cheat>
-) : ArrayAdapter<Cheat>(context, resource, textViewResourceId, objects) {
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = super.getView(position, convertView, parent)
-        val textDescription = view.findViewById<TextView>(R.id.cheatDescription)
-        val textCode = view.findViewById<TextView>(R.id.cheatCode)
-        val switchActive = view.findViewById<SwitchCompat>(R.id.cheatActive)
-        val (description, code, active) = objects[position]
-
-        textDescription.text = description
-        textCode.text = formatCode(code)
-        switchActive.isChecked = active
-
-        return view
-    }
-
-    private fun formatCode(code: String): String {
-        if (code.length == 9) {
-            return code.substring(0, 3) + "-" + code.substring(3, 6) + "-" + code.substring(6, 9)
-        }
-        return code
-    }
-}
-
-class CheatDialogFragment(private val index: Int) : DialogFragment() {
-    private var descriptionFilled = false
-    private var codeFilled = false
-
-    @SuppressLint("InflateParams")
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val activity = requireActivity() as CheatActivity
-        val view = activity.layoutInflater.inflate(R.layout.dialog_edit_cheat, null, false)
-        val descriptionInput = view.findViewById<EditText>(R.id.cheatDescriptionInput)
-        val codeInput = view.findViewById<EditText>(R.id.cheatCodeInput)
-        val cheatExists = (index >= 0)
-
-        val title: Int
-        if (!cheatExists) {
-            title = R.string.cheat_add_description
-        } else {
-            title = R.string.cheat_edit_description
-            val cheat = activity.getCheat(index)
-            descriptionInput.setText(cheat.description)
-            codeInput.setText(cheat.code)
-            descriptionFilled = true
-            codeFilled = true
-        }
-
-        val builder = MaterialAlertDialogBuilder(activity)
-            .setTitle(title)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                activity.addCheat(
-                    Cheat(
-                        descriptionInput.text.toString().trim(),
-                        codeInput.text.toString().uppercase(),
-                        true),
-                    index
-                )
-            }
-            .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            .setView(view)
-
-        if (cheatExists) {
-            builder.setNeutralButton(R.string.delete) { _, _ -> activity.removeCheat(index) }
-        }
-
-        val dialog = builder.create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !cheatExists
-        }
-
-        descriptionInput.filters = arrayOf(InputFilter { source, start, end, _, _, _ ->
-            if (end <= start) {
-                // Deletion, always accept
-                return@InputFilter null
-            }
-            return@InputFilter source.subSequence(start, end).filterNot { it == '#' || it == ';' }
-        })
-
-        descriptionInput.addTextChangedListener { editor ->
-            descriptionFilled = editor?.isNotBlank() ?: false
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled =
-                descriptionFilled && codeFilled
-        }
-
-        codeInput.addTextChangedListener { editor ->
-            codeFilled = editor?.length == 8 || editor?.length == 9
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled =
-                descriptionFilled && codeFilled
-        }
-
-        return dialog
-    }
-}

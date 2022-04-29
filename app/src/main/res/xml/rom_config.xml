@@ -32,13 +32,13 @@
         app:key="vsync"
         app:title="@string/settings_vsync" />
 
-    <com.philj56.gbcc.TurboPreference
+    <com.philj56.gbcc.settings.TurboPreference
         app:defaultValue="0"
         app:iconSpaceReserved="false"
         app:key="turbo"
         app:title="@string/settings_turbo_speed" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="Default"
         app:entries="@array/dmg_palettes_array"
         app:entryValues="@array/dmg_palettes_array"
@@ -46,7 +46,7 @@
         app:title="@string/rom_config_palette"
         app:iconSpaceReserved="false" />
 
-    <com.philj56.gbcc.SummaryListPreference
+    <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="@string/settings_shader_subpixel"
         app:entries="@array/shader_names_array"
         app:entryValues="@array/shader_values_array"

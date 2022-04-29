@@ -35,7 +35,7 @@
         app:key="haptic_key_release"
         app:title="@string/settings_haptic_key_release" />
 
-    <com.philj56.gbcc.TurboPreference
+    <com.philj56.gbcc.settings.TurboPreference
         app:defaultValue="0"
         app:iconSpaceReserved="false"
         app:key="turbo_speed"

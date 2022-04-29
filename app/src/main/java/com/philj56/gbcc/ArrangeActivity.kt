@@ -11,18 +11,14 @@
 package com.philj56.gbcc
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.os.*
-import android.util.AttributeSet
-import android.view.*
-import android.view.View.OnLongClickListener
-import android.view.View.OnTouchListener
-import android.widget.FrameLayout
+import android.os.Build
+import android.os.Bundle
+import android.view.View
+import android.view.WindowInsets
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
@@ -32,9 +28,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
 import com.philj56.gbcc.databinding.ActivityArrangeBinding
 import kotlin.math.log
-import kotlin.math.min
 import kotlin.math.pow
-
 
 class ArrangeActivity : BaseActivity() {
     private val scaleFactorRange : Float = 2f
@@ -311,135 +305,3 @@ class ArrangeActivity : BaseActivity() {
     }
 }
 
-class ResizableImage : AppCompatImageView {
-    private var floating: Boolean = false
-
-    constructor(context: Context) : super(context) {
-        addMotionListener()
-        addLongClickListener()
-    }
-
-    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
-        addMotionListener()
-        addLongClickListener()
-    }
-
-    private fun addMotionListener() {
-        setOnTouchListener(OnTouchListener { view, motionEvent ->
-
-            if (!floating) {
-                return@OnTouchListener view.performClick()
-            }
-
-            when (motionEvent.actionMasked) {
-                MotionEvent.ACTION_UP -> {
-                    floating = false
-                }
-            }
-
-            view.x = motionEvent.rawX - view.width / 2
-            view.y = motionEvent.rawY - view.height / 2
-
-            return@OnTouchListener true
-        })
-    }
-
-    private fun addLongClickListener() {
-        setOnLongClickListener(OnLongClickListener {
-            floating = true
-            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            return@OnLongClickListener false
-        })
-    }
-}
-
-class ResizableLayout : FrameLayout {
-    private var floating: Boolean = false
-
-    constructor(context: Context) : super(context) {
-        addMotionListener()
-        addLongClickListener()
-    }
-
-    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
-        addMotionListener()
-        addLongClickListener()
-    }
-
-    private fun addMotionListener() {
-        setOnTouchListener(OnTouchListener { view, motionEvent ->
-
-            if (!floating) {
-                return@OnTouchListener view.performClick()
-            }
-
-            when (motionEvent.actionMasked) {
-                MotionEvent.ACTION_UP -> {
-                    floating = false
-                }
-            }
-
-            view.x = motionEvent.rawX - view.width / 2
-            view.y = motionEvent.rawY - view.height / 2
-
-            return@OnTouchListener true
-        })
-    }
-
-    private fun addLongClickListener() {
-        setOnLongClickListener(OnLongClickListener {
-            floating = true
-            it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-            return@OnLongClickListener false
-        })
-    }
-}
-
-class ScreenPlaceholder : AppCompatImageView {
-
-    constructor(context: Context) : super(context) {
-        setMeasuredDimension(160, 144)
-        layoutParams = ViewGroup.LayoutParams(160, 144)
-    }
-
-    constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet) {
-        setMeasuredDimension(160, 144)
-        layoutParams = ViewGroup.LayoutParams(160, 144)
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-
-        var width = 0
-        var height = 0
-        val scaleX = widthSize / 160
-        val scaleY = heightSize / 144
-
-        when(widthMode) {
-            MeasureSpec.EXACTLY -> width = widthSize
-            MeasureSpec.AT_MOST -> Unit
-            MeasureSpec.UNSPECIFIED -> width = 160
-        }
-
-        when(heightMode) {
-            MeasureSpec.EXACTLY -> height = heightSize
-            MeasureSpec.AT_MOST -> Unit
-            MeasureSpec.UNSPECIFIED -> height = 144
-        }
-
-        if (width == 0 && height == 0) {
-            val scale = min(scaleX, scaleY)
-            width = 160 * scale
-            height = 144 * scale
-        } else if (width == 0) {
-            width = (height * 160) / 144
-        } else if (height == 0) {
-            height = (width * 144) / 160
-        }
-
-        setMeasuredDimension(width, height)
-    }
-}

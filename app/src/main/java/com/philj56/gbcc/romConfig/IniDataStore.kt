@@ -1,4 +1,4 @@
-package com.philj56.gbcc
+package com.philj56.gbcc.romConfig
 
 import androidx.preference.PreferenceDataStore
 import java.io.File
