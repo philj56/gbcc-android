@@ -11,7 +11,6 @@
 package com.philj56.gbcc
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.philj56.gbcc.databinding.ActivityLicenseBinding
 import java.io.File
 

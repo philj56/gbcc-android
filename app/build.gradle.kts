@@ -22,6 +22,9 @@ android {
 				targets.add("gbcc")
 			}
 		}
+		ndk {
+			debugSymbolLevel = "FULL"
+		}
 		splits {
 			abi {
 				isEnable = true
@@ -37,9 +40,6 @@ android {
 			)
 			isMinifyEnabled = true
 			isShrinkResources = true
-			ndk {
-				debugSymbolLevel = "FULL"
-			}
 		}
 		debug {
 			isMinifyEnabled = false

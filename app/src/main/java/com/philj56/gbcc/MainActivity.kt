@@ -27,6 +27,7 @@ import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.animation.addListener
 import androidx.core.view.forEach
@@ -55,8 +56,6 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 import kotlin.math.max
 
-private const val IMPORT_REQUEST_CODE: Int = 10
-private const val EXPORT_REQUEST_CODE: Int = 11
 private const val BACK_DELAY: Int = 2000
 private const val SAVE_DIR: String = "saves"
 private const val IMPORTED_SAVE_SUBDIR: String = "imported"
@@ -281,7 +280,7 @@ class MainActivity : BaseActivity() {
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.importItem -> performFileSearch()
+            R.id.importItem -> selectImportFiles()
             R.id.settingsItem -> startActivity(Intent(this, SettingsActivity::class.java))
             R.id.folderItem -> {
                 val dialog = EditTextDialogFragment(R.string.create_folder, "") { name ->
@@ -486,15 +485,9 @@ class MainActivity : BaseActivity() {
         clearSelection()
     }
 
-    private fun performFileSearch() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        }
+    private fun selectImportFiles() {
         try {
-            startActivityForResult(intent, IMPORT_REQUEST_CODE)
+            performImport.launch("*/*")
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(
                 baseContext,
@@ -504,7 +497,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
     private fun selectExportDir() {
         val saveDir = filesDir.resolve(SAVE_DIR)
         if (!saveDir.isDirectory || (saveDir.list()?.none { it.endsWith(".sav") } == true)) {
@@ -512,14 +504,8 @@ class MainActivity : BaseActivity() {
                 .show()
             return
         }
-        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/zip"
-        }
-        val date = SimpleDateFormat("yyyyMMdd").format(Date())
-        intent.putExtra(Intent.EXTRA_TITLE, "gbcc_saves_$date.zip")
         try {
-            startActivityForResult(intent, EXPORT_REQUEST_CODE)
+            performExport.launch("application/zip")
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(
                 baseContext,
@@ -661,91 +647,85 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-
-        super.onActivityResult(requestCode, resultCode, resultData)
-        if (resultCode != RESULT_OK || resultData == null) {
-            return
+    private val performImport = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { resultData: List<Uri>? ->
+        if (resultData == null) {
+            return@registerForActivityResult
         }
-        if (requestCode == IMPORT_REQUEST_CODE) {
-            val clipData = resultData.clipData
-            // Run the import in the background to avoid blocking the UI
-            Thread {
-                if (clipData != null) {
-                    if (clipData.itemCount >= 10) {
-                        // Give the user some notification that an import is occurring
-                        runOnUiThread {
-                            Toast.makeText(
-                                baseContext,
-                                resources.getQuantityString(
-                                    R.plurals.message_importing,
-                                    clipData.itemCount,
-                                    clipData.itemCount
-                                ),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                    for (i in 0 until clipData.itemCount) {
-                        importFile(clipData.getItemAt(i).uri)
-                    }
-                } else {
-                    resultData.data?.also { importFile(it) }
-                }
-                // updateFiles needs to be run on the main thread, however
-                runOnUiThread { updateFiles() }
-
-                // Go through the imported saves and prompt to overwrite if they already exist
-                val existing = ArrayList<File>()
-                val saveDir = filesDir.resolve(SAVE_DIR)
-                val importDir = saveDir.resolve(IMPORTED_SAVE_SUBDIR)
-                for (file in importDir.walk()) {
-                    if (file == importDir) {
-                        continue
-                    }
-                    val dest = saveDir.resolve(file.name)
-                    if (dest.exists()) {
-                        existing.add(file)
-                    } else {
-                        file.renameTo(dest)
-                    }
-                }
-                if (existing.size > 0) {
-                    existing.sort()
-                    val dialog = ImportOverwriteDialogFragment(existing)
-                    dialog.show(supportFragmentManager, "")
-                } else {
-                    importDir.delete()
-                }
-            }.start()
-        } else if (requestCode == EXPORT_REQUEST_CODE) {
-            val data = resultData.data ?: return
-            Thread {
-                val saveDir = filesDir.resolve(SAVE_DIR)
-                val saves = saveDir.listFiles { path -> path.extension == "sav" }
-                    ?: return@Thread
-                contentResolver.openOutputStream(data).use { outputStream ->
-                    ZipOutputStream(outputStream).use { zip ->
-                        saves.forEach { file ->
-                            zip.putNextEntry(ZipEntry(file.name))
-                            file.inputStream().use { it.copyTo(zip) }
-                            zip.closeEntry()
-                        }
-                    }
-                }
+        // Run the import in the background to avoid blocking the UI
+        Thread {
+            if (resultData.size >= 10) {
+                // Give the user some notification that an import is occurring
                 runOnUiThread {
                     Toast.makeText(
                         baseContext,
                         resources.getQuantityString(
-                            R.plurals.message_export_complete,
-                            saves.size,
-                            saves.size
+                            R.plurals.message_importing,
+                            resultData.size,
+                            resultData.size
                         ),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            }.start()
+            }
+            resultData.forEach { importFile(it) }
+
+            // updateFiles needs to be run on the main thread, however
+            runOnUiThread { updateFiles() }
+
+            // Go through the imported saves and prompt to overwrite if they already exist
+            val existing = ArrayList<File>()
+            val saveDir = filesDir.resolve(SAVE_DIR)
+            val importDir = saveDir.resolve(IMPORTED_SAVE_SUBDIR)
+            for (file in importDir.walk()) {
+                if (file == importDir) {
+                    continue
+                }
+                val dest = saveDir.resolve(file.name)
+                if (dest.exists()) {
+                    existing.add(file)
+                } else {
+                    file.renameTo(dest)
+                }
+            }
+            if (existing.size > 0) {
+                existing.sort()
+                val dialog = ImportOverwriteDialogFragment(existing)
+                dialog.show(supportFragmentManager, "")
+            } else {
+                importDir.delete()
+            }
+        }.start()
+    }
+
+    private val performExport = registerForActivityResult(CreateSaveExportZip()) { uri: Uri? ->
+        if (uri == null) {
+            return@registerForActivityResult
         }
+        Thread {
+            val saveDir = filesDir.resolve(SAVE_DIR)
+            val saves = saveDir.listFiles { path -> path.extension == "sav" }
+                ?: return@Thread
+            contentResolver.openOutputStream(uri).use { outputStream ->
+                ZipOutputStream(outputStream).use { zip ->
+                    saves.forEach { file ->
+                        zip.putNextEntry(ZipEntry(file.name))
+                        file.inputStream().use { it.copyTo(zip) }
+                        zip.closeEntry()
+                    }
+                }
+            }
+            runOnUiThread {
+                Toast.makeText(
+                    baseContext,
+                    resources.getQuantityString(
+                        R.plurals.message_export_complete,
+                        saves.size,
+                        saves.size
+                    ),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }.start()
     }
 
     override fun onBackPressed() {
@@ -892,6 +872,19 @@ class ImportOverwriteDialogFragment(private val files: ArrayList<File>) : Dialog
                 .setOnDismissListener { deleteFiles() }
             return builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+}
+
+class CreateSaveExportZip : ActivityResultContracts.CreateDocument() {
+    @SuppressLint("SimpleDateFormat")
+    override fun createIntent(context: Context, input: String): Intent {
+        val intent = super.createIntent(context, input)
+        intent.apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        val date = SimpleDateFormat("yyyyMMdd").format(Date())
+        intent.putExtra(Intent.EXTRA_TITLE, "gbcc_saves_$date.zip")
+        return intent
     }
 }
 
