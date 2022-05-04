@@ -111,6 +111,13 @@ private val ACTION_TO_KEY_MAP = mapOf(
 )
 
 class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
+
+    private data class ButtonInfo(val view: View, val id: Int) {
+        var isNormalPressed: Boolean = false
+        var isMotionPressed: Boolean = false
+        val isPressed: Boolean get() = isNormalPressed or isMotionPressed
+    }
+
     private lateinit var prefs: SharedPreferences
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
@@ -263,44 +270,60 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setButtonIds(views: Array<View>, buttons: Array<Int>) {
+    private fun setButtonIds(buttons: Array<ButtonInfo>) {
         fun inBounds(view: View, x: Int, y: Int): Boolean {
-            val rect = Rect()
             val location = IntArray(2)
-            view.getDrawingRect(rect)
             view.getLocationOnScreen(location)
-            rect.offset(location[0], location[1])
+            val rect = Rect(
+                location[0],
+                location[1],
+                location[0] + ceil(view.width * view.scaleX).toInt(),
+                location[1] + ceil(view.height * view.scaleY).toInt()
+            )
             return rect.contains(x, y)
         }
-        views.forEachIndexed { index, view ->
-            view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
-                if (touchView != view) {
+        buttons.forEach { button ->
+            button.view.setOnTouchListener(View.OnTouchListener { touchView, motionEvent ->
+                if (touchView != button.view) {
                     return@OnTouchListener false
                 }
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        press(buttons[index], true)
-                        view.isPressed = true && animateButtons
-                        hapticVibrate(view, true)
+                        if (!button.isPressed) {
+                            press(button.id, true)
+                        }
+                        button.isNormalPressed = true
+                        button.view.isPressed = true && animateButtons
+                        hapticVibrate(button.view, true)
                     }
                     MotionEvent.ACTION_UP -> {
-                        views.forEachIndexed { index2, view2 ->
-                            press(buttons[index2], false)
-                            view2.isPressed = false && animateButtons
-                            hapticVibrate(view2, false)
+                        buttons.forEach { button2 ->
+                            val lastPressed = button2.isPressed
+                            if (button2 == button) {
+                                button2.isNormalPressed = false
+                            } else {
+                                button2.isMotionPressed = false
+                            }
+                            if (lastPressed && !button2.isPressed) {
+                                press(button2.id, false)
+                                button2.view.isPressed = false && animateButtons
+                                hapticVibrate(button2.view, false)
+                            }
                         }
                     }
                     MotionEvent.ACTION_MOVE -> run {
                         val x = motionEvent.rawX.toInt()
                         val y = motionEvent.rawY.toInt()
-                        views.forEachIndexed { index2, view2 ->
-                            if (view2 != view) {
-                                val pressed = inBounds(view2, x, y)
-                                if (pressed && !isPressed(buttons[index2])) {
-                                    hapticVibrate(view2, true)
+                        buttons.forEach { button2 ->
+                            if (button2 != button) {
+                                val lastPressed = button2.isPressed
+                                button2.isMotionPressed = inBounds(button2.view, x, y)
+                                val pressed = button2.isPressed
+                                if (pressed != lastPressed) {
+                                    hapticVibrate(button2.view, pressed)
+                                    press(button2.id, pressed)
+                                    button2.view.isPressed = pressed && animateButtons
                                 }
-                                press(buttons[index2], pressed)
-                                view2.isPressed = pressed && animateButtons
                             }
                         }
                     }
@@ -486,11 +509,16 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         }
 
         animateButtons = prefs.getBoolean("animate_buttons", true)
-        setButtonIds(arrayOf(binding.buttonA, binding.buttonB), arrayOf(BUTTON_CODE_A, BUTTON_CODE_B))
         setButtonIds(
-            arrayOf(binding.buttonStart, binding.buttonSelect), arrayOf(
-                BUTTON_CODE_START,
-                BUTTON_CODE_SELECT
+            arrayOf(
+                ButtonInfo(binding.buttonA, BUTTON_CODE_A),
+                ButtonInfo(binding.buttonB, BUTTON_CODE_B)
+            )
+        )
+        setButtonIds(
+            arrayOf(
+                ButtonInfo(binding.buttonStart, BUTTON_CODE_START),
+                ButtonInfo(binding.buttonSelect, BUTTON_CODE_SELECT)
             )
         )
 
