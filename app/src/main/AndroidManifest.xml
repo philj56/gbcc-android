@@ -33,6 +33,7 @@
 		android:allowBackup="true"
 		android:backupAgent=".SaveBackupAgent"
 		android:dataExtractionRules="@xml/backup_rules"
+		android:hasFragileUserData="true"
 		android:fullBackupContent="@xml/backup"
 		android:fullBackupOnly="true"
 		android:icon="@mipmap/ic_launcher"

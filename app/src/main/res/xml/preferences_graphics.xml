@@ -23,7 +23,7 @@
         app:summary="@string/settings_vsync_summary"/>
 
     <com.philj56.gbcc.settings.SummaryListPreference
-        app:defaultValue="@string/settings_shader_dot_matrix"
+        app:defaultValue="Dot Matrix"
         app:entries="@array/shader_names_array"
         app:entryValues="@array/shader_values_array"
         app:key="shader_dmg"
@@ -31,7 +31,7 @@
         app:iconSpaceReserved="false" />
 
     <com.philj56.gbcc.settings.SummaryListPreference
-        app:defaultValue="@string/settings_shader_subpixel"
+        app:defaultValue="Subpixel"
         app:entries="@array/shader_names_array"
         app:entryValues="@array/shader_values_array"
         app:key="shader_gbc"

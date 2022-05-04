@@ -73,7 +73,7 @@
     <string name="settings_category_audio">Audio</string>
     <string name="settings_category_audio_summary">Audio latency and volume</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
-    <string name="settings_category_miscellaneous_summary">General app behaviour, uncommon settings and licenses</string>
+    <string name="settings_category_miscellaneous_summary">App appearance, uncommon settings and licenses</string>
 
     <string name="settings_animate_buttons">Animate button presses</string>
     <string name="settings_auto_resume">Auto-resume</string>

@@ -77,7 +77,12 @@ class MainActivity : BaseActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_audio, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_behaviour, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_display, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_graphics, true)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_miscellaneous, true)
         AppCompatDelegate.setDefaultNightMode(
             when (PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("night_mode", null)) {
