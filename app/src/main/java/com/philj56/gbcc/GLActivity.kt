@@ -1014,11 +1014,25 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
     override fun onBackPressed() {
         if (prefs.getBoolean("back_prompt", false)) {
-            MaterialAlertDialogBuilder(this)
+            val dialog = MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.quit_confirmation)
                 .setPositiveButton(R.string.button_quit) { _, _ -> super.onBackPressed() }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .show()
+                .setNeutralButton(R.string.button_reboot) { _, _ ->
+                    stopGBCC()
+                    resume = false
+                    startGBCC()
+                }
+                .create()
+            dialog.window?.decorView?.let {
+                ViewCompat.getWindowInsetsController(it)?.let { controller ->
+                    // Hide system bars
+                    controller.systemBarsBehavior =
+                        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                }
+            }
+            dialog.show()
         } else {
             super.onBackPressed()
         }

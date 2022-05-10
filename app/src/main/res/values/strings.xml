@@ -47,6 +47,7 @@
     <string name="invalid_opcode_description">GBCC has encountered an error, and will now stop. This could either be due to an error in the ROM you were trying to run, or a bug in GBCC. To see a more detailed report or report this issue, press \"Send feedback\".</string>
     <string name="button_send_feedback">Send feedback</string>
     <string name="button_quit">Quit</string>
+    <string name="button_reboot">Reboot</string>
 
     <!-- RomConfigActivity -->
     <string name="rom_config_title">Rom config</string>
@@ -81,7 +82,7 @@
     <string name="settings_auto_save">Auto-save</string>
     <string name="settings_auto_save_summary">Save whenever a game writes to SRAM</string>
     <string name="settings_back_prompt">Prompt on exit</string>
-    <string name="settings_back_prompt_summary">Ask for confirmation when leaving a game</string>
+    <string name="settings_back_prompt_summary">Display a confirmation dialog with a reboot option when leaving a game</string>
     <string name="settings_fps">Show FPS counter</string>
     <string name="settings_frame_blend">Frame-blending</string>
     <string name="settings_frame_blend_summary">Blend consecutive frames together similarly to a real console</string>

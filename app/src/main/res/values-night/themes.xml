@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--
-    <style name="ThemeOverlay.GBCC.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="buttonBarPositiveButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Widget.GBCC.Button.TextButton.Dialog</item>
-    </style>
-    -->
     <style name="Theme.GBCC.Berry" parent="Theme.GBCC">
         <!-- Material color attributes (dark theme) -->
         <item name="colorPrimary"> @color/theme_berry_dark_primary </item>
