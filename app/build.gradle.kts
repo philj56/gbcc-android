@@ -64,6 +64,7 @@ android {
 	}
 
 	ndkVersion = "24.0.8215888"
+	namespace = "com.philj56.gbcc"
 }
 
 dependencies {
@@ -76,7 +77,7 @@ dependencies {
 	implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
 	implementation("androidx.preference:preference-ktx:1.2.0")
 	implementation("androidx.recyclerview:recyclerview:1.2.1")
-	implementation("com.google.android.material:material:1.6.0-rc01")
+	implementation("com.google.android.material:material:1.6.0")
 	testImplementation("junit:junit:4.13.2")
 	androidTestImplementation("androidx.test:runner:1.4.0")
 	androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
