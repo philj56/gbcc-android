@@ -21,7 +21,7 @@ import android.view.WindowInsets
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.PreferenceManager
@@ -156,7 +156,7 @@ class ArrangeActivity : BaseActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        ViewCompat.getWindowInsetsController(window.decorView)?.let {
+        WindowCompat.getInsetsController(window, window.decorView).let {
             // Hide system bars
             it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             it.hide(WindowInsetsCompat.Type.systemBars())

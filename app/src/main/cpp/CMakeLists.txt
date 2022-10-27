@@ -31,11 +31,11 @@ add_library(gbcc SHARED
 	${GBCC_DIR}/src/cheats.c
 	${GBCC_DIR}/src/colour.c
 	${GBCC_DIR}/src/config.c
+	${GBCC_DIR}/src/core.c
 	${GBCC_DIR}/src/cpu.c
 	${GBCC_DIR}/src/debug.c
 	${GBCC_DIR}/src/gbcc.c
 	${GBCC_DIR}/src/hdma.c
-	${GBCC_DIR}/src/init.c
 	${GBCC_DIR}/src/input.c
 	${GBCC_DIR}/src/mbc.c
 	${GBCC_DIR}/src/memory.c

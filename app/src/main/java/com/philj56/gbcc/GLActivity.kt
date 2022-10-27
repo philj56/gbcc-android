@@ -35,13 +35,14 @@ import android.util.Log
 import android.util.Size
 import android.view.*
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.LifecycleOwner
@@ -128,6 +129,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var checkEmulatorState : Runnable
     private lateinit var filename : String
     private var resume = false
+    private var reboot = false
     private var loadedSuccessfully = false
     private var cameraPermissionRefused = false
     private var animateButtons = true
@@ -448,12 +450,13 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        ViewCompat.getWindowInsetsController(window.decorView)?.let {
+        WindowCompat.getInsetsController(window, window.decorView).let {
             // Hide system bars
             it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             it.hide(WindowInsetsCompat.Type.systemBars())
         }
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback { showBackPrompt() }
         chdir(filesDir.absolutePath)
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -710,11 +713,12 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             }
         }
         handler.post(checkEmulatorState)
-        if (resume) {
+        if (!reboot && (resume || prefs.getBoolean("auto_resume", false))) {
             loadState(autoSaveState)
             binding.turboToggle.isChecked = false
             resume = false
         }
+        reboot = false
         if (hasAccelerometer()) {
             sensorManager.registerListener(this, accelerometer, 10000)
         }
@@ -1012,20 +1016,20 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         return super.onGenericMotionEvent(event)
     }
 
-    override fun onBackPressed() {
+    private fun showBackPrompt() {
         if (prefs.getBoolean("back_prompt", false)) {
             val dialog = MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.quit_confirmation)
-                .setPositiveButton(R.string.button_quit) { _, _ -> super.onBackPressed() }
+                .setPositiveButton(R.string.button_quit) { _, _ -> finish() }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .setNeutralButton(R.string.button_reboot) { _, _ ->
                     stopGBCC()
-                    resume = false
+                    reboot = true
                     startGBCC()
                 }
                 .create()
-            dialog.window?.decorView?.let {
-                ViewCompat.getWindowInsetsController(it)?.let { controller ->
+            dialog.window?.let {
+                WindowCompat.getInsetsController(it, it.decorView).let { controller ->
                     // Hide system bars
                     controller.systemBarsBehavior =
                         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -1034,7 +1038,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             }
             dialog.show()
         } else {
-            super.onBackPressed()
+            finish()
         }
     }
 
@@ -1043,7 +1047,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             val action = prefs.getString(KEYCODE_TO_STRING_MAP[keyCode], null) ?: "unmapped"
             val button = ACTION_TO_KEY_MAP[action] ?: -1
             when (action) {
-                "back" -> onBackPressed()
+                "back" -> onBackPressedDispatcher.onBackPressed()
                 "turbo" -> if (pressed) toggleTurboWrapper()
                 else -> press(button, pressed)
             }
@@ -1108,7 +1112,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     }
 
     class DpadListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
+        override fun onDoubleTap(e: MotionEvent): Boolean {
             return true
         }
     }

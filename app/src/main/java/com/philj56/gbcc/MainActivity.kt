@@ -22,6 +22,7 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.forEach
@@ -92,6 +93,7 @@ class MainActivity : BaseActivity() {
             }
         )
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback { backPress() }
         baseDir = getExternalFilesDir(null) ?: filesDir
         currentDir = baseDir
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -723,14 +725,14 @@ class MainActivity : BaseActivity() {
         }.start()
     }
 
-    override fun onBackPressed() {
+    private fun backPress() {
         if (currentDir != baseDir) {
             changeDir(currentDir.parentFile ?: baseDir)
             return
         }
 
         if (timeBackPressed + BACK_DELAY > System.currentTimeMillis()) {
-            super.onBackPressed()
+            finish()
             return
         }
 

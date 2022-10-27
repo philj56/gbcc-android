@@ -323,10 +323,6 @@ Java_com_philj56_gbcc_GLActivity_loadRom(
 		gbcc_load_config(&gbc, tmp);
 		free(tmp);
 	}
-	if (gbc.autoresume) {
-		gbc.load_state = 10;
-		gbcc_load_state(&gbc);
-	}
 	if (cheatFile != nullptr) {
 		gbc.core.cheats.num_genie_cheats = 0;
 		gbc.core.cheats.num_shark_cheats = 0;
