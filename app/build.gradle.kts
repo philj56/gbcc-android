@@ -14,8 +14,8 @@ android {
 		applicationId = "com.philj56.gbcc"
 		minSdk = 21
 		targetSdk = 33
-		versionCode = 38
-		versionName = "beta38"
+		versionCode = 39
+		versionName = "beta39"
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
 			cmake {
