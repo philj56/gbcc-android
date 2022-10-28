@@ -22,8 +22,7 @@
         android:textAppearance="?attr/textAppearanceBodyLarge"
         android:textColor="@color/material_on_surface_emphasis_high_type"
         app:icon="@drawable/ic_lan_connect_24dp"
-        app:iconPadding="32dp"
-        android:visibility="gone"/>
+        app:iconPadding="32dp"/>
 
     <Button
         android:id="@+id/buttonSelectItems"

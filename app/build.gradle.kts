@@ -1,3 +1,4 @@
+
 plugins {
 	id("com.android.application") apply true
 	kotlin("android") apply true
@@ -14,8 +15,8 @@ android {
 		applicationId = "com.philj56.gbcc"
 		minSdk = 21
 		targetSdk = 33
-		versionCode = 39
-		versionName = "beta39"
+		versionCode = 40
+		versionName = "beta40"
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 		externalNativeBuild {
 			cmake {
