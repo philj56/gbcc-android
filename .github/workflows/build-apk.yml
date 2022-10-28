@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Checkout submodules
         shell: bash
@@ -34,7 +34,7 @@ jobs:
         run: sudo ./gradlew build
 
       - name: Upload debug apk
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: gbcc
           path: app/build/outputs/apk/debug/gbcc-universal-debug.apk
