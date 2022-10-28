@@ -63,7 +63,7 @@ android {
 		jvmTarget = JavaVersion.VERSION_11.toString()
 	}
 
-	ndkVersion = "24.0.8215888"
+	ndkVersion = "25.1.8937393"
 	namespace = "com.philj56.gbcc"
 }
 
