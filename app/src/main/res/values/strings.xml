@@ -225,5 +225,6 @@
     </plurals>
     <string name="message_failed_name">Failed to retrieve file name</string>
     <string name="message_failed_create_folder">Failed to create folder <xliff:g>%1$s</xliff:g></string>
+    <string name="message_failed_camera">Failed to open camera: <xliff:g>%1$s</xliff:g></string>
     <string name="message_repeat_back">Press BACK again to exit</string>
 </resources>

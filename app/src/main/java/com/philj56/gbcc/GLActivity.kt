@@ -862,7 +862,15 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 else -> CameraSelector.DEFAULT_BACK_CAMERA
             }
 
-            cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+            try {
+                cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.message_failed_camera, e.message),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }, ContextCompat.getMainExecutor(this))
     }
 
