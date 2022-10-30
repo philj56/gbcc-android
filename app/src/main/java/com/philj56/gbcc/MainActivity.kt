@@ -36,6 +36,7 @@ import com.philj56.gbcc.databinding.DialogDirectoryActionsBinding
 import com.philj56.gbcc.databinding.DialogRomActionsBinding
 import com.philj56.gbcc.main.*
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.charset.Charset
@@ -513,7 +514,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getFileName(uri: Uri): String? {
-        return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        return contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
             if (!cursor.moveToFirst()) {
                 return@use null
             }
@@ -588,7 +589,12 @@ class MainActivity : BaseActivity() {
                 }
             }
             name.matches(Regex(".*\\.(gbc?|sav|s[0-9])")) -> {
-                val iStream = contentResolver.openInputStream(uri)
+                val iStream =
+                    try {
+                        contentResolver.openInputStream(uri)
+                    } catch (e: FileNotFoundException) {
+                        null
+                    }
                 if (iStream == null) {
                     showImportFailToast()
                     return
@@ -599,7 +605,12 @@ class MainActivity : BaseActivity() {
             contentResolver.getType(uri).equals("application/zip")
                     or contentResolver.getType(uri).equals("application/x-zip-compressed")
                     or name.endsWith("zip") -> {
-                val iStream = contentResolver.openInputStream(uri)
+                val iStream =
+                    try {
+                        contentResolver.openInputStream(uri)
+                    } catch (e: FileNotFoundException) {
+                        null
+                    }
                 if (iStream == null) {
                     showImportFailToast()
                     return
@@ -609,7 +620,12 @@ class MainActivity : BaseActivity() {
                 var e = importZipWithCharset(iStream, StandardCharsets.UTF_8)
                 if (e != null) {
                     // importZipWithCharset closes the input stream, so we have to open a new one
-                    val iStream2 = contentResolver.openInputStream(uri)
+                    val iStream2 =
+                        try {
+                            contentResolver.openInputStream(uri)
+                        } catch (e: FileNotFoundException) {
+                            null
+                        }
                     if (iStream2 == null) {
                         showImportFailToast()
                         return
