@@ -49,4 +49,14 @@
             android:targetPackage="com.philj56.gbcc"
             android:targetClass="com.philj56.gbcc.RemapActivity" />
     </Preference>
+
+    <Preference
+        app:key="advanced_remap"
+        app:title="@string/settings_additional_mappings"
+        app:summary="@string/settings_additional_mappings_summary"
+        app:iconSpaceReserved="false">
+        <intent
+            android:targetPackage="com.philj56.gbcc"
+            android:targetClass="com.philj56.gbcc.AdditionalMappingsActivity" />
+    </Preference>
 </PreferenceScreen>

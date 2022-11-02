@@ -143,6 +143,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private var disableAccelerometer = false
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
+    private val additionalMappings = mutableMapOf<Int, String>()
 
     private lateinit var binding: ActivityGlBinding
 
@@ -308,7 +309,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                             }
                             if (lastPressed && !button2.isPressed) {
                                 press(button2.id, false)
-                                button2.view.isPressed = false && animateButtons
+                                button2.view.isPressed = false
                                 hapticVibrate(button2.view, false)
                             }
                         }
@@ -603,6 +604,18 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
             return@OnTouchListener true
         })
+
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_a_key), -1)] = "a"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_b_key), -1)] = "b"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_start_key), -1)] = "start"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_select_key), -1)] = "select"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_up_key), -1)] = "up"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_down_key), -1)] = "down"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_left_key), -1)] = "left"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_right_key), -1)] = "right"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_turbo_key), -1)] = "turbo"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_menu_key), -1)] = "menu"
+        additionalMappings[prefs.getInt(getString(R.string.additional_map_back_key), -1)] = "back"
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -875,34 +888,28 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
-            || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
-            if (event.repeatCount == 0) {
-                val pressed = when(keyCode) {
-                    KeyEvent.KEYCODE_BUTTON_L2 -> { val r = !lastLeftTrigger; lastLeftTrigger = true; r }
-                    KeyEvent.KEYCODE_BUTTON_R2 -> { val r = !lastRightTrigger; lastRightTrigger = true; r }
-                    else -> true
-                }
-                if (pressed && gamepadPress(keyCode, true)) {
-                        return true
-                }
+        if (event.repeatCount == 0) {
+            val pressed = when(keyCode) {
+                KeyEvent.KEYCODE_BUTTON_L2 -> { val r = !lastLeftTrigger; lastLeftTrigger = true; r }
+                KeyEvent.KEYCODE_BUTTON_R2 -> { val r = !lastRightTrigger; lastRightTrigger = true; r }
+                else -> true
+            }
+            if (pressed && gamepadPress(keyCode, true)) {
+                return true
             }
         }
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (event.source and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD
-            || event.source and InputDevice.SOURCE_DPAD == InputDevice.SOURCE_DPAD) {
-            if (event.repeatCount == 0) {
-                val pressed = when(keyCode) {
-                    KeyEvent.KEYCODE_BUTTON_L2 -> { val r = lastLeftTrigger; lastLeftTrigger = false; r }
-                    KeyEvent.KEYCODE_BUTTON_R2 -> { val r = lastRightTrigger; lastRightTrigger = false; r }
-                    else -> true
-                }
-                if (pressed && gamepadPress(keyCode, false)) {
-                    return true
-                }
+        if (event.repeatCount == 0) {
+            val pressed = when(keyCode) {
+                KeyEvent.KEYCODE_BUTTON_L2 -> { val r = lastLeftTrigger; lastLeftTrigger = false; r }
+                KeyEvent.KEYCODE_BUTTON_R2 -> { val r = lastRightTrigger; lastRightTrigger = false; r }
+                else -> true
+            }
+            if (pressed && gamepadPress(keyCode, false)) {
+                return true
             }
         }
         return super.onKeyUp(keyCode, event)
@@ -1051,17 +1058,24 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     }
 
     private fun gamepadPress(keyCode: Int, pressed: Boolean): Boolean {
-        if (KEYCODE_TO_STRING_MAP.containsKey(keyCode)){
-            val action = prefs.getString(KEYCODE_TO_STRING_MAP[keyCode], null) ?: "unmapped"
-            val button = ACTION_TO_KEY_MAP[action] ?: -1
-            when (action) {
-                "back" -> onBackPressedDispatcher.onBackPressed()
-                "turbo" -> if (pressed) toggleTurboWrapper()
-                else -> press(button, pressed)
+        val action = when(keyCode) {
+            in KEYCODE_TO_STRING_MAP -> {
+                prefs.getString(KEYCODE_TO_STRING_MAP[keyCode], null) ?: "unmapped"
             }
-            return true
+            in additionalMappings -> {
+                additionalMappings[keyCode] ?: "unmapped"
+            }
+            else -> {
+                return false
+            }
         }
-        return false
+        val button = ACTION_TO_KEY_MAP[action] ?: -1
+        when (action) {
+            "back" -> onBackPressedDispatcher.onBackPressed()
+            "turbo" -> if (pressed) toggleTurboWrapper()
+            else -> press(button, pressed)
+        }
+        return true
     }
 
     private fun updateDpad(state: Int) : Boolean {

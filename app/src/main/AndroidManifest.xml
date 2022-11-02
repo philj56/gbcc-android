@@ -87,6 +87,10 @@
 			android:parentActivityName=".SettingsActivity"
 			android:screenOrientation="userLandscape"/>
 
+		<activity android:name=".AdditionalMappingsActivity"
+			android:parentActivityName=".SettingsActivity"
+			android:label="@string/additional_mappings_title"/>
+
 		<activity android:name=".LicenseListActivity"
 			android:parentActivityName=".SettingsActivity"
 			android:label="@string/license_title"/>

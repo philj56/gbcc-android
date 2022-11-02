@@ -21,4 +21,17 @@
     <string name="select_scale_key">buttonSelectScale</string>
     <string name="dpad_scale_key">dpadScale</string>
     <string name="turbo_scale_key">buttonTurboScale</string>
+
+    <!-- Additional button mappings -->
+    <string name="additional_map_a_key">additionalMapA</string>
+    <string name="additional_map_b_key">additionalMapB</string>
+    <string name="additional_map_start_key">additionalMapStart</string>
+    <string name="additional_map_select_key">additionalMapSelect</string>
+    <string name="additional_map_up_key">additionalMapUp</string>
+    <string name="additional_map_down_key">additionalMapDown</string>
+    <string name="additional_map_left_key">additionalMapLeft</string>
+    <string name="additional_map_right_key">additionalMapRight</string>
+    <string name="additional_map_turbo_key">additionalMapTurbo</string>
+    <string name="additional_map_menu_key">additionalMapMenu</string>
+    <string name="additional_map_back_key">additionalMapBack</string>
 </resources>

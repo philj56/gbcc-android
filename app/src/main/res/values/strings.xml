@@ -164,6 +164,8 @@
     <string name="settings_haptic_key_release">Vibrate on button release</string>
     <string name="settings_rumble_strength">Rumble pak strength</string>
     <string name="settings_remap">Remap gamepad</string>
+    <string name="settings_additional_mappings">Additional button mappings</string>
+    <string name="settings_additional_mappings_summary">Necessary for non-gamepad devices such as keyboards</string>
 
     <!-- Arrange Activity -->
     <string name="size_title">Button sizes</string>
@@ -200,6 +202,12 @@
     <string name="stick_description_tilt">Tilt</string>
     <string name="stick_description_unmapped">Unmapped</string>
     <string name="select_mapping">Select mapping</string>
+
+    <!-- Additional Mappings Activity -->
+    <string name="additional_mappings_title">Additional Mappings</string>
+    <string name="additional_mappings_map_description">Mapped to: <xliff:g>%1$s</xliff:g></string>
+    <string name="additional_mappings_unset">Unset</string>
+    <string name="additional_mappings_waiting">Waiting for key press…</string>
 
     <!-- License Activity -->
     <string name="license_title">Licenses</string>
