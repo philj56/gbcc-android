@@ -456,6 +456,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             it.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             it.hide(WindowInsetsCompat.Type.systemBars())
         }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback { showBackPrompt() }
         chdir(filesDir.absolutePath)
