@@ -64,7 +64,7 @@
         app:title="@string/settings_arrange"
         app:iconSpaceReserved="false">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.ArrangeActivity" />
     </Preference>
 

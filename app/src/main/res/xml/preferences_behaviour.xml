@@ -46,7 +46,7 @@
         app:title="@string/settings_remap"
         app:iconSpaceReserved="false">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.RemapActivity" />
     </Preference>
 
@@ -56,7 +56,7 @@
         app:summary="@string/settings_additional_mappings_summary"
         app:iconSpaceReserved="false">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.AdditionalMappingsActivity" />
     </Preference>
 </PreferenceScreen>

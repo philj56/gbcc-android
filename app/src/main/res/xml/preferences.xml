@@ -8,7 +8,7 @@
         app:summary="@string/settings_category_behaviour_summary"
         app:icon="@drawable/ic_gamepad_24dp">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.BehaviourSettingsActivity" />
     </Preference>
 
@@ -18,7 +18,7 @@
         app:summary="@string/settings_category_graphics_summary"
         app:icon="@drawable/ic_image_24dp">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.GraphicsSettingsActivity" />
     </Preference>
 
@@ -28,7 +28,7 @@
         app:summary="@string/settings_category_display_summary"
         app:icon="@drawable/ic_smartphone_24dp">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.DisplaySettingsActivity" />
     </Preference>
 
@@ -38,7 +38,7 @@
         app:summary="@string/settings_category_audio_summary"
         app:icon="@drawable/ic_music_note_24dp">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.AudioSettingsActivity" />
     </Preference>
 
@@ -48,7 +48,7 @@
         app:summary="@string/settings_category_miscellaneous_summary"
         app:icon="@drawable/ic_cogs_24dp">
         <intent
-            android:targetPackage="com.philj56.gbcc"
+            android:targetPackage="@string/application_id"
             android:targetClass="com.philj56.gbcc.MiscellaneousSettingsActivity" />
     </Preference>
 
