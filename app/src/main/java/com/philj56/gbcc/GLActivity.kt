@@ -1174,6 +1174,15 @@ class MyGLSurfaceView : GLSurfaceView {
         }
     }
 
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        super.surfaceCreated(holder)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Limit frame rate on devices with >60Hz screens
+            holder.surface.setFrameRate(59.7275f, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
+        }
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
         val widthSize = MeasureSpec.getSize(widthMeasureSpec)
