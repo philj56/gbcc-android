@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="auto_resume"
@@ -10,6 +11,7 @@
         app:summary="@string/settings_auto_resume_summary" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="auto_save"
@@ -17,6 +19,7 @@
         app:summary="@string/settings_auto_save_summary" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="back_prompt"
@@ -24,12 +27,14 @@
         app:summary="@string/settings_back_prompt_summary" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="haptic_key_press"
         app:title="@string/settings_haptic_key_press" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="haptic_key_release"

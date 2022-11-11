@@ -19,6 +19,7 @@
         app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:key="oled_night_mode"
         app:title="@string/settings_oled_night_mode"
@@ -26,6 +27,7 @@
         app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:key="animate_printer"
         app:title="@string/settings_animate_printer"

@@ -2,6 +2,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="frame_blend"
@@ -9,6 +10,7 @@
         app:summary="@string/settings_frame_blend_summary"/>
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="interlacing"
@@ -16,6 +18,7 @@
         app:summary="@string/settings_interlacing_summary"/>
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="vsync"

@@ -3,30 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="autoresume"
         app:title="@string/settings_auto_resume" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="autosave"
         app:title="@string/settings_auto_save" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="frame-blending"
         app:title="@string/settings_frame_blend" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="false"
         app:iconSpaceReserved="false"
         app:key="interlacing"
         app:title="@string/settings_interlacing" />
 
     <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="vsync"
