@@ -1441,7 +1441,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private fun updatePrinterImage(animate: Boolean) {
         val portrait = (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
 
-        val printoutWidthPX = 160  // Image width in Gameboy Pixels
+        val printoutWidthPX = 160  // Image width in Game boy Pixels
         val printoutHeightPX = printerByteArray.size / printoutWidthPX
         val printoutWidthDP = 128f // Width of printout on paper
         val paperWidthDP = 192f  // Width of paper in printer drawable
