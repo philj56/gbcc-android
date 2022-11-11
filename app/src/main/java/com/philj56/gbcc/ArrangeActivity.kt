@@ -120,19 +120,6 @@ class ArrangeActivity : BaseActivity() {
             }
         }
 
-        binding.buttonA.scaleX = prefs.getFloat(getString(R.string.a_scale_key), 1f)
-        binding.buttonA.scaleY = binding.buttonA.scaleX
-        binding.buttonB.scaleX = prefs.getFloat(getString(R.string.b_scale_key), 1f)
-        binding.buttonB.scaleY = binding.buttonB.scaleX
-        binding.buttonStart.scaleX = prefs.getFloat(getString(R.string.start_scale_key), 1f)
-        binding.buttonStart.scaleY = binding.buttonStart.scaleX
-        binding.buttonSelect.scaleX = prefs.getFloat(getString(R.string.select_scale_key), 1f)
-        binding.buttonSelect.scaleY = binding.buttonSelect.scaleX
-        binding.dpad.root.scaleX = prefs.getFloat(getString(R.string.dpad_scale_key), 1f)
-        binding.dpad.root.scaleY = binding.dpad.root.scaleX
-        binding.turboToggleLayout.root.scaleX = prefs.getFloat(getString(R.string.turbo_scale_key), 1f)
-        binding.turboToggleLayout.root.scaleY = binding.turboToggleLayout.root.scaleX
-
         binding.buttonA.translationX = prefs.getFloat(getString(R.string.a_offset_x_key), 0f)
         binding.buttonA.translationY = prefs.getFloat(getString(R.string.a_offset_y_key), 0f)
         binding.buttonB.translationX = prefs.getFloat(getString(R.string.b_offset_x_key), 0f)
@@ -149,8 +136,6 @@ class ArrangeActivity : BaseActivity() {
         if (!prefs.getBoolean("show_turbo", false)) {
             binding.turboToggleLayout.turboToggle.visibility = View.GONE
         }
-
-        setSizes()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -191,9 +176,14 @@ class ArrangeActivity : BaseActivity() {
         )
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onResume() {
+        super.onResume()
+        binding.sliders.abSlider.value = sizeToValue(prefs.getFloat(getString(R.string.a_scale_key), 1f))
+        binding.sliders.startSelectSlider.value = sizeToValue(prefs.getFloat(getString(R.string.start_scale_key), 1f))
+        binding.sliders.dpadSlider.value = sizeToValue(prefs.getFloat(getString(R.string.dpad_scale_key), 1f))
+    }
 
+    override fun onPause() {
         prefs.edit {
             putFloat(getString(R.string.a_scale_key), binding.buttonA.scaleX)
             putFloat(getString(R.string.b_scale_key), binding.buttonB.scaleX)
@@ -216,12 +206,7 @@ class ArrangeActivity : BaseActivity() {
             putFloat(getString(R.string.turbo_offset_y_key), binding.turboToggleLayout.root.translationY)
             apply()
         }
-    }
-
-    private fun setSizes() {
-        binding.sliders.abSlider.value = sizeToValue(binding.buttonA.scaleX)
-        binding.sliders.startSelectSlider.value = sizeToValue(binding.buttonStart.scaleX)
-        binding.sliders.dpadSlider.value = sizeToValue(binding.dpad.root.scaleX)
+        super.onPause()
     }
 
     private fun resetSizes() {
