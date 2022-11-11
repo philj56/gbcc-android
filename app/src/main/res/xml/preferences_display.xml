@@ -72,4 +72,11 @@
             android:targetClass="com.philj56.gbcc.ArrangeActivity" />
     </Preference>
 
+    <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="grid_snap"
+        app:title="@string/settings_grid_snap" />
+
 </PreferenceScreen>

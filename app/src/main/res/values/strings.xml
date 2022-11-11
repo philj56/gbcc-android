@@ -167,6 +167,7 @@
     <string name="settings_animate_printer_summary">Disabling this may cause printing issues</string>
 
     <string name="settings_arrange">Rearrange layout</string>
+    <string name="settings_grid_snap">Snap layout to grid</string>
     <string name="settings_licenses">Licenses</string>
 
     <string name="settings_haptic_key_press">Vibrate on button press</string>

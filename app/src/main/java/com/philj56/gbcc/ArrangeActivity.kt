@@ -28,6 +28,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.slider.Slider
 import com.philj56.gbcc.databinding.ActivityArrangeBinding
 import kotlin.math.log
+import kotlin.math.min
 import kotlin.math.pow
 
 class ArrangeActivity : BaseActivity() {
@@ -156,6 +157,25 @@ class ArrangeActivity : BaseActivity() {
         setContentView(binding.root)
 
         hideNavigation()
+
+        if (prefs.getBoolean("grid_snap", true)) {
+            val minDim =
+                min(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels)
+            val gridSize = minDim / 18
+            val gridBase = minDim / 2
+            binding.buttonA.gridSize = gridSize
+            binding.buttonA.gridBase = gridBase
+            binding.buttonB.gridSize = gridSize
+            binding.buttonB.gridBase = gridBase
+            binding.buttonStart.gridSize = gridSize
+            binding.buttonStart.gridBase = gridBase
+            binding.buttonSelect.gridSize = gridSize
+            binding.buttonSelect.gridBase = gridBase
+            binding.dpad.root.gridSize = gridSize
+            binding.dpad.root.gridBase = gridBase
+            binding.turboToggleLayout.root.gridSize = gridSize
+            binding.turboToggleLayout.root.gridBase = gridBase
+        }
 
         binding.placeholderTouchTarget.setOnTouchListener { v, _ ->
             // This shouldn't be needed, but Android
