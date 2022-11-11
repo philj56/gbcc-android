@@ -25,6 +25,13 @@
         app:summary="@string/settings_oled_night_mode_summary"
         app:iconSpaceReserved="false" />
 
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="animate_printer"
+        app:title="@string/settings_animate_printer"
+        app:summary="@string/settings_animate_printer_summary"
+        app:iconSpaceReserved="false" />
+
     <com.philj56.gbcc.settings.SummaryListPreference
         app:defaultValue="back"
         app:entries="@array/camera_names_array"

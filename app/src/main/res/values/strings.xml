@@ -42,6 +42,10 @@
     <string name="dpad_description">Dpad</string>
     <string name="start_button_description">Start</string>
     <string name="select_button_description">Select</string>
+    <string name="printer_button_description">Printer</string>
+    <string name="gameboy_button_description">Game Boy</string>
+    <string name="printer_save_button_description">Save printer output</string>
+    <string name="printer_clear_button_description">Clear printer output</string>
 
     <string name="quit_confirmation">Are you sure you want to quit?</string>
     <string name="invalid_opcode_title">Invalid Opcode</string>
@@ -129,6 +133,7 @@
     <string name="settings_color_teal">Teal</string>
 
     <string name="settings_audio_volume">Volume</string>
+    <string name="settings_audio_printer_volume">Printer volume</string>
 
     <string name="settings_audio_background_music">Allow background music</string>
     <string name="settings_audio_background_music_summary">If enabled, music from other apps will keep playing when launching a game</string>
@@ -157,6 +162,9 @@
     <string name="settings_camera">Default camera</string>
     <string name="settings_camera_back">Back</string>
     <string name="settings_camera_front">Front</string>
+
+    <string name="settings_animate_printer">Animate printer</string>
+    <string name="settings_animate_printer_summary">Disabling this may cause printing issues</string>
 
     <string name="settings_arrange">Rearrange layout</string>
     <string name="settings_licenses">Licenses</string>

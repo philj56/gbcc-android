@@ -50,4 +50,14 @@
         app:title="@string/settings_audio_volume"
         app:iconSpaceReserved="false" />
 
+    <com.philj56.gbcc.materialPreferences.MaterialSeekbarPreference
+        android:layout="@layout/preference_widget_slider"
+        app:min="0"
+        android:max="100"
+        app:defaultValue="100"
+        app:showSeekBarValue="false"
+        app:key="printer_volume"
+        app:title="@string/settings_audio_printer_volume"
+        app:iconSpaceReserved="false" />
+
 </PreferenceScreen>

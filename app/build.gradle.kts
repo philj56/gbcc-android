@@ -92,8 +92,13 @@ dependencies {
 tasks.register<Copy>("copyAssets") {
 	from("libs/gbcc/tileset.png")
 	from("libs/gbcc/camera.png")
-	from("libs/gbcc/print.wav")
 	into("src/main/assets")
 }
 
+tasks.register<Copy>("copyResources") {
+	from("libs/gbcc/print.wav")
+	into("src/main/res/raw")
+}
+
 tasks["preBuild"].dependsOn("copyAssets")
+tasks["preBuild"].dependsOn("copyResources")

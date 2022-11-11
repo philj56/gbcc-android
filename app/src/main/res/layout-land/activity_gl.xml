@@ -1,224 +1,425 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
-    android:focusable="false"
-    android:layoutDirection="ltr"
     tools:context=".GLActivity">
 
-    <ImageView
-        android:id="@+id/placeholderTouchTarget"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/gameboyLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:importantForAccessibility="no"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="false"
+        android:layoutDirection="ltr"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/empty">
-        <!-- This shouldn't be needed, but Android
-        seems to act strangely when the root view is touched
-        and ignores any further touches. -->
-    </ImageView>
-
-    <com.philj56.gbcc.MyGLSurfaceView
-        android:id="@+id/screen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/screen_description"
-        android:keepScreenOn="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
 
-    <ImageView
-        android:id="@+id/screenBorderLeft"
-        android:importantForAccessibility="no"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:src="@drawable/screen_border_side"
-        app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
-        app:layout_constraintEnd_toStartOf="@+id/screen"
-        app:layout_constraintTop_toTopOf="@+id/screen" />
+        <ImageView
+            android:id="@+id/placeholderTouchTarget"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/empty">
+            <!-- This shouldn't be needed, but Android
+            seems to act strangely when the root view is touched
+            and ignores any further touches. -->
+        </ImageView>
 
-    <ImageView
-        android:id="@+id/screenBorderRight"
-        android:layout_width="16dp"
-        android:layout_height="0dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/screen_border_side"
-        app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
-        app:layout_constraintStart_toEndOf="@+id/screen"
-        app:layout_constraintTop_toTopOf="@+id/screen" />
+        <com.philj56.gbcc.MyGLSurfaceView
+            android:id="@+id/screen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/screen_description"
+            android:keepScreenOn="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/screenBorderBottom"
-        android:importantForAccessibility="no"
+        <ImageView
+            android:id="@+id/screenBorderLeft"
+            android:importantForAccessibility="no"
+            android:layout_width="16dp"
+            android:layout_height="0dp"
+            android:src="@drawable/screen_border_side"
+            app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
+            app:layout_constraintEnd_toStartOf="@+id/screen"
+            app:layout_constraintTop_toTopOf="@+id/screen" />
+
+        <ImageView
+            android:id="@+id/screenBorderRight"
+            android:layout_width="16dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/screen_border_side"
+            app:layout_constraintBottom_toTopOf="@+id/screenBorderBottom"
+            app:layout_constraintStart_toEndOf="@+id/screen"
+            app:layout_constraintTop_toTopOf="@+id/screen" />
+
+        <ImageView
+            android:id="@+id/screenBorderBottom"
+            android:importantForAccessibility="no"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:src="@drawable/screen_border_bottom"
+            app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
+            app:layout_constraintStart_toStartOf="@+id/screenBorderLeft"
+            app:layout_constraintTop_toBottomOf="@+id/screen" />
+
+        <ImageView
+            android:id="@+id/screenBorderTop"
+            android:importantForAccessibility="no"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:src="@drawable/screen_border_top"
+            app:layout_constraintBottom_toTopOf="@+id/screen"
+            app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
+            app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
+
+        <ImageButton
+            android:id="@+id/buttonA"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="64dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/a_button_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_button_ab_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/buttonB"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/b_button_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_button_ab_selector"
+            app:layout_constraintEnd_toEndOf="@+id/buttonA"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
+            app:layout_constraintTop_toBottomOf="@+id/buttonA" />
+
+        <ImageButton
+            android:id="@+id/buttonSelect"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/select_button_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_button_startselect_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonStart"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_weight="0" />
+
+        <ImageButton
+            android:id="@+id/buttonStart"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/start_button_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_button_startselect_selector"
+            app:layout_constraintBottom_toTopOf="@+id/buttonSelect"
+            app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_weight="0" />
+
+        <include
+            android:id="@+id/dpad"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/dpad_description"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            layout="@layout/button_dpad" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/turboToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:theme="@style/TurboToggleTheme"
+            android:saveEnabled="false"
+            android:background="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
+            app:switchMinWidth="64dp" />
+
+        <ImageView
+            android:id="@+id/topRightCorner"
+            android:importantForAccessibility="no"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/device_border_top_corner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/topLeftCorner"
+            android:importantForAccessibility="no"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:rotation="270"
+            android:src="@drawable/device_border_top_corner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/bottomLeftCorner"
+            android:importantForAccessibility="no"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:rotation="180"
+            android:src="@drawable/device_border_top_corner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/bottomRightCorner"
+            android:importantForAccessibility="no"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:rotation="90"
+            android:src="@drawable/device_border_top_corner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/printerTransitionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:contentDescription="@string/printer_button_description"
+            android:theme="@style/ThemeOverlay.GBCC.Button.PrinterButton"
+            app:srcCompat="@drawable/ic_printer_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/printerLayout"
         android:layout_width="0dp"
-        android:layout_height="16dp"
-        android:src="@drawable/screen_border_bottom"
-        app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
-        app:layout_constraintStart_toStartOf="@+id/screenBorderLeft"
-        app:layout_constraintTop_toBottomOf="@+id/screen" />
-
-    <ImageView
-        android:id="@+id/screenBorderTop"
-        android:importantForAccessibility="no"
-        android:layout_width="0dp"
-        android:layout_height="16dp"
-        android:src="@drawable/screen_border_top"
-        app:layout_constraintBottom_toTopOf="@+id/screen"
-        app:layout_constraintEnd_toEndOf="@+id/screenBorderRight"
-        app:layout_constraintStart_toStartOf="@+id/screenBorderLeft" />
-
-    <ImageButton
-        android:id="@+id/buttonA"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="64dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/a_button_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_button_ab_selector"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/buttonB"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="48dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/b_button_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_button_ab_selector"
-        app:layout_constraintEnd_toEndOf="@+id/buttonA"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
-        app:layout_constraintTop_toBottomOf="@+id/buttonA" />
-
-    <ImageButton
-        android:id="@+id/buttonSelect"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/select_button_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_button_startselect_selector"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonStart"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_weight="0" />
-
-    <ImageButton
-        android:id="@+id/buttonStart"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/start_button_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_button_startselect_selector"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSelect"
-        app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_weight="0" />
-
-    <include
-        android:id="@+id/dpad"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/dpad_description"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/screenBorderLeft"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        layout="@layout/button_dpad" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/turboToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:theme="@style/TurboToggleTheme"
-        android:saveEnabled="false"
-        android:background="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/screenBorderRight"
-        app:switchMinWidth="64dp" />
-
-    <ImageView
-        android:id="@+id/topRightCorner"
-        android:importantForAccessibility="no"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/device_border_top_corner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        >
 
-    <ImageView
-        android:id="@+id/topLeftCorner"
-        android:importantForAccessibility="no"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:rotation="270"
-        android:src="@drawable/device_border_top_corner"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/printerBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/square"
+            app:tint="@android:color/black" />
 
-    <ImageView
-        android:id="@+id/bottomLeftCorner"
-        android:importantForAccessibility="no"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:rotation="180"
-        android:src="@drawable/device_border_top_corner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/printer"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:cropToPadding="true"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/printer_landscape" />
 
-    <ImageView
-        android:id="@+id/bottomRightCorner"
-        android:importantForAccessibility="no"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:rotation="90"
-        android:src="@drawable/device_border_top_corner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <LinearLayout
+            android:id="@+id/printerPaperLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/printer"
+            app:layout_constraintTop_toTopOf="@id/printer"
+            app:layout_constraintBottom_toBottomOf="@id/printer">
 
+            <ImageView
+                android:id="@+id/printerPaperTop"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="-1dp"
+                app:srcCompat="@drawable/printer_paper_top_landscape"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/printerPaper"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/square"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/printerPaperBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_marginStart="-1dp"
+                app:srcCompat="@drawable/printer_paper_bottom_landscape"
+                app:tint="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/printerPaperTearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/printer"
+            app:layout_constraintTop_toTopOf="@id/printer"
+            app:layout_constraintBottom_toBottomOf="@id/printer">
+
+            <ImageView
+                android:id="@+id/printerPaperTearTop"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_marginEnd="-1dp"
+                app:srcCompat="@drawable/printer_paper_top_landscape"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/printerPaperTear"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/square"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/printerPaperTearBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:layout_marginStart="-1dp"
+                app:srcCompat="@drawable/printer_paper_bottom_landscape"
+                app:tint="@android:color/white" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/printerBlades"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:adjustViewBounds="true"
+            android:cropToPadding="true"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@id/printer"
+            app:layout_constraintTop_toTopOf="@id/printer"
+            app:layout_constraintStart_toStartOf="@id/printer"
+            app:layout_constraintEnd_toEndOf="@id/printer"
+            app:srcCompat="@drawable/printer_blades_landscape" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/gameboyTransitionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/gameboy_button_description"
+            android:theme="@style/ThemeOverlay.GBCC.Button.PrinterButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_gameboy_24dp"
+            app:maxImageSize="32dp"
+            />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/printerSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/printer_save_button_description"
+            android:theme="@style/ThemeOverlay.GBCC.Button.PrinterButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_save_24dp"
+            />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/printerClearButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/printer_clear_button_description"
+            android:theme="@style/ThemeOverlay.GBCC.Button.PrinterButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/printerSaveButton"
+            app:srcCompat="@drawable/ic_delete_24dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

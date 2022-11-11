@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 24 24"
+   height="24"
+   width="24"
+   sodipodi:docname="ic_gameboy.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
+   inkscape:export-filename="/home/phil/Documents/android/projects/gbcc-android/sources/ic_play_store.png"
+   inkscape:export-xdpi="768"
+   inkscape:export-ydpi="768"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1411"
+     id="namedview40"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="24.722548"
+     inkscape:cx="18.566047"
+     inkscape:cy="10.112226"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient13887">
+      <stop
+         id="stop13883"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:0.1" />
+      <stop
+         id="stop13885"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <filter
+       id="filter7804"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur7802"
+         result="blur"
+         stdDeviation="1 1" />
+    </filter>
+    <filter
+       id="filter8500"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur8498"
+         result="blur"
+         stdDeviation="1 1" />
+    </filter>
+    <radialGradient
+       gradientTransform="matrix(1.547619,0,0,1.5714284,13.142856,-587.13326)"
+       gradientUnits="userSpaceOnUse"
+       r="42"
+       fy="395.26666"
+       fx="18"
+       cy="395.26666"
+       cx="18"
+       id="radialGradient13889"
+       xlink:href="#linearGradient13887" />
+    <filter
+       height="1.16"
+       y="-0.079999991"
+       width="1.24"
+       x="-0.12000001"
+       id="filter921"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur923"
+         stdDeviation="1.4999999" />
+    </filter>
+    <filter
+       id="filter7804-7"
+       inkscape:label="Blur"
+       style="color-interpolation-filters:sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur7802-5"
+         result="blur"
+         stdDeviation="1 1" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-22,-170)"
+     id="layer2" />
+  <path
+     id="rect7684"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.26456;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 7.277995,4.5 C 7.124107,4.5 7,4.6286095 7,4.7884113 V 18.634766 h 0.0013 a 0.55555747,0.57692273 0 0 0 0.364583,0.541666 c 0,0 1.02301,0.323568 4.634115,0.323568 3.611105,0 4.634115,-0.323568 4.634115,-0.323568 a 0.55555747,0.57692273 0 0 0 0.364583,-0.541666 H 17 V 4.7884113 C 17,4.6286128 16.875893,4.5 16.722005,4.5 Z m 0.601562,0.666667 h 8.240886 c 0.164148,0 0.296224,0.132076 0.296224,0.296224 v 7.407552 c 0,0.164148 -0.132076,0.296224 -0.296224,0.296224 H 7.879557 c -0.164148,0 -0.296224,-0.132076 -0.296224,-0.296224 V 5.462891 c 0,-0.164148 0.132076,-0.296224 0.296224,-0.296224 z m 0.997396,0.916666 c -0.162682,0 -0.29362,0.130938 -0.29362,0.29362 v 5.579427 c 0,0.162682 0.130938,0.29362 0.29362,0.29362 h 6.246094 c 0.162682,0 0.29362,-0.130938 0.29362,-0.29362 V 6.376953 c 0,-0.162682 -0.130938,-0.29362 -0.29362,-0.29362 z m 0.473307,7.75 h 0.466146 c 0.193899,0 0.350261,0.156358 0.350261,0.350261 V 15 h 0.816406 c 0.193899,0 0.35026,0.156358 0.35026,0.35026 v 0.466146 c 0,0.193903 -0.156361,0.350261 -0.35026,0.350261 h -0.816406 v 0.816406 c 0,0.193899 -0.156362,0.35026 -0.350261,0.35026 H 9.35026 C 9.156361,17.333333 9,17.176972 9,16.983073 V 16.166667 H 8.183594 c -0.193899,0 -0.350261,-0.156358 -0.350261,-0.350261 V 15.35026 C 7.833333,15.156358 7.989695,15 8.183594,15 H 9 v -0.816406 c 0,-0.193899 0.156361,-0.350261 0.35026,-0.350261 z m 5.84961,0.433594 A 0.86666663,0.86666663 0 0 1 16.066406,15.133464 0.86666663,0.86666663 0 0 1 15.19987,16 0.86666663,0.86666663 0 0 1 14.333333,15.133464 0.86666663,0.86666663 0 0 1 15.19987,14.266927 Z m -2.166667,1.333333 a 0.86666663,0.86666663 0 0 1 0.866537,0.866537 0.86666663,0.86666663 0 0 1 -0.866537,0.866536 0.86666663,0.86666663 0 0 1 -0.866536,-0.866536 0.86666663,0.86666663 0 0 1 0.866536,-0.866537 z" />
+  <g
+     id="layer3"
+     transform="translate(-22,-22)" />
+</svg>

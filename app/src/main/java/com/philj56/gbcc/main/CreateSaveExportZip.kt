@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateSaveExportZip : ActivityResultContracts.CreateDocument() {
+class CreateSaveExportZip : ActivityResultContracts.CreateDocument("application/zip") {
     @SuppressLint("SimpleDateFormat")
     override fun createIntent(context: Context, input: String): Intent {
         val intent = super.createIntent(context, input)

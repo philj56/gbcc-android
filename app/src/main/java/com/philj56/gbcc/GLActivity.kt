@@ -11,6 +11,8 @@
 package com.philj56.gbcc
 
 import android.Manifest
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -19,8 +21,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
-import android.graphics.Rect
+import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -32,25 +34,32 @@ import android.opengl.GLSurfaceView
 import android.os.*
 import android.util.AttributeSet
 import android.util.Log
+import android.util.Property
 import android.util.Size
 import android.view.*
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.philj56.gbcc.databinding.ActivityGlBinding
 import java.io.File
 import java.nio.ByteBuffer
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -58,6 +67,10 @@ import kotlin.math.*
 
 private const val autoSaveState: Int = 10
 private const val REQUEST_CODE_PERMISSIONS = 10
+private const val PRINTER_TRANSITION_MILLIS = 800L
+private const val PRINTER_CLEAR_MILLIS = 800L
+private const val PRINTER_SCROLL_MILLIS = 300L
+private const val PRINTER_UPDATE_SAMPLES = 17000
 
 private const val BUTTON_CODE_A = 0
 private const val BUTTON_CODE_B = 1
@@ -119,6 +132,10 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         val isPressed: Boolean get() = isNormalPressed or isMotionPressed
     }
 
+    private enum class Screen {
+        GAMEBOY, PRINTER
+    }
+
     private lateinit var prefs: SharedPreferences
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
@@ -128,7 +145,11 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private lateinit var vibrator : Vibrator
     private lateinit var checkEmulatorState : Runnable
     private lateinit var filename : String
+    private lateinit var printerAudio : AudioTrack
+    private lateinit var printerPaperTearSound : SoundPool
+    private var printerAudioLength = 0
     private var resume = false
+    private var resumePrinting = false
     private var reboot = false
     private var loadedSuccessfully = false
     private var cameraPermissionRefused = false
@@ -143,7 +164,12 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private var disableAccelerometer = false
     private lateinit var saveDir : String
     private var tempOptions : ByteArray? = null
+    private var printerByteArray : ByteArray = ByteArray(0)
     private val additionalMappings = mutableMapOf<Int, String>()
+    private val transitionToPrinter = AnimatorSet()
+    private val transitionToGameboy = AnimatorSet()
+    private lateinit var printerScrollAnimation : ObjectAnimator
+    private var currentScreen = Screen.GAMEBOY
 
     private lateinit var binding: ActivityGlBinding
 
@@ -167,7 +193,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private external fun saveState(state: Int)
     private external fun loadState(state: Int)
     private external fun getOptions(): ByteArray
-    private external fun setOptions(options: ByteArray?)
+    private external fun setOptions(options: ByteArray)
     private external fun checkVibrationFun(): Boolean
     private external fun checkErrorFun(): Boolean
     private external fun checkTurboFun(): Boolean
@@ -186,10 +212,29 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private external fun hasRumble(): Boolean
     private external fun hasAccelerometer(): Boolean
     private external fun isCamera(): Boolean
+    private external fun printerConnected(): Boolean
+    private external fun shouldStartPrinting(): Boolean
+    private external fun isPrinting(): Boolean
+    private external fun updatePrinter(): Boolean
+    private external fun getPrinterStrip(): ByteArray
+    private external fun resetPrinter()
 
 
     init {
         checkEmulatorState = Runnable {
+            if (printerConnected()) {
+                binding.printerTransitionButton.visibility = View.VISIBLE
+            } else {
+                binding.printerTransitionButton.visibility = View.GONE
+            }
+            if (shouldStartPrinting() || (isPrinting() && (printerAudio.playState != AudioTrack.PLAYSTATE_PLAYING))) {
+                if (printerConnected()) {
+                    print()
+                } else {
+                    // Something went wrong, reset the printer to be safe
+                    resetPrinter()
+                }
+            }
             if (checkVibrationFun()) {
                 rumblePakVibrate(prefs.getInt("rumble_strength", 255))
             }
@@ -364,7 +409,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 screenBorderColor = ContextCompat.getColor(this, R.color.dmgDarkScreenBorder)
                 binding.dpad.dpadBackground.setColorFilter(
                     ContextCompat.getColor(this, R.color.dmgDarkDpad),
-                    android.graphics.PorterDuff.Mode.SRC_IN
+                    PorterDuff.Mode.SRC_IN
                 )
 
                 binding.buttonA.setImageResource(R.drawable.ic_button_ab_dmg_dark_selector)
@@ -398,7 +443,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             borders.forEach {
                 it.setColorFilter(
                     screenBorderColor,
-                    android.graphics.PorterDuff.Mode.SRC_IN
+                    PorterDuff.Mode.SRC_IN
                 )
             }
 
@@ -508,8 +553,22 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
         if (savedInstanceState != null) {
             resume = resume || savedInstanceState.getBoolean("resume")
+            resumePrinting = resumePrinting || savedInstanceState.getBoolean("resumePrinting")
             if (tempOptions == null) {
                 tempOptions = savedInstanceState.getByteArray("options")
+            }
+            if (printerByteArray.isEmpty()) {
+                savedInstanceState.getByteArray("printerByteArray")?.let {
+                    printerByteArray = it
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                savedInstanceState.getSerializable("currentScreen", Screen.GAMEBOY.declaringClass)
+                    ?.let { currentScreen = it }
+            } else {
+                @Suppress("DEPRECATION")
+                (savedInstanceState.getSerializable("currentScreen") as Screen?)
+                    ?.let { currentScreen = it }
             }
         }
 
@@ -617,6 +676,8 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         additionalMappings[prefs.getInt(getString(R.string.additional_map_turbo_key), -1)] = "turbo"
         additionalMappings[prefs.getInt(getString(R.string.additional_map_menu_key), -1)] = "menu"
         additionalMappings[prefs.getInt(getString(R.string.additional_map_back_key), -1)] = "back"
+
+        initialisePrinter()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -681,9 +742,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         val cheatFile = filesDir.resolve("config/" + File(filename).nameWithoutExtension + ".cheats").let {
             if (it.exists()) it else null
         }
-        if (tempOptions != null) {
-            setOptions(tempOptions)
-        }
+        tempOptions?.let { setOptions(it) }
         loadedSuccessfully = loadRom(
             filename,
             sampleRate,
@@ -732,6 +791,10 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
             binding.turboToggle.isChecked = false
             resume = false
         }
+        if (resumePrinting) {
+            print()
+            resumePrinting = false
+        }
         reboot = false
         if (hasAccelerometer()) {
             sensorManager.registerListener(this, accelerometer, 10000)
@@ -749,6 +812,8 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
 
     private fun stopGBCC() {
         if (loadedSuccessfully) {
+            resumePrinting = (printerAudio.playState == AudioTrack.PLAYSTATE_PLAYING)
+            stopPrinting()
             tempOptions = getOptions()
             sensorManager.unregisterListener(this)
             handler.removeCallbacks(checkEmulatorState)
@@ -773,7 +838,10 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("resume", true)
+        outState.putBoolean("resumePrinting", resumePrinting)
         outState.putByteArray("options", tempOptions)
+        outState.putByteArray("printerByteArray", printerByteArray)
+        outState.putSerializable("currentScreen", currentScreen)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -1134,6 +1202,392 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
         binding.turboToggle.isChecked = turbo
     }
 
+    private fun initialisePrinter() {
+        initialisePrinterAudio()
+
+        val dimension: Float
+        val property: Property<View, Float>
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            dimension = resources.displayMetrics.widthPixels.toFloat()
+            property = View.TRANSLATION_X
+            if (currentScreen == Screen.GAMEBOY) {
+                binding.printerLayout.translationX = dimension
+            } else {
+                binding.gameboyLayout.translationX = -dimension
+                binding.printerLayout.visibility = View.VISIBLE
+            }
+            printerScrollAnimation = ObjectAnimator.ofFloat(binding.printerPaperLayout, View.TRANSLATION_Y, 0f).apply {
+                duration = PRINTER_SCROLL_MILLIS
+            }
+        } else {
+            dimension = -resources.displayMetrics.heightPixels.toFloat()
+            property = View.TRANSLATION_Y
+            if (currentScreen == Screen.GAMEBOY) {
+                binding.printerLayout.translationY = dimension
+            } else {
+                binding.gameboyLayout.translationY = -dimension
+                binding.printerLayout.visibility = View.VISIBLE
+            }
+            printerScrollAnimation = ObjectAnimator.ofFloat(binding.printerPaperLayout, View.TRANSLATION_X, 0f).apply {
+                duration = PRINTER_SCROLL_MILLIS
+            }
+        }
+
+        updatePrinterImage(false)
+
+        transitionToPrinter.play(
+            ObjectAnimator.ofFloat(binding.printerLayout, property, 0f).apply {
+                duration = PRINTER_TRANSITION_MILLIS
+            }
+        ).with(
+            ObjectAnimator.ofFloat(binding.gameboyLayout, property, -dimension).apply {
+                duration = PRINTER_TRANSITION_MILLIS
+            }
+        )
+        transitionToPrinter.doOnStart {
+            binding.printerLayout.visibility = View.VISIBLE
+            currentScreen = Screen.PRINTER
+            updatePrinterImage(false)
+        }
+
+
+        transitionToGameboy.play(
+            ObjectAnimator.ofFloat(binding.printerLayout, property, dimension).apply {
+                duration = PRINTER_TRANSITION_MILLIS
+            }
+        ).with(
+            ObjectAnimator.ofFloat(binding.gameboyLayout, property, 0f).apply {
+                duration = PRINTER_TRANSITION_MILLIS
+            }
+        )
+        transitionToGameboy.doOnEnd {
+            binding.printerLayout.visibility = View.GONE
+            currentScreen = Screen.GAMEBOY
+        }
+
+        binding.printerTransitionButton.setOnClickListener {
+            if (transitionToGameboy.isRunning || transitionToPrinter.isRunning || currentScreen == Screen.PRINTER) {
+                return@setOnClickListener
+            }
+            transitionToPrinter.start()
+        }
+
+        binding.gameboyTransitionButton.setOnClickListener {
+            if (transitionToGameboy.isRunning || transitionToPrinter.isRunning || currentScreen == Screen.GAMEBOY) {
+                return@setOnClickListener
+            }
+            transitionToGameboy.start()
+        }
+
+        val printerExport = registerForActivityResult(CreatePrinterImage()) { uri : Uri? ->
+            if (uri == null) {
+                return@registerForActivityResult
+            }
+            Thread {
+                printerByteArray.let {
+                    if (it.isEmpty()) {
+                        return@Thread
+                    }
+                    val width = 160
+                    val height = it.size / 160
+                    val bitmap = Bitmap.createBitmap(
+                        width,
+                        height,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    // Android fails to export ALPHA_8 bitmaps, so we have to use ARGB_8888
+                    // and set each pixel manually.
+                    for (x in 0 until width) {
+                        for (y in 0 until height) {
+                            val px = 255 - it[y * width + x].toUByte().toInt()
+                            bitmap.setPixel(x, y, Color.argb(255, px, px, px))
+                        }
+                    }
+                    contentResolver.openOutputStream(uri).use { stream ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    }
+                }
+            }.start()
+        }
+        binding.printerSaveButton.setOnClickListener {
+            val date = SimpleDateFormat("yyyy-MM-dd'T'HHmmss").format(Date())
+            printerExport.launch("gbcc_printer_$date.png")
+        }
+        printerPaperTearSound = SoundPool.Builder()
+            .setMaxStreams(1)
+            .setAudioAttributes(AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+            )
+            .build()
+        printerPaperTearSound.load(this, R.raw.printer_paper_tear, 1)
+        binding.printerClearButton.setOnClickListener {
+            binding.printerClearButton.isEnabled = false
+            binding.printerSaveButton.isEnabled = false
+
+            val portrait = (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            // Make a duplicate of the printer paper
+            binding.printerPaperTearLayout.visibility = View.VISIBLE
+            updatePrinterPaperTear()
+
+            // Reset the actual paper
+            printerScrollAnimation.cancel()
+            printerByteArray = ByteArray(0)
+            updatePrinterImage(false)
+
+            // Animate the torn paper
+            val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+            val screenHeight = resources.displayMetrics.heightPixels.toFloat()
+            val paperWidth = binding.printerPaperLayout.width.toFloat()
+            val paperHeight = binding.printerPaperLayout.height.toFloat()
+            val curX = binding.printerPaperTearLayout.translationX
+            val curY = binding.printerPaperTearLayout.translationY
+            val anim = AnimatorSet()
+            val path = Path().apply {
+                if (portrait) {
+                    moveTo(0f, curY)
+                    lineTo(screenWidth + paperHeight, curY - paperWidth)
+                    Log.d("Printer", "Target: (${screenWidth + paperHeight}, ${curY - paperWidth})")
+                } else {
+                    moveTo(curX, 0f)
+                    lineTo(curX - paperHeight, -(screenHeight + paperWidth))
+                }
+            }
+            anim.play(
+                ObjectAnimator.ofFloat(binding.printerPaperTearLayout, View.TRANSLATION_X, View.TRANSLATION_Y, path).apply {
+                    duration = PRINTER_CLEAR_MILLIS
+                }
+            ).with(
+                ObjectAnimator.ofFloat(binding.printerPaperTearLayout, View.ROTATION, 0f, 90f).apply {
+                    duration = PRINTER_CLEAR_MILLIS
+                }
+            )
+            val volume = prefs.getInt("printer_volume", 100) / 100f
+            anim.doOnStart {
+                printerPaperTearSound.play(1, 0.5f * volume, 0.5f * volume, 0, 0, 1f)
+            }
+            anim.doOnEnd {
+                binding.printerPaperTearLayout.visibility = View.GONE
+            }
+            anim.interpolator = FastOutSlowInInterpolator()
+            anim.start()
+        }
+
+    }
+
+    private fun initialisePrinterAudio() {
+        val headerLength = 44L
+        val data: ByteArray
+        resources.openRawResourceFd(R.raw.print).use { fd ->
+            data = ByteArray((fd.length - headerLength).toInt())
+            fd.createInputStream().use {
+                it.skip(headerLength)
+                it.read(data)
+            }
+        }
+        printerAudio = AudioTrack(
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build(),
+            AudioFormat.Builder()
+                .setEncoding(AudioFormat.ENCODING_PCM_8BIT)
+                .setSampleRate(22050)
+                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                .build(),
+            data.size,
+            AudioTrack.MODE_STATIC,
+            AudioManager.AUDIO_SESSION_ID_GENERATE
+        )
+        printerAudio.setVolume(prefs.getInt("printer_volume", 100) / 100f)
+        printerAudio.write(data, 0, data.size)
+        printerAudioLength = data.size
+        printerAudio.setPlaybackPositionUpdateListener(object : AudioTrack.OnPlaybackPositionUpdateListener {
+            private var stop = false
+
+            override fun onMarkerReached(track: AudioTrack?) {
+                if (stop) {
+                    stop = false
+                    printerAudio.stop()
+                    printerAudio.reloadStaticData()
+                    return
+                }
+                val finished = updatePrinter()
+                val strip = getPrinterStrip()
+                if (strip.isEmpty()) {
+                    stop = true
+                    return
+                }
+                val oldSize = printerByteArray.size
+                printerByteArray = printerByteArray.copyOf(oldSize + strip.size)
+                strip.copyInto(printerByteArray, oldSize)
+                updatePrinterImage(true)
+
+                printerAudio.notificationMarkerPosition += data.size
+                if (finished) {
+                    stop = true
+                    printerAudio.notificationMarkerPosition -= PRINTER_UPDATE_SAMPLES
+                }
+            }
+
+            override fun onPeriodicNotification(track: AudioTrack?) {
+                // This method is required
+            }
+        })
+    }
+
+    private fun updatePrinterImage(animate: Boolean) {
+        val portrait = (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+
+        val printoutWidthPX = 160  // Image width in Gameboy Pixels
+        val printoutHeightPX = printerByteArray.size / printoutWidthPX
+        val printoutWidthDP = 128f // Width of printout on paper
+        val paperWidthDP = 192f  // Width of paper in printer drawable
+        val printerWidthDP = 360f  // Width of printer drawable
+        val printerHeightDP = 640f
+        val bladesHeightDP = 520f // Y-Position of blades in printer drawable
+
+        // We have to use screen size rather than e.g. binding.printer.width, as it
+        // may not have been laid out fully when we call this function
+        val printerWidthPX = if (portrait) {
+            resources.displayMetrics.widthPixels.toFloat()
+        } else {
+            resources.displayMetrics.heightPixels.toFloat()
+        }
+        val printerHeightPX = printerWidthPX * printerHeightDP / printerWidthDP
+
+        val dpPerPX = printoutWidthDP / printoutWidthPX
+
+        val paper = binding.printerPaper
+        if (printoutHeightPX > 0) {
+            paper.setImageDrawable(PrinterDrawable(printerByteArray, !portrait))
+            binding.printerClearButton.isEnabled = true
+            binding.printerSaveButton.isEnabled = true
+        } else {
+            binding.printerClearButton.isEnabled = false
+            binding.printerSaveButton.isEnabled = false
+        }
+        // Scale paper width to match printer image
+        val paperWidth : Int
+        if (portrait) {
+            paperWidth = (printerWidthPX * paperWidthDP / printerWidthDP).toInt()
+            paper.layoutParams.width = paperWidth
+        } else {
+            paperWidth = (printerWidthPX * paperWidthDP / printerWidthDP).toInt()
+            paper.layoutParams.height = paperWidth
+        }
+
+        // Scale height by same factor
+        if (portrait) {
+            paper.layoutParams.height =
+                (printoutHeightPX * dpPerPX * paperWidth / paperWidthDP).toInt()
+        } else {
+            paper.layoutParams.width =
+                (printoutHeightPX * dpPerPX * paperWidth / paperWidthDP).toInt()
+        }
+        paper.requestLayout()
+        if (portrait) {
+            binding.printerPaperTop.layoutParams.width = paperWidth
+            binding.printerPaperBottom.layoutParams.width = paperWidth
+        } else {
+            binding.printerPaperTop.layoutParams.height = paperWidth
+            binding.printerPaperBottom.layoutParams.height = paperWidth
+        }
+        binding.printerPaperTop.requestLayout()
+        binding.printerPaperBottom.requestLayout()
+
+        if (portrait) {
+            if (binding.printerPaperLayout.translationY == 0f) {
+                binding.printerPaperLayout.translationY =
+                    printerHeightPX * bladesHeightDP / printerHeightDP
+            }
+            val target = printerHeightPX * bladesHeightDP / printerHeightDP - binding.printerPaper.layoutParams.height
+            if (animate) {
+                printerScrollAnimation.setFloatValues(target)
+                printerScrollAnimation.start()
+            } else {
+                binding.printerPaperLayout.translationY = target
+            }
+        } else {
+            if (binding.printerPaperLayout.translationX == 0f) {
+                binding.printerPaperLayout.translationX =
+                    printerHeightPX * bladesHeightDP / printerHeightDP
+            }
+            val target = printerHeightPX * bladesHeightDP / printerHeightDP - binding.printerPaper.layoutParams.width
+            if (animate) {
+                printerScrollAnimation.setFloatValues(target)
+                printerScrollAnimation.start()
+            } else {
+                binding.printerPaperLayout.translationX = target
+            }
+        }
+    }
+
+    // Make the torn paper look just like the normal paper
+    private fun updatePrinterPaperTear() {
+        val portrait = (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+        val paper = binding.printerPaperTear
+        if (printerByteArray.isNotEmpty()) {
+            paper.setImageDrawable(PrinterDrawable(printerByteArray, !portrait))
+        }
+
+        paper.layoutParams.width = binding.printerPaper.layoutParams.width
+        paper.layoutParams.height = binding.printerPaper.layoutParams.height
+
+        if (portrait) {
+            binding.printerPaperTearTop.layoutParams.width = binding.printerPaper.layoutParams.width
+            binding.printerPaperTearBottom.layoutParams.width = binding.printerPaper.layoutParams.width
+        } else {
+            binding.printerPaperTearTop.layoutParams.height = binding.printerPaper.layoutParams.height
+            binding.printerPaperTearBottom.layoutParams.height = binding.printerPaper.layoutParams.height
+        }
+
+        paper.requestLayout()
+        binding.printerPaperTop.requestLayout()
+        binding.printerPaperBottom.requestLayout()
+
+        val layout = binding.printerPaperTearLayout
+        if (portrait) {
+            layout.translationY = binding.printerPaperLayout.translationY
+        } else {
+            layout.translationX = binding.printerPaperLayout.translationX
+        }
+        layout.rotation = 0f
+    }
+
+    private fun print() {
+        if (currentScreen != Screen.PRINTER) {
+            binding.printerTransitionButton.performClick()
+        }
+        if (prefs.getBoolean("animate_printer", true)) {
+            printerAudio.setLoopPoints(0, printerAudioLength, -1)
+            printerAudio.notificationMarkerPosition = PRINTER_UPDATE_SAMPLES
+            printerAudio.play()
+        } else {
+            var finished = updatePrinter()
+            var strip = getPrinterStrip()
+            while (strip.isNotEmpty()) {
+                val oldSize = printerByteArray.size
+                printerByteArray = printerByteArray.copyOf(oldSize + strip.size)
+                strip.copyInto(printerByteArray, oldSize)
+                updatePrinterImage(false)
+
+                if (finished) {
+                    break
+                } else {
+                    finished = updatePrinter()
+                    strip = getPrinterStrip()
+                }
+            }
+        }
+    }
+
+    private fun stopPrinting() {
+        printerAudio.stop()
+    }
+
     class DpadListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent): Boolean {
             return true
@@ -1246,4 +1700,60 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private external fun initWindow()
     private external fun updateWindow()
     private external fun resizeWindow(width: Int, height: Int)
+}
+
+class PrinterDrawable(byteArray: ByteArray, private val landscape: Boolean) : Drawable() {
+    private val bitmap : Bitmap
+    private val whitePaint: Paint = Paint().apply { setARGB(255, 255, 255, 255) }
+    private val blackPaint: Paint = Paint().apply {
+        setARGB(255, 0, 0, 0)
+        isFilterBitmap = true
+    }
+
+    init {
+        bitmap = Bitmap.createBitmap(
+            160,
+            byteArray.size / 160,
+            Bitmap.Config.ALPHA_8
+        )
+        bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(byteArray))
+    }
+
+    override fun draw(canvas: Canvas) {
+        // Get the drawable's bounds
+        val width = bounds.width().toFloat()
+        val height = bounds.height().toFloat()
+        val rect = RectF(width / 6f, 0f, 5f * width / 6f, height)
+
+        if (landscape) {
+            canvas.rotate(-90f, width / 2, height / 2)
+            canvas.scale(height / width, width / height, width / 2, height / 2)
+        }
+        canvas.drawRect(0f, 0f, width, height, whitePaint)
+        canvas.drawBitmap(bitmap, null, rect, blackPaint)
+    }
+
+    override fun setAlpha(alpha: Int) {
+        // This method is required
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        // This method is required
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun getOpacity() =
+        // Must be PixelFormat.UNKNOWN, TRANSLUCENT, TRANSPARENT, or OPAQUE
+        PixelFormat.OPAQUE
+}
+
+class CreatePrinterImage : ActivityResultContracts.CreateDocument("image/png") {
+    @SuppressLint("SimpleDateFormat")
+    override fun createIntent(context: Context, input: String): Intent {
+        val intent = super.createIntent(context, input)
+        intent.apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+        }
+        return intent
+    }
 }

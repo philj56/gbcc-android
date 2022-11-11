@@ -32,4 +32,9 @@
         <item name="colorSurface">@android:color/black</item>
         <item name="android:colorBackground">@android:color/black</item>
     </style>
+
+    <style name="ThemeOverlay.GBCC.Button.PrinterButton" parent="">
+        <item name="colorPrimaryContainer">?attr/colorSecondary</item>
+        <item name="colorOnPrimaryContainer">?attr/colorOnSecondary</item>
+    </style>
 </resources>

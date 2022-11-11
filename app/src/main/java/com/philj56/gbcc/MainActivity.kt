@@ -130,10 +130,6 @@ class MainActivity : BaseActivity() {
                 baseDir.resolve("Tutorial.gbc").outputStream().use {
                     assets.open("Tutorial.gbc").copyTo(it)
                 }
-                assets.open("print.wav").use { iStream ->
-                    val file = File("$filesDir/print.wav")
-                    FileOutputStream(file).use { iStream.copyTo(it) }
-                }
                 assets.list("shaders")?.forEach { shader ->
                     File("$filesDir/shaders").mkdirs()
                     assets.open("shaders/$shader").use { iStream ->

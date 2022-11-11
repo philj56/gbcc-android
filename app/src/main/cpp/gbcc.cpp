@@ -23,14 +23,17 @@
 extern "C" {
 #pragma GCC visibility push(hidden)
 #include <gbcc.h>
+#include <bit_utils.h>
 #include <camera.h>
 #include <config.h>
 #include <core.h>
+#include <printer_platform.h>
 #include <save.h>
 #include <window.h>
 #pragma GCC visibility pop
 }
 
+#define PRINTER_STRIP_BYTES (8 * PRINTER_WIDTH_TILES * PRINTER_STRIP_HEIGHT)
 #define MAX_SHADER_LEN 32
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -75,6 +78,15 @@ static struct gbcc_temp_options options;
 static FILE *logfile;
 int stdout_fd;
 int stderr_fd;
+static bool start_printing;
+
+static uint8_t print_buffer[PRINTER_STRIP_BYTES];
+static int print_stage = 0;
+static bool print_strip_done = false;
+
+
+static bool print_margin(struct printer *p, bool top);
+static bool print_strip(struct printer *p);
 
 /*
  * Seems that the JNI doesn't guarantee strings from GetStringUTFChars are null-terminated,
@@ -540,9 +552,6 @@ Java_com_philj56_gbcc_GLActivity_setOptions(
 		JNIEnv *env,
 		jobject /* this */,
 		jbyteArray opts) {
-	if (opts == nullptr) {
-		return;
-	}
 	env->GetByteArrayRegion(opts, 0, sizeof(options), reinterpret_cast<jbyte *>(&options));
 }
 
@@ -778,4 +787,148 @@ extern "C" void gbcc_fontmap_load(struct gbcc_fontmap *font) {
 extern "C" void gbcc_fontmap_destroy(struct gbcc_fontmap *font) {
 	(void) font;
 	// Stubbed
+}
+
+void gbcc_printer_platform_start_printing(struct printer *printer) {
+	(void) printer;
+	start_printing = true;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_printerConnected(
+        JNIEnv *,
+        jobject /* this */) {
+    return static_cast<jboolean>(gbc.core.link_cable.state == GBCC_LINK_CABLE_STATE_PRINTER);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_isPrinting(
+		JNIEnv *,
+		jobject /* this */) {
+	return static_cast<jboolean>(gbc.core.printer.status & 0x02u);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_shouldStartPrinting(
+		JNIEnv *,
+		jobject /* this */) {
+	bool ret = start_printing;
+    if (start_printing) {
+        start_printing = false;
+    }
+	return static_cast<jboolean>(ret);
+}
+extern "C" JNIEXPORT void JNICALL
+Java_com_philj56_gbcc_GLActivity_resetPrinter(
+		JNIEnv *env,
+		jobject /* this */) {
+	gbcc_printer_initialise(&gbc.core.printer);
+	print_stage = 0;
+	start_printing = false;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_philj56_gbcc_GLActivity_updatePrinter(
+		JNIEnv *env,
+		jobject /* this */) {
+	bool finished = false;
+	struct printer *p = &gbc.core.printer;
+	if (print_stage == 0) {
+		print_stage += print_margin(p, true);
+	}
+	if (print_stage == 1) {
+		print_stage += print_strip(p);
+		if (p->print_byte == p->image_buffer.length && p->margin.bottom_width == 0) {
+			finished = true;
+		}
+	}
+	if (print_stage == 2) {
+		print_stage += print_margin(p, false);
+		if (p->margin.bottom_line >= p->margin.bottom_width) {
+			finished = true;
+		}
+	}
+	if (print_stage >= 3) {
+		finished = true;
+	}
+	if (finished) {
+		print_stage = 0;
+		gbcc_printer_initialise(p);
+	}
+	return static_cast<jboolean>(finished);
+}
+
+extern "C" JNIEXPORT jbyteArray JNICALL
+Java_com_philj56_gbcc_GLActivity_getPrinterStrip(
+        JNIEnv *env,
+        jobject /* this */) {
+    jbyteArray arr;
+    if (print_strip_done) {
+        print_strip_done = false;
+        arr = env->NewByteArray(PRINTER_STRIP_BYTES);
+        env->SetByteArrayRegion(arr, 0, PRINTER_STRIP_BYTES, (jbyte *) print_buffer);
+    } else {
+        arr = env->NewByteArray(0);
+    }
+    return arr;
+}
+
+bool print_margin(struct printer *p, bool top) {
+	if (top && p->margin.top_line >= p->margin.top_width) {
+		return true;
+	} else if (!top && p->margin.bottom_line >= p->margin.bottom_width) {
+		return true;
+	}
+	for (int line = 0; line < PRINTER_STRIP_HEIGHT; line++) {
+		for (uint8_t tx = 0; tx < PRINTER_WIDTH_TILES; tx++) {
+			for (uint8_t x = 0; x < 8; x++) {
+				size_t idx = line * 8 * PRINTER_WIDTH_TILES + x + 8 * tx;
+				print_buffer[idx] = 0;
+			}
+		}
+	}
+	if (top) {
+		p->margin.top_line++;
+	} else {
+		p->margin.bottom_line++;
+	}
+    print_strip_done = true;
+	return false;
+}
+
+bool print_strip(struct printer *p)
+{
+	if (p->print_byte == p->image_buffer.length) {
+		return true;
+	}
+	unsigned int line;
+	for (line = 0; (line < PRINTER_STRIP_HEIGHT) && (p->print_byte < p->image_buffer.length); line++) {
+		uint8_t ty = (uint8_t)((line + p->print_line) / 8);
+		for (uint8_t tx = 0; tx < PRINTER_WIDTH_TILES; tx++) {
+			uint16_t idx = ty * PRINTER_WIDTH_TILES * 16 + tx * 16 + (uint8_t)(line + p->print_line - ty * 8) * 2;
+			uint8_t lo = p->image_buffer.data[idx];
+			uint8_t hi = p->image_buffer.data[idx + 1];
+			for (uint8_t x = 0; x < 8; x++) {
+				size_t didx = line * 8 * PRINTER_WIDTH_TILES + x + 8 * tx;
+				switch (gbcc_printer_get_palette_colour(p, (uint8_t)(check_bit(hi, 7 - x) << 1u) | check_bit(lo, 7 - x))) {
+					case 0:
+						print_buffer[didx] = 0;
+						break;
+					case 1:
+						print_buffer[didx] = 85;
+						break;
+					case 2:
+						print_buffer[didx] = 170;
+						break;
+					case 3:
+						print_buffer[didx] = 255;
+						break;
+				}
+			}
+			p->print_byte += 2;
+		}
+	}
+	p->print_line += line;
+    print_strip_done = true;
+	return 0;
 }
