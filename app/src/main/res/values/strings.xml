@@ -1,6 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">GBCC</string>
     <string name="application_id">com.philj56.gbcc</string>
+    <string name="launch_game_intent">com.philj56.gbcc.launch_game</string>
 
     <!-- MainActivity -->
     <string name="base_directory_name">Files</string>
@@ -30,6 +31,7 @@
     <string name="delete_config_confirmation">Are you sure you wish to delete your config for this game?</string>
     <string name="edit_config">Edit game config</string>
     <string name="edit_cheats">Edit cheats</string>
+    <string name="add_shortcut">Add shortcut</string>
     <string name="move">Move</string>
     <string name="overwrite_confirmation">Select save files to overwrite:</string>
     <string name="error_zip_title">Error parsing zip file: <xliff:g>%1$s</xliff:g></string>

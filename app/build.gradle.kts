@@ -85,8 +85,8 @@ dependencies {
 	implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
 	implementation("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
 	testImplementation("junit:junit:4.13.2")
-	androidTestImplementation("androidx.test:runner:1.4.0")
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+	androidTestImplementation("androidx.test:runner:1.5.1")
+	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
 }
 
 tasks.register<Copy>("copyAssets") {

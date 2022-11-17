@@ -76,6 +76,23 @@
         app:iconPadding="32dp" />
 
     <Button
+        android:id="@+id/buttonAddShortcut"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:text="@string/add_shortcut"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/material_on_surface_emphasis_high_type"
+        app:icon="@drawable/ic_launch_24dp"
+        app:iconPadding="32dp" />
+
+    <Button
         android:id="@+id/buttonEditCheats"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="match_parent"

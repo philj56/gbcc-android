@@ -12,11 +12,15 @@ package com.philj56.gbcc
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.AdaptiveIconDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -25,6 +29,9 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.preference.PreferenceManager
@@ -420,6 +427,53 @@ class MainActivity : BaseActivity() {
             }
             startActivity(intent)
             dialog.dismiss()
+        }
+        binding.buttonAddShortcut.setOnClickListener {
+            if (!ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+                return@setOnClickListener
+            }
+            val iconResource = if (file.extension == "gbc") {
+                R.drawable.ic_game_shortcut_gbc
+            } else {
+                R.drawable.ic_game_shortcut_dmg
+            }
+            val icon =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val iconSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 108f, resources.displayMetrics).toInt()
+                    val borderSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18f, resources.displayMetrics).toInt()
+
+                    val drawable = AdaptiveIconDrawable(
+                        IconCompat.createWithResource(this, R.drawable.ic_launcher_background).loadDrawable(this),
+                        IconCompat.createWithResource(this, iconResource).loadDrawable(this),
+                    )
+                    drawable.setBounds(borderSize, borderSize, iconSize - borderSize, iconSize - borderSize)
+
+                    val bitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
+                    drawable.draw(Canvas(bitmap))
+                    IconCompat.createWithAdaptiveBitmap(bitmap)
+                } else {
+                    IconCompat.createWithResource(this, iconResource)
+                }
+            val shortcut = ShortcutInfoCompat.Builder(this, "launch_${file.name}")
+                .setShortLabel(file.name)
+                .setLongLabel("Open ${file.name}")
+                .setIcon(icon)
+                .setIntents(
+                    arrayOf(
+                        /* Clear any existing activities, and launch the game */
+                        Intent(this, MainActivity::class.java).apply {
+                            action = Intent.ACTION_VIEW
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        },
+                        Intent(this, GLActivity::class.java).apply {
+                            action = resources.getString(R.string.launch_game_intent)
+                            putExtra("file", file.toString())
+                        }
+                    )
+                )
+                .build()
+
+            ShortcutManagerCompat.requestPinShortcut(this, shortcut, null)
         }
     }
 
