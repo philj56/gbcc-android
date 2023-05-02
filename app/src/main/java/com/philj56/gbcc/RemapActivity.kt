@@ -36,7 +36,7 @@ class RemapActivity : BaseActivity() {
 
         // Set controller outline to follow night mode theme
         val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.colorOnSurface, typedValue, true)
+        theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true)
         layers.findDrawableByLayerId(R.id.controllerOutline).setTint(typedValue.data)
 
         buttonInfoArray = arrayOf(
@@ -168,12 +168,12 @@ class RemapActivity : BaseActivity() {
     private fun highlight(button: Button, pressed: Boolean) {
         val color = if (pressed) {
             val typedValue = TypedValue()
-            theme.resolveAttribute(R.attr.colorPrimaryInverse, typedValue, true)
+            theme.resolveAttribute(com.google.android.material.R.attr.colorPrimaryInverse, typedValue, true)
             typedValue.data
         } else {
             val typedValue = TypedValue()
             val theme = button.context.theme
-            theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+            theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true)
             typedValue.data
         }
         button.setBackgroundColor(color)

@@ -30,8 +30,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build
 
+      - name: Update Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
       - name: Build app
-        run: sudo ./gradlew build
+        run: ./gradlew build
 
       - name: Upload debug apk
         uses: actions/upload-artifact@v3

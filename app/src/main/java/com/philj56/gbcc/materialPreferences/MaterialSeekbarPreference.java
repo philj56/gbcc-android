@@ -145,15 +145,15 @@ public class MaterialSeekbarPreference extends Preference {
             Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.SeekBarPreference, defStyleAttr, defStyleRes);
+                attrs, androidx.preference.R.styleable.SeekBarPreference, defStyleAttr, defStyleRes);
         // The ordering of these two statements are important. If we want to set max first, we need
         // to perform the same steps by changing min/max to max/min as following:
         // mMax = a.getInt(...) and setMin(...).
-        mMin = a.getInt(R.styleable.SeekBarPreference_min, 0);
-        setMax(a.getInt(R.styleable.SeekBarPreference_android_max, 100));
-        setSeekBarIncrement(a.getInt(R.styleable.SeekBarPreference_seekBarIncrement, 0));
-        mAdjustable = a.getBoolean(R.styleable.SeekBarPreference_adjustable, true);
-        mShowSeekBarValue = a.getBoolean(R.styleable.SeekBarPreference_showSeekBarValue, false);
+        mMin = a.getInt(androidx.preference.R.styleable.SeekBarPreference_min, 0);
+        setMax(a.getInt(androidx.preference.R.styleable.SeekBarPreference_android_max, 100));
+        setSeekBarIncrement(a.getInt(androidx.preference.R.styleable.SeekBarPreference_seekBarIncrement, 0));
+        mAdjustable = a.getBoolean(androidx.preference.R.styleable.SeekBarPreference_adjustable, true);
+        mShowSeekBarValue = a.getBoolean(androidx.preference.R.styleable.SeekBarPreference_showSeekBarValue, false);
         mUpdatesContinuously = false; //a.getBoolean(R.styleable.SeekBarPreference_updatesContinuously, false);
         a.recycle();
     }
@@ -161,7 +161,7 @@ public class MaterialSeekbarPreference extends Preference {
         this(context, attrs, defStyleAttr, 0);
     }
     public MaterialSeekbarPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.seekBarPreferenceStyle);
+        this(context, attrs, androidx.preference.R.attr.seekBarPreferenceStyle);
     }
     public MaterialSeekbarPreference(Context context) {
         this(context, null);

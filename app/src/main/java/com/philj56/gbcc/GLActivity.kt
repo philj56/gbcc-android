@@ -563,7 +563,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                savedInstanceState.getSerializable("currentScreen", Screen.GAMEBOY.declaringClass)
+                savedInstanceState.getSerializable("currentScreen", Screen.GAMEBOY.declaringJavaClass)
                     ?.let { currentScreen = it }
             } else {
                 @Suppress("DEPRECATION")
