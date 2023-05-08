@@ -124,7 +124,7 @@ private val ACTION_TO_KEY_MAP = mapOf(
     "unmapped" to -1
 )
 
-class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
+class GLActivity : BaseActivity(), SensorEventListener {
 
     private data class ButtonInfo(val view: View, val id: Int) {
         var isNormalPressed: Boolean = false
@@ -200,7 +200,7 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
     private external fun flushLogs()
     private external fun updateAccelerometer(x: Float, y: Float)
     private external fun updateCamera(
-        array: ByteArray,
+        array: ByteBuffer,
         width: Int,
         height: Int,
         rotation: Int,
@@ -927,10 +927,8 @@ class GLActivity : BaseActivity(), SensorEventListener, LifecycleOwner {
                 // Images are always in YUV_420_888 format, with Y as plane 0
                 // with a pixel stride of 1, so we can just grab the greyscale from here
                 val yplane = image.planes[0]
-                val arr = ByteArray(yplane.buffer.remaining())
-                yplane.buffer.get(arr)
                 updateCamera(
-                    arr,
+                    yplane.buffer,
                     image.width,
                     image.height,
                     image.imageInfo.rotationDegrees,

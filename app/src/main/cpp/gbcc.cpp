@@ -625,12 +625,12 @@ extern "C" JNIEXPORT void JNICALL
 Java_com_philj56_gbcc_GLActivity_updateCamera(
 		JNIEnv *env,
 		jobject /* this */,
-		jbyteArray array,
+		jobject buf,
 		jint width,
 		jint height,
 		jint rotation,
 		jint rowStride) {
-	jbyte *image = env->GetByteArrayElements(array, nullptr);
+	uint8_t *image = static_cast<uint8_t *>(env->GetDirectBufferAddress(buf));
 
 	// Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
 	int box_size = MIN(width, height) / 128 / 2 + 1;
@@ -638,18 +638,18 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 	// First we perform the horizontal blur
 	auto *new_row = static_cast<uint8_t *>(calloc(width, 1));
 	for (int j = 0; j < height; j++) {
-		jbyte *row = &image[j * rowStride];
+		uint8_t *row = &image[j * rowStride];
 		int sum = 0;
 		int div = 0;
 
 		for (int i = -box_size; i < width; i++) {
 			if (i < width - box_size) {
-				sum += static_cast<uint8_t>(row[i + box_size]);
+				sum += row[i + box_size];
 			} else {
 				div--;
 			}
 			if (i >= box_size) {
-				sum -= static_cast<uint8_t>(row[i - box_size]);
+				sum -= row[i - box_size];
 			} else {
 				div++;
 			}
@@ -670,12 +670,12 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 
 		for (int j = -box_size; j < height; j++) {
 			if (j < height - box_size) {
-				sum += static_cast<uint8_t>(image[(j + box_size) * rowStride + i]);
+				sum += image[(j + box_size) * rowStride + i];
 			} else {
 				div--;
 			}
 			if (j >= box_size) {
-				sum -= static_cast<uint8_t>(image[(j - box_size) * rowStride + i]);
+				sum -= image[(j - box_size) * rowStride + i];
 			} else {
 				div++;
 			}
@@ -706,11 +706,9 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 				dst_idx = j * 128 + i;
 			}
 
-			camera_image[dst_idx] = static_cast<uint8_t>(image[src_idx]);
+			camera_image[dst_idx] = image[src_idx];
 		}
 	}
-
-	env->ReleaseByteArrayElements(array, image, JNI_ABORT);
 }
 
 extern "C" JNIEXPORT void JNICALL
