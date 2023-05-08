@@ -45,6 +45,7 @@ import com.philj56.gbcc.main.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
@@ -612,6 +613,8 @@ class MainActivity : BaseActivity() {
             } catch (e: IllegalArgumentException) {
                 return e
             } catch (e: ZipException) {
+                return e
+            } catch (e: IOException) {
                 return e
             }
             return null
