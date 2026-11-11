@@ -629,7 +629,8 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 		jint width,
 		jint height,
 		jint rotation,
-		jint rowStride) {
+		jint rowStride,
+		jboolean mirror) {
 	uint8_t *image = static_cast<uint8_t *>(env->GetDirectBufferAddress(buf));
 
 	// Perform box-blur downsampling of the sensor image to get out 128x128 gb camera image
@@ -692,9 +693,13 @@ Java_com_philj56_gbcc_GLActivity_updateCamera(
 
 	// Then we nearest-neighbour downscale and rotate
 	double scale = MIN(height, width) / 128.0;
+	// Centre the square crop instead of taking the top-left corner.
+	int x0 = (width - MIN(height, width)) / 2;
+	int y0 = (height - MIN(height, width)) / 2;
 	for (int j = 0; j < 128; j++) {
 		for (int i = 0; i < 128; i++) {
-			int src_idx = (int)(j * scale) * rowStride + (int)(i * scale);
+			int si = mirror ? (127 - i) : i;
+			int src_idx = (y0 + (int)(j * scale)) * rowStride + x0 + (int)(si * scale);
 			int dst_idx;
 			if (rotation == 90) {
 				dst_idx = i * 128 + (127 - j);

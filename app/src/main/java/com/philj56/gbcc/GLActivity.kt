@@ -41,6 +41,10 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import android.hardware.camera2.CameraCharacteristics
+import androidx.camera.camera2.interop.Camera2CameraInfo
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop
+import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -153,6 +157,8 @@ class GLActivity : BaseActivity(), SensorEventListener {
     private var reboot = false
     private var loadedSuccessfully = false
     private var cameraPermissionRefused = false
+    @Volatile private var cameraMirror = false
+    @Volatile private var cameraExtraRotation = 0
     private var animateButtons = true
     private var dpadState = 0
     private var lastHatUp = false
@@ -204,7 +210,8 @@ class GLActivity : BaseActivity(), SensorEventListener {
         width: Int,
         height: Int,
         rotation: Int,
-        rowStride: Int
+        rowStride: Int,
+        mirror: Boolean
     )
     private external fun initialiseTileset(width: Int, height: Int, data: ByteArray)
     private external fun destroyTileset()
@@ -931,16 +938,17 @@ class GLActivity : BaseActivity(), SensorEventListener {
                     yplane.buffer,
                     image.width,
                     image.height,
-                    image.imageInfo.rotationDegrees,
-                    yplane.rowStride
+                    (image.imageInfo.rotationDegrees + cameraExtraRotation) % 360,
+                    yplane.rowStride,
+                    cameraMirror
                 )
                 image.close()
             }
 
-            val cameraSelector = when (prefs.getString("camera", "back")) {
-                "front" -> CameraSelector.DEFAULT_FRONT_CAMERA
-                else -> CameraSelector.DEFAULT_BACK_CAMERA
-            }
+            cameraMirror = prefs.getBoolean("camera_mirror", false)
+            cameraExtraRotation = prefs.getString("camera_rotation", "0")?.toIntOrNull() ?: 0
+
+            val cameraSelector = chooseCamera(cameraProvider, prefs.getString("camera", "back"))
 
             try {
                 cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
@@ -952,6 +960,41 @@ class GLActivity : BaseActivity(), SensorEventListener {
                 ).show()
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    // External (USB/UVC) cameras report LENS_FACING_EXTERNAL, so the stock
+    // DEFAULT_BACK/FRONT selectors never pick them. Pick what the user asked
+    // for when it exists, otherwise fall back to an external camera, then to
+    // whatever camera the device has.
+    @androidx.annotation.OptIn(ExperimentalCamera2Interop::class)
+    private fun lensFacing(info: CameraInfo): Int? =
+        try {
+            Camera2CameraInfo.from(info).getCameraCharacteristic(CameraCharacteristics.LENS_FACING)
+        } catch (e: Exception) {
+            null
+        }
+
+    private fun selectorFor(facing: Int): CameraSelector =
+        CameraSelector.Builder().addCameraFilter { infos ->
+            infos.filter { lensFacing(it) == facing }.take(1)
+        }.build()
+
+    private fun chooseCamera(provider: ProcessCameraProvider, choice: String?): CameraSelector {
+        val external = selectorFor(CameraCharacteristics.LENS_FACING_EXTERNAL)
+        val first = CameraSelector.Builder().addCameraFilter { infos -> infos.take(1) }.build()
+        val wanted = when (choice) {
+            "front" -> CameraSelector.DEFAULT_FRONT_CAMERA
+            "external" -> external
+            "any" -> first
+            else -> CameraSelector.DEFAULT_BACK_CAMERA
+        }
+        for (selector in listOf(wanted, external, first)) {
+            val ok = try { provider.hasCamera(selector) } catch (e: Exception) { false }
+            if (ok) {
+                return selector
+            }
+        }
+        return wanted
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -1302,7 +1345,7 @@ class GLActivity : BaseActivity(), SensorEventListener {
                             bitmap.setPixel(x, y, Color.argb(255, px, px, px))
                         }
                     }
-                    contentResolver.openOutputStream(uri).use { stream ->
+                    contentResolver.openOutputStream(uri)?.use { stream ->
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                     }
                 }

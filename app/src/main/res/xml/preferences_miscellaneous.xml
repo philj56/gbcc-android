@@ -42,6 +42,21 @@
         app:title="@string/settings_camera"
         app:iconSpaceReserved="false" />
 
+    <SwitchPreferenceCompat
+        app:widgetLayout="@layout/preference_widget_material_switch"
+        app:defaultValue="false"
+        app:key="camera_mirror"
+        app:title="@string/settings_camera_mirror"
+        app:iconSpaceReserved="false" />
+
+    <com.philj56.gbcc.settings.SummaryListPreference
+        app:defaultValue="0"
+        app:entries="@array/camera_rotation_names_array"
+        app:entryValues="@array/camera_rotation_values_array"
+        app:key="camera_rotation"
+        app:title="@string/settings_camera_rotation"
+        app:iconSpaceReserved="false" />
+
     <com.philj56.gbcc.materialPreferences.MaterialSeekbarPreference
         android:layout="@layout/preference_widget_slider"
         app:defaultValue="255"

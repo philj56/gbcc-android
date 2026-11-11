@@ -10,7 +10,7 @@ base {
 }
 
 android {
-	compileSdk = 33
+	compileSdk = 34
 	buildToolsVersion = "33.0.0"
 	defaultConfig {
 		applicationId = "com.philj56.gbcc"
@@ -73,9 +73,9 @@ android {
 
 dependencies {
 	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-	implementation("androidx.camera:camera-core:1.2.2")
-	implementation("androidx.camera:camera-camera2:1.2.2")
-	implementation("androidx.camera:camera-lifecycle:1.2.2")
+	implementation("androidx.camera:camera-core:1.3.4")
+	implementation("androidx.camera:camera-camera2:1.3.4")
+	implementation("androidx.camera:camera-lifecycle:1.3.4")
 	implementation("androidx.core:core-ktx:1.10.0")
 	implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 	implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
