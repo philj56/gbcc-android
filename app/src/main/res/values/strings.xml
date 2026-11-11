@@ -164,6 +164,10 @@
     <string name="settings_camera">Default camera</string>
     <string name="settings_camera_back">Back</string>
     <string name="settings_camera_front">Front</string>
+    <string name="settings_camera_external">External (USB)</string>
+    <string name="settings_camera_any">First available</string>
+    <string name="settings_camera_mirror">Flip camera horizontally</string>
+    <string name="settings_camera_rotation">Camera rotation</string>
 
     <string name="settings_animate_printer">Animate printer</string>
     <string name="settings_animate_printer_summary">Disabling this may cause printing issues</string>

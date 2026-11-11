@@ -107,11 +107,29 @@
     <string-array name="camera_names_array">
         <item>@string/settings_camera_back</item>
         <item>@string/settings_camera_front</item>
+        <item>@string/settings_camera_external</item>
+        <item>@string/settings_camera_any</item>
     </string-array>
 
     <string-array name="camera_values_array">
         <item>back</item>
         <item>front</item>
+        <item>external</item>
+        <item>any</item>
+    </string-array>
+
+    <string-array name="camera_rotation_names_array">
+        <item>0°</item>
+        <item>90°</item>
+        <item>180°</item>
+        <item>270°</item>
+    </string-array>
+
+    <string-array name="camera_rotation_values_array">
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+        <item>270</item>
     </string-array>
 
 
